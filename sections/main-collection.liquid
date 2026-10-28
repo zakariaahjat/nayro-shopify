@@ -10,6 +10,21 @@
       endif
     endif
   endfor
+  assign reset_filters_url = collection.url
+  assign facets_form_action = collection.url
+  assign virtual_q = ''
+  if collection.current_type != blank
+    assign active_filter_count = active_filter_count | plus: 1
+    assign reset_filters_url = routes.all_products_collection_url
+    assign facets_form_action = routes.collections_url | append: '/types'
+    assign virtual_q = collection.current_type
+  endif
+  if collection.current_vendor != blank
+    assign active_filter_count = active_filter_count | plus: 1
+    assign reset_filters_url = routes.all_products_collection_url
+    assign facets_form_action = routes.collections_url | append: '/vendors'
+    assign virtual_q = collection.current_vendor
+  endif
 -%}
 <div class="nayro-page nayro-collection-page">
   <div class="nayro-container">
@@ -20,7 +35,15 @@
         {{ collection.image | image_url: width: 2000 | image_tag: loading: 'eager', widths: '750, 1100, 1500, 2000', sizes: '100vw', alt: collection.image.alt | default: collection.title }}
       {%- endif -%}
       <div class="nayro-collection-banner__inner">
-        <h1>{{ collection.title | escape }}</h1>
+        {%- if collection.current_type != blank -%}
+          <span class="nayro-page__eyebrow">{{ 'collections.general.category' | t }}</span>
+          <h1>{{ collection.current_type | escape }}</h1>
+        {%- elsif collection.current_vendor != blank -%}
+          <span class="nayro-page__eyebrow">{{ 'collections.general.brand' | t }}</span>
+          <h1>{{ collection.current_vendor | escape }}</h1>
+        {%- else -%}
+          <h1>{{ collection.title | escape }}</h1>
+        {%- endif -%}
         {%- if collection.description != blank -%}
           <p>{{ collection.description | strip_html | truncatewords: 40 }}</p>
         {%- endif -%}
@@ -35,8 +58,8 @@
             {% render 'icon', name: 'close' %}
           </button>
         </div>
-        {% render 'facets', results: collection, form_action: collection.url, reset_url: collection.url, current_sort: current_sort %}
-        {%- if collection.filters.size == 0 -%}
+        {% render 'facets', results: collection, form_action: facets_form_action, reset_url: reset_filters_url, current_sort: current_sort, virtual_q: virtual_q %}
+        {%- if collection.filters.size == 0 and collection.all_types.size == 0 and collection.all_vendors.size == 0 -%}
           <p class="nayro-filters__empty">{{ section.settings.no_filters_text | default: 'No filters are available for this collection yet.' | escape }}</p>
         {%- endif -%}
       </aside>
@@ -54,7 +77,10 @@
               {{ 'collections.general.filters' | t }}
             </button>
 
-            <form class="nayro-sort" method="get" action="{{ collection.url }}" data-sort-form>
+            <form class="nayro-sort" method="get" action="{{ facets_form_action }}" data-sort-form>
+              {%- if virtual_q != blank -%}
+                <input type="hidden" name="q" value="{{ virtual_q | escape }}">
+              {%- endif -%}
               <label for="SortBy-{{ section.id }}">{{ 'collections.general.sort_by' | t }}</label>
               <select id="SortBy-{{ section.id }}" name="sort_by" data-sort-select>
                 {%- for option in collection.sort_options -%}
@@ -91,6 +117,18 @@
 
         {%- if active_filter_count > 0 -%}
           <div class="nayro-filters__active">
+            {%- if collection.current_type != blank -%}
+              <span class="nayro-filter-chip">
+                {{ 'collections.general.category' | t }}: {{ collection.current_type | escape }}
+                <a href="{{ routes.all_products_collection_url }}" aria-label="{{ 'collections.general.clear_all' | t }}: {{ collection.current_type | escape }}">×</a>
+              </span>
+            {%- endif -%}
+            {%- if collection.current_vendor != blank -%}
+              <span class="nayro-filter-chip">
+                {{ 'collections.general.brand' | t }}: {{ collection.current_vendor | escape }}
+                <a href="{{ routes.all_products_collection_url }}" aria-label="{{ 'collections.general.clear_all' | t }}: {{ collection.current_vendor | escape }}">×</a>
+              </span>
+            {%- endif -%}
             {%- for filter in collection.filters -%}
               {%- for value in filter.active_values -%}
                 <span class="nayro-filter-chip">
@@ -99,7 +137,7 @@
                 </span>
               {%- endfor -%}
             {%- endfor -%}
-            <a class="nayro-filter-chip nayro-filter-chip--clear" href="{{ collection.url }}">{{ 'collections.general.clear_all' | t }}</a>
+            <a class="nayro-filter-chip nayro-filter-chip--clear" href="{{ reset_filters_url }}">{{ 'collections.general.clear_all' | t }}</a>
           </div>
         {%- endif -%}
 

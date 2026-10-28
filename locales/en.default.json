@@ -108,7 +108,9 @@
       "grid_view": "Grid view",
       "list_view": "List view",
       "refine": "Refine",
-      "showing": "Showing"
+      "showing": "Showing",
+      "category": "Category",
+      "brand": "Brand"
     }
   },
   "search": {
