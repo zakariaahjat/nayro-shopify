@@ -77,6 +77,25 @@ Optional variables: `SHOPIFY_BLOG_HANDLE`, `SHOPIFY_BLOG_TITLE`,
 `SHOPIFY_BLOG_AUTHOR`, `SHOPIFY_API_VERSION` (default `2026-10`),
 `FORCE_IMAGES=true`.
 
+## Blog page and menu
+
+The blog listing is rendered by `templates/blog.json` at `/blogs/news` and single
+posts by `templates/article.json`. The header shows a **Blog** link automatically
+whenever no menu item already points to a blog, so the page is reachable right
+away. You can pick which blog it links to and change its label from
+**Theme editor -> Header**.
+
+To add it through the Shopify admin instead:
+
+1. Go to **Online Store -> Navigation -> Main menu**.
+2. Click **Add menu item** and name it `Blog`.
+3. Choose **Blogs** as the link type and select your blog (usually `News`).
+4. Click **Save** and refresh the storefront.
+
+Publish at least one article under **Online Store -> Blog posts** for posts to
+appear. The homepage "From the blog" section uses the `News` blog by default and
+can be pointed to a different blog from the theme editor.
+
 ## Theme structure
 
 ```
