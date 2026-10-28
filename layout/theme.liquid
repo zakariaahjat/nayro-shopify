@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}" dir="{% if request.locale.iso_code == 'ar' or request.locale.iso_code == 'he' %}rtl{% else %}ltr{% endif %}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="{{ settings.color_primary }}">
+  {%- if settings.enable_dark_mode -%}
+    <script>
+      try {
+        var nayroSavedTheme = localStorage.getItem('nayro-theme');
+        if (nayroSavedTheme === 'dark' || nayroSavedTheme === 'light') {
+          document.documentElement.setAttribute('data-theme', nayroSavedTheme);
+        }
+      } catch (e) {}
+    </script>
+  {%- endif -%}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  {{ content_for_header }}
+  {% render 'meta-tags' %}
+
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+  {{ 'modern.css' | asset_url | stylesheet_tag }}
+  {{ 'legacy-shop.css' | asset_url | stylesheet_tag }}
+  {{ 'nayro-home.css' | asset_url | stylesheet_tag }}
+  {{ 'nayro-shopify.css' | asset_url | stylesheet_tag }}
+
+  <style>
+    :root {
+      --n-primary: {{ settings.color_primary }};
+      --n-primary-dark: {{ settings.color_primary_dark }};
+      --n-primary-2: {{ settings.color_primary }};
+      --n-text: {{ settings.color_text }};
+      --n-muted: {{ settings.color_muted }};
+      --n-bg: {{ settings.color_bg }};
+      --n-surface: {{ settings.color_surface }};
+      --n-surface-2: {{ settings.color_surface | color_darken: 4 }};
+      --n-border: {{ settings.color_border }};
+      --n-sale: {{ settings.color_sale }};
+      --n-container: {{ settings.container_width }}px;
+      --nayro-surface: {{ settings.color_surface }};
+      --nayro-border: {{ settings.color_border }};
+      --nayro-primary: {{ settings.color_primary }};
+    }
+    [data-theme="dark"] {
+      --n-primary: {{ settings.color_primary }};
+      --n-primary-dark: {{ settings.color_primary_dark }};
+      --nayro-surface: #101624;
+      --nayro-border: rgba(148, 163, 184, .24);
+    }
+    {% if settings.sticky_header %}
+      .nayro-header { position: sticky; top: 0; }
+    {% else %}
+      .nayro-header { position: relative; }
+    {% endif %}
+  </style>
+
+  <script>
+    window.NayroConfig = {
+      root: {{ routes.root_url | json }},
+      cartUrl: {{ routes.cart_url | json }},
+      cartAddUrl: {{ routes.cart_add_url | json }},
+      cartChangeUrl: {{ routes.cart_change_url | json }},
+      cartUpdateUrl: {{ routes.cart_update_url | json }},
+      cartAddJs: {{ routes.cart_add_url | append: '.js' | json }},
+      cartChangeJs: {{ routes.cart_change_url | append: '.js' | json }},
+      cartJs: {{ routes.cart_url | append: '.js' | json }},
+      searchUrl: {{ routes.search_url | json }},
+      predictiveSearchUrl: {{ routes.predictive_search_url | json }},
+      productRecommendationsUrl: {{ routes.product_recommendations_url | json }},
+      moneyFormat: {{ shop.money_format | json }},
+      currency: {{ cart.currency.iso_code | default: shop.currency | json }},
+      freeShippingThreshold: {{ settings.free_shipping_threshold | times: 100 }},
+      strings: {
+        loading: {{ 'general.accessibility.loading' | t | json }},
+        error: {{ 'general.accessibility.error' | t | json }},
+        close: {{ 'general.accessibility.close' | t | json }},
+        addToCart: {{ 'products.product.add_to_cart' | t | json }},
+        addedToCart: {{ 'products.product.added_to_cart' | t | json }},
+        soldOut: {{ 'products.product.sold_out' | t | json }},
+        unavailable: {{ 'products.product.unavailable' | t | json }},
+        inStock: {{ 'products.product.in_stock' | t | json }},
+        lowStock: {{ 'products.product.low_stock' | t | json }},
+        outOfStock: {{ 'products.product.out_of_stock' | t | json }},
+        chooseOptions: {{ 'products.product.choose_options' | t | json }},
+        addToWishlist: {{ 'products.product.add_to_wishlist' | t | json }},
+        removeFromWishlist: {{ 'products.product.remove_from_wishlist' | t | json }},
+        wishlistEmpty: {{ 'wishlist.empty' | t | json }},
+        viewProduct: {{ 'products.product.view_product' | t | json }},
+        quantity: {{ 'products.product.quantity' | t | json }}
+      }
+    };
+  </script>
+</head>
+
+<body class="nayro-site nayro-woo template-{{ template.name | handle }}{% if template.name == 'index' %} nayro-homepage{% endif %}">
+  <a class="skip-to-content-link nayro-visually-hidden" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
+  {% section 'announcement-bar' %}
+  {% section 'header' %}
+
+  <main id="MainContent" class="nayro-main" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {% section 'footer' %}
+  {% section 'cart-drawer' %}
+
+  {% render 'quick-view' %}
+
+  <div class="nayro-overlay" id="nayro-overlay" hidden></div>
+  <div class="nayro-toast" id="nayro-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="{{ 'nayro.js' | asset_url }}" defer></script>
+</body>
+</html>

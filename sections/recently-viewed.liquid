@@ -1,0 +1,72 @@
+<div class="nayro-home">
+  <section class="nh-section" id="recently-viewed-{{ section.id }}" data-recently-viewed hidden>
+    <div class="nh-wrap">
+      <div class="nh-head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="nh-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+          {%- endif -%}
+          <h2 class="nh-title">{{ section.settings.title | default: 'Recently viewed' | escape }}</h2>
+        </div>
+        {%- if section.settings.show_link -%}
+          <a class="nh-link" href="{{ routes.all_products_collection_url }}">{{ section.settings.link_label | default: 'Continue shopping' | escape }} {% render 'icon', name: 'arrow', class: 'nh-icon' %}</a>
+        {%- endif -%}
+      </div>
+
+      <ul class="products nayro-products" data-recently-viewed-grid data-limit="{{ section.settings.products_to_show | default: 4 }}"></ul>
+
+      <div class="nayro-empty-state" data-recently-viewed-empty>
+        {% render 'icon', name: 'eye' %}
+        <h2>{{ 'recently_viewed.empty' | t }}</h2>
+        <p>{{ 'recently_viewed.empty_text' | t }}</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Recently viewed",
+  "class": "nayro-recently-viewed-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Pick up where you left off"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Recently viewed"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_link",
+      "label": "Show shop link",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "Continue shopping"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Recently viewed"
+    }
+  ]
+}
+{% endschema %}

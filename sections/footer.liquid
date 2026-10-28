@@ -1,0 +1,266 @@
+{%- liquid
+  assign account_url = routes.account_login_url
+  if shop.customer_accounts_enabled
+    assign account_url = routes.account_url
+  endif
+  if pages.wishlist != blank
+    assign wishlist_url = pages.wishlist.url
+  else
+    assign wishlist_url = routes.root_url | append: '/pages/wishlist' | replace_first: '//', '/'
+  endif
+  assign whatsapp_url = ''
+  if settings.whatsapp_number != blank
+    assign whatsapp_text = settings.whatsapp_message | url_encode
+    assign whatsapp_url = 'https://wa.me/' | append: settings.whatsapp_number | append: '?text=' | append: whatsapp_text
+  endif
+  assign copyright_text = section.settings.copyright
+  if copyright_text == blank
+    assign copyright_text = settings.footer_text
+  endif
+  if copyright_text == blank
+    assign copyright_text = 'now' | date: '%Y' | prepend: '© ' | append: ' ' | append: shop.name
+  endif
+-%}
+
+{%- if section.settings.show_trust -%}
+  <section class="nayro-trust" aria-label="Why buy from us">
+    <div class="nayro-container">
+      <ul class="nayro-trust__grid">
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            <li class="nayro-trust__item" {{ block.shopify_attributes }}>
+              <span class="nayro-trust__icon">{% render 'icon', name: block.settings.icon %}</span>
+              <span class="nayro-trust__text">
+                <strong>{{ block.settings.title | escape }}</strong>
+                <small>{{ block.settings.text | escape }}</small>
+              </span>
+            </li>
+          {%- endfor -%}
+        {%- else -%}
+          <li class="nayro-trust__item">
+            <span class="nayro-trust__icon">{% render 'icon', name: 'shield' %}</span>
+            <span class="nayro-trust__text"><strong>Warranty included</strong><small>On selected products</small></span>
+          </li>
+          <li class="nayro-trust__item">
+            <span class="nayro-trust__icon">{% render 'icon', name: 'truck' %}</span>
+            <span class="nayro-trust__text"><strong>Fast delivery</strong><small>Across the country</small></span>
+          </li>
+          <li class="nayro-trust__item">
+            <span class="nayro-trust__icon">{% render 'icon', name: 'check' %}</span>
+            <span class="nayro-trust__text"><strong>Quality checked</strong><small>Every item inspected</small></span>
+          </li>
+          <li class="nayro-trust__item">
+            <span class="nayro-trust__icon">{% render 'icon', name: 'cash' %}</span>
+            <span class="nayro-trust__text"><strong>Cash on delivery</strong><small>Pay when you receive</small></span>
+          </li>
+        {%- endif -%}
+      </ul>
+    </div>
+  </section>
+{%- endif -%}
+
+<footer class="nayro-footer" role="contentinfo">
+  <div class="nayro-container">
+    <div class="nayro-footer__grid">
+      <div class="nayro-footer__col nayro-footer__col--brand">
+        <a class="nayro-footer__logo" href="{{ routes.root_url }}">
+          {%- if settings.logo != blank -%}
+            <img class="nayro-footer__logo-img" src="{{ settings.logo | image_url: width: 400 }}" alt="{{ shop.name | escape }}" loading="lazy" width="{{ settings.logo_width }}" height="44">
+          {%- else -%}
+            <span class="nayro-logo__text"><span class="nayro-logo__mark">N</span><span>{{ shop.name | default: 'nayro' }}</span></span>
+          {%- endif -%}
+        </a>
+        <p class="nayro-footer__slogan">{{ section.settings.slogan | default: shop.description | escape }}</p>
+        {% render 'social-icons' %}
+      </div>
+
+      <div class="nayro-footer__col">
+        <h3 class="nayro-footer__title">{{ 'sections.footer.shop' | t }}</h3>
+        <ul class="nayro-footer__menu">
+          {%- if section.settings.menu_shop != blank -%}
+            {%- for link in section.settings.menu_shop.links -%}
+              <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+            {%- endfor -%}
+          {%- else -%}
+            <li><a href="{{ routes.all_products_collection_url }}">{{ 'general.shop' | t }}</a></li>
+            <li><a href="{{ routes.collections_url }}">Collections</a></li>
+            <li><a href="{{ pages.contact.url | default: routes.root_url }}">Contact</a></li>
+          {%- endif -%}
+        </ul>
+      </div>
+
+      <div class="nayro-footer__col">
+        <h3 class="nayro-footer__title">{{ 'sections.footer.help' | t }}</h3>
+        <ul class="nayro-footer__menu">
+          {%- if section.settings.menu_help != blank -%}
+            {%- for link in section.settings.menu_help.links -%}
+              <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+            {%- endfor -%}
+          {%- else -%}
+            <li><a href="{{ routes.search_url }}">{{ 'general.accessibility.search' | t }}</a></li>
+            <li><a href="{{ wishlist_url }}">{{ 'general.wishlist' | t }}</a></li>
+            <li><a href="{{ account_url }}">{{ 'customer.general.account' | t }}</a></li>
+            <li><a href="{{ routes.cart_url }}">{{ 'cart.general.title' | t }}</a></li>
+          {%- endif -%}
+        </ul>
+      </div>
+
+      <div class="nayro-footer__col nayro-footer__col--contact">
+        <h3 class="nayro-footer__title">{{ 'sections.footer.contact' | t }}</h3>
+        <ul class="nayro-footer__contact">
+          {%- if settings.contact_address != blank -%}
+            <li>{% render 'icon', name: 'pin' %}<span>{{ settings.contact_address | escape }}</span></li>
+          {%- endif -%}
+          {%- if settings.contact_phone != blank -%}
+            <li>{% render 'icon', name: 'phone' %}<a href="tel:{{ settings.contact_phone | remove: ' ' }}">{{ settings.contact_phone | escape }}</a></li>
+          {%- endif -%}
+          {%- if settings.contact_email != blank -%}
+            <li>{% render 'icon', name: 'mail' %}<a href="mailto:{{ settings.contact_email }}">{{ settings.contact_email | escape }}</a></li>
+          {%- endif -%}
+        </ul>
+        {%- if whatsapp_url != blank -%}
+          <a class="nayro-btn nayro-btn--whatsapp nayro-btn--sm" href="{{ whatsapp_url }}" target="_blank" rel="noopener">
+            {% render 'icon', name: 'whatsapp' %}
+            {{ 'sections.footer.chat_whatsapp' | t }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="nayro-footer__bottom">
+      <p class="nayro-footer__copy">{{ copyright_text | escape }}</p>
+
+      {%- if settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+        <ul class="nayro-payments" aria-label="{{ 'sections.footer.payments' | t }}">
+          {%- for type in shop.enabled_payment_types -%}
+            <li class="nayro-pay">{{ type | payment_type_svg_tag }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      {%- if settings.show_localization -%}
+        {%- if localization.available_countries.size > 1 or localization.available_languages.size > 1 -%}
+          {% form 'localization', id: 'FooterLocalization', class: 'nayro-footer__localization' %}
+            {%- if localization.available_countries.size > 1 -%}
+              <label class="nayro-visually-hidden" for="FooterCountry">{{ 'general.country' | t }}</label>
+              <select id="FooterCountry" name="country_code" data-localization-select>
+                {{ localization.country_option_tags }}
+              </select>
+            {%- endif -%}
+            {%- if localization.available_languages.size > 1 -%}
+              <label class="nayro-visually-hidden" for="FooterLanguage">{{ 'general.language' | t }}</label>
+              <select id="FooterLanguage" name="language_code" data-localization-select>
+                {%- for language in localization.available_languages -%}
+                  <option value="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>{{ language.endonym_name | escape }}</option>
+                {%- endfor -%}
+              </select>
+            {%- endif -%}
+            <noscript><button type="submit" class="nayro-btn nayro-btn--ghost nayro-btn--sm">{{ 'customer.general.submit' | t }}</button></noscript>
+          {% endform %}
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{%- if whatsapp_url != blank -%}
+  <a class="nayro-whatsapp-float" href="{{ whatsapp_url }}" target="_blank" rel="noopener" aria-label="{{ 'sections.footer.chat_whatsapp' | t }}">
+    {% render 'icon', name: 'whatsapp' %}
+  </a>
+{%- endif -%}
+
+<nav class="nayro-bottomnav" aria-label="Mobile navigation">
+  <a class="nayro-bottomnav__item" href="{{ routes.root_url }}">
+    {% render 'icon', name: 'home' %}
+    <span>{{ 'general.home' | t }}</span>
+  </a>
+  <button class="nayro-bottomnav__item" type="button" data-open-panel="mobile-menu">
+    {% render 'icon', name: 'grid' %}
+    <span>{{ 'general.categories' | t }}</span>
+  </button>
+  <button class="nayro-bottomnav__item" type="button" data-open-panel="cart">
+    {% render 'icon', name: 'cart' %}
+    <span>{{ 'general.cart' | t }}</span>
+  </button>
+  <a class="nayro-bottomnav__item" href="{{ account_url }}">
+    {% render 'icon', name: 'user' %}
+    <span>{{ 'general.account' | t }}</span>
+  </a>
+</nav>
+
+{% schema %}
+{
+  "name": "Footer",
+  "class": "nayro-footer-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_trust",
+      "label": "Show trust strip",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "slogan",
+      "label": "Slogan",
+      "default": "New and used tech, checked and delivered."
+    },
+    {
+      "type": "link_list",
+      "id": "menu_shop",
+      "label": "Shop menu",
+      "default": "footer"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_help",
+      "label": "Help menu"
+    },
+    {
+      "type": "text",
+      "id": "copyright",
+      "label": "Copyright text"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "trust",
+      "name": "Trust item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "shield", "label": "Shield" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "check", "label": "Check" },
+            { "value": "cash", "label": "Cash" },
+            { "value": "box", "label": "Box" },
+            { "value": "chat", "label": "Chat" }
+          ],
+          "default": "shield"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Warranty included"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "On selected products"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Footer"
+    }
+  ]
+}
+{% endschema %}

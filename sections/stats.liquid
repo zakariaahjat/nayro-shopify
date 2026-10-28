@@ -1,0 +1,89 @@
+<div class="nayro-home">
+  <section class="nh-section nh-alt nh-section--tight" id="stats-{{ section.id }}">
+    <div class="nh-wrap">
+      {%- if section.settings.title != blank -%}
+        <div class="nh-head">
+          <div>
+            {%- if section.settings.eyebrow != blank -%}
+              <span class="nh-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+            {%- endif -%}
+            <h2 class="nh-title">{{ section.settings.title | escape }}</h2>
+          </div>
+        </div>
+      {%- endif -%}
+
+      <div class="nh-stats">
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            <div class="nh-stat" {{ block.shopify_attributes }}>
+              <b data-count-to="{{ block.settings.number }}" data-count-suffix="{{ block.settings.suffix | escape }}">{{ block.settings.number }}{{ block.settings.suffix }}</b>
+              <span>{{ block.settings.label | escape }}</span>
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          <div class="nh-stat"><b>10k+</b><span>Happy customers</span></div>
+          <div class="nh-stat"><b>4.8/5</b><span>Average rating</span></div>
+          <div class="nh-stat"><b>24h</b><span>Fast dispatch</span></div>
+          <div class="nh-stat"><b>100%</b><span>Checked products</span></div>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Stats",
+  "class": "nayro-stats-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "settings": [
+        {
+          "type": "number",
+          "id": "number",
+          "label": "Number",
+          "default": 10000
+        },
+        {
+          "type": "text",
+          "id": "suffix",
+          "label": "Suffix",
+          "default": "+"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Happy customers"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Stats",
+      "blocks": [
+        { "type": "stat", "settings": { "number": 10000, "suffix": "+", "label": "Happy customers" } },
+        { "type": "stat", "settings": { "number": 98, "suffix": "%", "label": "Would buy again" } },
+        { "type": "stat", "settings": { "number": 24, "suffix": "h", "label": "Fast dispatch" } },
+        { "type": "stat", "settings": { "number": 100, "suffix": "%", "label": "Checked products" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

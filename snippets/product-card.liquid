@@ -1,0 +1,117 @@
+{%- comment -%}
+  Product card. Accepts: product (required), collection (optional), index (optional).
+{%- endcomment -%}
+{%- liquid
+  assign product_url = product.url
+  if collection != blank
+    assign product_url = product.url | within: collection
+  endif
+  assign tags_string = product.tags | join: ',' | downcase
+  assign condition_label = ''
+  assign condition_class = ''
+  if tags_string contains 'refurbished'
+    assign condition_label = 'products.product.refurbished' | t
+    assign condition_class = 'nayro-badge--refurbished'
+  elsif tags_string contains 'used'
+    assign condition_label = 'products.product.used' | t
+    assign condition_class = 'nayro-badge--used'
+  elsif tags_string contains 'new'
+    assign condition_label = 'products.product.new' | t
+    assign condition_class = 'nayro-badge--new'
+  endif
+  assign second_image = product.media[1].preview_image
+-%}
+<li class="product nayro-product" data-product-card>
+  <div class="nayro-product__media">
+    <a class="nayro-product__image-link" href="{{ product_url }}" aria-label="{{ product.title | escape }}">
+      <span class="nayro-product__slides">
+        {%- if product.featured_image != blank -%}
+          {{ product.featured_image | image_url: width: 700 | image_tag:
+            loading: 'lazy',
+            widths: '165, 330, 533, 700',
+            sizes: '(min-width: 1200px) 300px, (min-width: 720px) 25vw, 50vw',
+            class: 'nayro-product__img nayro-product__img--primary is-active',
+            alt: product.featured_image.alt | default: product.title
+          }}
+          {%- if settings.show_second_image and second_image != blank -%}
+            {{ second_image | image_url: width: 700 | image_tag:
+              loading: 'lazy',
+              widths: '165, 330, 533, 700',
+              sizes: '(min-width: 1200px) 300px, (min-width: 720px) 25vw, 50vw',
+              class: 'nayro-product__img nayro-product__img--secondary',
+              alt: second_image.alt | default: product.title
+            }}
+          {%- endif -%}
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'nayro-placeholder nayro-product__img is-active' }}
+        {%- endif -%}
+      </span>
+    </a>
+
+    <div class="nayro-product__quick">
+      {%- if settings.show_quick_view -%}
+        <button type="button" class="nayro-quick-btn" data-quick-view="{{ product.handle }}" aria-label="{{ 'products.product.quick_view' | t }}: {{ product.title | escape }}">
+          {% render 'icon', name: 'eye' %}
+        </button>
+      {%- endif -%}
+      {%- if settings.enable_wishlist -%}
+        <button type="button" class="nayro-wish-btn" data-wishlist-handle="{{ product.handle }}" aria-pressed="false" aria-label="{{ 'products.product.add_to_wishlist' | t }}: {{ product.title | escape }}">
+          {% render 'icon', name: 'heart' %}
+        </button>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="nayro-product__body">
+    <div class="nayro-product__meta-top">
+      {%- if product.type != blank -%}
+        <span class="nayro-product__cat">{{ product.type | escape }}</span>
+      {%- endif -%}
+      {%- if product.vendor != blank and settings.show_vendor -%}
+        <span class="nayro-product__brand">{{ product.vendor | escape }}</span>
+      {%- endif -%}
+    </div>
+
+    <h3 class="nayro-product__title">
+      <a href="{{ product_url }}">{{ product.title | escape }}</a>
+    </h3>
+
+    <div class="nayro-product__badges">
+      {%- if product.compare_at_price > product.price -%}
+        <span class="nayro-badge nayro-badge--sale">{{ 'products.product.on_sale' | t }}</span>
+      {%- endif -%}
+      {%- if condition_label != blank -%}
+        <span class="nayro-badge {{ condition_class }}">{{ condition_label }}</span>
+      {%- endif -%}
+      {%- unless product.available -%}
+        <span class="nayro-badge nayro-badge--out">{{ 'products.product.sold_out' | t }}</span>
+      {%- endunless -%}
+    </div>
+
+    <div class="nayro-product__footer">
+      <div class="nayro-product__price">
+        {% render 'price', product: product %}
+      </div>
+
+      <div class="nayro-product__actions">
+        {%- if product.available -%}
+          {%- if product.variants.size > 1 -%}
+            <a class="button" href="{{ product_url }}">{{ 'products.product.choose_options' | t }}</a>
+          {%- else -%}
+            {%- form 'product', product, class: 'nayro-card-form', data-cart-form: '' -%}
+              <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" class="button" data-add-to-cart>
+                {{ 'products.product.add_to_cart' | t }}
+              </button>
+            {%- endform -%}
+          {%- endif -%}
+        {%- else -%}
+          <button type="button" class="button button--soldout" disabled>
+            {{ 'products.product.sold_out' | t }}
+          </button>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</li>

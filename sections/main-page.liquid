@@ -1,0 +1,35 @@
+<div class="nayro-page">
+  <div class="nayro-container">
+    {% render 'breadcrumbs' %}
+
+    <div class="nayro-page__head">
+      <h1 class="nayro-page__title">{{ page.title | escape }}</h1>
+      {%- if section.settings.subtitle != blank -%}
+        <p class="nayro-page__lead">{{ section.settings.subtitle | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="nayro-prose rte">
+      {{ page.content }}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page",
+  "class": "nayro-main-page-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Page"
+    }
+  ]
+}
+{% endschema %}

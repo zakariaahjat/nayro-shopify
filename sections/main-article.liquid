@@ -1,0 +1,120 @@
+<div class="nayro-article">
+  <div class="nayro-container">
+    {% render 'breadcrumbs' %}
+
+    <header class="nayro-article__head">
+      <div class="nayro-blog__meta">
+        <span>{{ article.published_at | date: '%b %d, %Y' }}</span>
+        {%- if article.author != blank -%}<span>{{ 'blogs.general.by' | t }} {{ article.author | escape }}</span>{%- endif -%}
+        {%- if article.tags.size > 0 -%}<span>{{ article.tags.first | escape }}</span>{%- endif -%}
+      </div>
+      <h1 class="nayro-article__title">{{ article.title | escape }}</h1>
+      {%- if article.excerpt != blank -%}
+        <p class="nayro-page__lead">{{ article.excerpt | strip_html }}</p>
+      {%- endif -%}
+    </header>
+
+    {%- if article.image != blank -%}
+      <div class="nayro-article__hero">
+        {{ article.image | image_url: width: 1800 | image_tag:
+          loading: 'eager',
+          widths: '750, 1100, 1500, 1800',
+          sizes: '(min-width: 1000px) 1000px, 100vw',
+          alt: article.image.alt | default: article.title
+        }}
+      </div>
+    {%- endif -%}
+
+    <div class="nayro-article__body rte">
+      {{ article.content }}
+    </div>
+
+    {%- if article.tags.size > 0 -%}
+      <div class="nayro-article__tags">
+        {%- for tag in article.tags -%}
+          <a href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag | escape }}</a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <nav class="nayro-article__nav" aria-label="{{ 'blogs.general.all_articles' | t }}">
+      <div>
+        {%- if blog.previous_article -%}
+          <a href="{{ blog.previous_article.url }}">
+            <span>{{ 'blogs.general.previous' | t }}</span>
+            {{ blog.previous_article.title | escape }}
+          </a>
+        {%- endif -%}
+      </div>
+      <div style="text-align: right;">
+        {%- if blog.next_article -%}
+          <a href="{{ blog.next_article.url }}">
+            <span>{{ 'blogs.general.next' | t }}</span>
+            {{ blog.next_article.title | escape }}
+          </a>
+        {%- endif -%}
+      </div>
+    </nav>
+
+    {%- if blog.comments_enabled? -%}
+      <section class="nayro-article__comments" aria-labelledby="CommentsTitle">
+        <h2 id="CommentsTitle">{{ 'blogs.general.comments' | t }} ({{ article.comments_count }})</h2>
+
+        {%- paginate article.comments by 10 -%}
+          {%- for comment in article.comments -%}
+            <article class="nayro-comment" id="{{ comment.id }}">
+              <div class="nayro-comment__meta">
+                <b>{{ comment.author | escape }}</b>
+                <span>{{ comment.created_at | date: '%b %d, %Y' }}</span>
+              </div>
+              <div class="nayro-comment__body">{{ comment.content }}</div>
+            </article>
+          {%- endfor -%}
+          {% render 'pagination', paginate: paginate %}
+        {%- endpaginate -%}
+
+        {%- form 'new_comment', article, class: 'nayro-form nayro-comment-form' -%}
+          <h3>{{ 'blogs.general.comment_form' | t }}</h3>
+          {%- if form.posted_successfully? -%}
+            <p class="nayro-notice nayro-notice--success" role="status">{{ 'blogs.general.comment_success' | t }}</p>
+          {%- elsif form.errors -%}
+            <div class="nayro-notice nayro-notice--error" role="alert">{{ form.errors | default_errors }}</div>
+          {%- endif -%}
+          <div class="nayro-form__row">
+            <div>
+              <label for="CommentAuthor">{{ 'blogs.general.comment_name' | t }}</label>
+              <input id="CommentAuthor" type="text" name="comment[author]" value="{{ form.author | escape }}" autocomplete="name" required>
+            </div>
+            <div>
+              <label for="CommentEmail">{{ 'blogs.general.comment_email' | t }}</label>
+              <input id="CommentEmail" type="email" name="comment[email]" value="{{ form.email | escape }}" autocomplete="email" required>
+            </div>
+          </div>
+          <div>
+            <label for="CommentBody">{{ 'blogs.general.comment_message' | t }}</label>
+            <textarea id="CommentBody" name="comment[body]" required>{{ form.body | escape }}</textarea>
+          </div>
+          <div class="nayro-form__submit">
+            <button type="submit" class="nayro-btn nayro-btn--primary">{{ 'blogs.general.comment_submit' | t }}</button>
+            {%- if blog.moderated? -%}
+              <span class="nayro-page__lead" style="font-size: 13px;">{{ 'blogs.general.comment_moderated' | t }}</span>
+            {%- endif -%}
+          </div>
+        {%- endform -%}
+      </section>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Article",
+  "class": "nayro-main-article-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Article"
+    }
+  ]
+}
+{% endschema %}

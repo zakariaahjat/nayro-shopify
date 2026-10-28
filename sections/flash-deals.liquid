@@ -1,0 +1,86 @@
+{%- liquid
+  assign deals = section.settings.collection
+  if deals == blank
+    assign deals = collections.all
+  endif
+-%}
+<div class="nayro-home">
+  <section class="nh-section" id="deals-{{ section.id }}">
+    <div class="nh-wrap">
+      <div class="nh-deals">
+        <div class="nh-head">
+          <div>
+            <span class="nh-eyebrow">{% render 'icon', name: 'bolt', class: 'nh-icon' %} {{ section.settings.eyebrow | default: 'Limited time' | escape }}</span>
+            <h2 class="nh-title">{{ section.settings.title | default: 'Flash deals' | escape }}</h2>
+          </div>
+          <div class="nh-timer" data-countdown="{{ section.settings.end_time | default: '23:59' }}" aria-label="Time left today">
+            <span><b data-u="h">00</b><small>Hrs</small></span>
+            <span><b data-u="m">00</b><small>Min</small></span>
+            <span><b data-u="s">00</b><small>Sec</small></span>
+          </div>
+        </div>
+
+        {%- if deals.products.size > 0 -%}
+          <ul class="products nayro-products">
+            {%- for product in deals.products limit: section.settings.products_to_show -%}
+              {% render 'product-card', product: product, collection: deals, index: forloop.index %}
+            {%- endfor -%}
+          </ul>
+        {%- else -%}
+          <div class="nayro-empty-state">
+            {% render 'icon', name: 'bolt' %}
+            <h2>{{ 'collections.general.no_products' | t }}</h2>
+            <p>{{ 'collections.general.no_products_text' | t }}</p>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Flash deals",
+  "class": "nayro-flash-deals-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Limited time"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Flash deals"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "text",
+      "id": "end_time",
+      "label": "Countdown end time (HH:MM)",
+      "default": "23:59",
+      "info": "The countdown restarts every day at this time."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flash deals"
+    }
+  ]
+}
+{% endschema %}

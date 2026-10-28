@@ -1,0 +1,40 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-faq",
+      "blocks": {
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "How long does delivery take?",
+            "answer": "<p>Orders are usually delivered within 1 to 3 business days.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I pay on delivery?",
+            "answer": "<p>Yes, cash on delivery is available on eligible orders.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>Contact us within 7 days of delivery to arrange a return or exchange on eligible products.</p>"
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "question": "Is there a warranty?",
+            "answer": "<p>Selected products include a warranty. The details are listed on the product page.</p>"
+          }
+        }
+      },
+      "block_order": ["faq_1", "faq_2", "faq_3", "faq_4"],
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

@@ -1,0 +1,120 @@
+{%- liquid
+  assign per_page = section.settings.posts_per_page | default: 9
+  assign featured_article = blank
+-%}
+<div class="nayro-blog">
+  <div class="nayro-container">
+    {% render 'breadcrumbs' %}
+
+    <div class="nayro-page__head">
+      <span class="nayro-page__eyebrow">{{ section.settings.eyebrow | default: 'Blog' | escape }}</span>
+      <h1 class="nayro-page__title">{{ blog.title | escape }}</h1>
+      {%- if section.settings.intro != blank -%}
+        <p class="nayro-page__lead">{{ section.settings.intro | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- paginate blog.articles by per_page -%}
+      {%- if paginate.current_page == 1 -%}
+        {%- assign featured_article = blog.articles.first -%}
+      {%- endif -%}
+      {%- if blog.articles.size > 0 -%}
+        {%- if featured_article != blank -%}
+          <article class="nayro-blog__featured">
+            {%- if featured_article.image != blank -%}
+              <a href="{{ featured_article.url }}" tabindex="-1" aria-hidden="true">
+                {{ featured_article.image | image_url: width: 1400 | image_tag:
+                  loading: 'eager',
+                  widths: '500, 800, 1100, 1400',
+                  sizes: '(min-width: 900px) 55vw, 100vw',
+                  alt: featured_article.image.alt | default: featured_article.title
+                }}
+              </a>
+            {%- endif -%}
+            <div>
+              <div class="nayro-blog__meta">
+                <span>{{ featured_article.published_at | date: '%b %d, %Y' }}</span>
+                {%- if featured_article.author != blank -%}
+                  <span>{{ 'blogs.general.by' | t }} {{ featured_article.author | escape }}</span>
+                {%- endif -%}
+              </div>
+              <h2><a href="{{ featured_article.url }}">{{ featured_article.title | escape }}</a></h2>
+              <p>{{ featured_article.excerpt_or_content | strip_html | truncatewords: 34 }}</p>
+              <a class="nayro-btn nayro-btn--primary nayro-btn--sm" href="{{ featured_article.url }}">{{ 'blogs.general.read_article' | t }}</a>
+            </div>
+          </article>
+        {%- endif -%}
+
+        <div class="nayro-blog__grid">
+          {%- for article in blog.articles -%}
+            {%- if article.id == featured_article.id -%}{%- continue -%}{%- endif -%}
+            <article class="nayro-post-card">
+              <a class="nayro-post-card__img" href="{{ article.url }}" tabindex="-1" aria-hidden="true">
+                {%- if article.image != blank -%}
+                  {{ article.image | image_url: width: 700 | image_tag:
+                    loading: 'lazy',
+                    widths: '350, 500, 700',
+                    sizes: '(min-width: 1024px) 33vw, (min-width: 720px) 50vw, 100vw',
+                    alt: article.image.alt | default: article.title
+                  }}
+                {%- endif -%}
+              </a>
+              <div class="nayro-post-card__body">
+                <div class="nayro-blog__meta">
+                  <span>{{ article.published_at | date: '%b %d, %Y' }}</span>
+                  {%- if article.tags.size > 0 -%}<span>{{ article.tags.first | escape }}</span>{%- endif -%}
+                </div>
+                <h3><a href="{{ article.url }}">{{ article.title | escape }}</a></h3>
+                <p>{{ article.excerpt_or_content | strip_html | truncatewords: 18 }}</p>
+                <a class="nayro-post-card__more" href="{{ article.url }}">
+                  {{ 'blogs.general.read_more' | t }} {% render 'icon', name: 'arrow' %}
+                </a>
+              </div>
+            </article>
+          {%- endfor -%}
+        </div>
+
+        {% render 'pagination', paginate: paginate %}
+      {%- else -%}
+        <div class="nayro-empty-state">
+          {% render 'icon', name: 'box' %}
+          <h2>{{ 'blogs.general.no_articles' | t }}</h2>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Blog",
+  "class": "nayro-main-blog-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Blog"
+    },
+    {
+      "type": "text",
+      "id": "intro",
+      "label": "Introduction"
+    },
+    {
+      "type": "range",
+      "id": "posts_per_page",
+      "label": "Posts per page",
+      "min": 3,
+      "max": 18,
+      "step": 3,
+      "default": 9
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog"
+    }
+  ]
+}
+{% endschema %}

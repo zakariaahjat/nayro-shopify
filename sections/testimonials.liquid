@@ -1,0 +1,138 @@
+<div class="nayro-home">
+  <section class="nh-section nh-alt" id="reviews-{{ section.id }}">
+    <div class="nh-wrap">
+      <div class="nh-head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="nh-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+          {%- endif -%}
+          <h2 class="nh-title">{{ section.settings.title | default: 'What customers say' | escape }}</h2>
+        </div>
+        {%- if section.settings.show_link and section.settings.link != blank -%}
+          <a class="nh-link" href="{{ section.settings.link }}">{{ section.settings.link_label | default: 'Read all reviews' | escape }} {% render 'icon', name: 'arrow', class: 'nh-icon' %}</a>
+        {%- endif -%}
+      </div>
+
+      <div class="nh-reviews">
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            <blockquote class="nh-review" {{ block.shopify_attributes }}>
+              <div class="nh-stars" role="img" aria-label="{{ block.settings.rating }} / 5">
+                {%- for i in (1..5) -%}
+                  {%- if i <= block.settings.rating -%}
+                    {% render 'icon', name: 'star', class: 'nh-icon' %}
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+              <p>{{ block.settings.quote | escape }}</p>
+              <footer>
+                <b>{{ block.settings.author | escape }}</b>
+                {{ block.settings.meta | escape }}
+              </footer>
+            </blockquote>
+          {%- endfor -%}
+        {%- else -%}
+          <blockquote class="nh-review">
+            <div class="nh-stars" role="img" aria-label="5 / 5">{% for i in (1..5) %}{% render 'icon', name: 'star', class: 'nh-icon' %}{% endfor %}</div>
+            <p>Ordered a laptop on Monday, received it on Wednesday. Exactly as described and well packed.</p>
+            <footer><b>Yassine</b>Verified buyer</footer>
+          </blockquote>
+          <blockquote class="nh-review">
+            <div class="nh-stars" role="img" aria-label="5 / 5">{% for i in (1..5) %}{% render 'icon', name: 'star', class: 'nh-icon' %}{% endfor %}</div>
+            <p>The team answered all my questions on WhatsApp before I ordered. Great service and fair price.</p>
+            <footer><b>Salma</b>Verified buyer</footer>
+          </blockquote>
+          <blockquote class="nh-review">
+            <div class="nh-stars" role="img" aria-label="5 / 5">{% for i in (1..5) %}{% render 'icon', name: 'star', class: 'nh-icon' %}{% endfor %}</div>
+            <p>My refurbished phone looks and works like new. I would definitely buy again.</p>
+            <footer><b>Omar</b>Verified buyer</footer>
+          </blockquote>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "class": "nayro-testimonials-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Reviews"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "What customers say"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_link",
+      "label": "Show link",
+      "default": false
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "Read all reviews"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Review",
+          "default": "Great service and a product that matches the description."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author",
+          "default": "Happy customer"
+        },
+        {
+          "type": "text",
+          "id": "meta",
+          "label": "Details",
+          "default": "Verified buyer"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Testimonials",
+      "blocks": [
+        { "type": "review", "settings": { "rating": 5, "quote": "Ordered a laptop on Monday, received it on Wednesday. Exactly as described and well packed.", "author": "Yassine", "meta": "Verified buyer" } },
+        { "type": "review", "settings": { "rating": 5, "quote": "The team answered all my questions on WhatsApp before I ordered. Great service and fair price.", "author": "Salma", "meta": "Verified buyer" } },
+        { "type": "review", "settings": { "rating": 5, "quote": "My refurbished phone looks and works like new. I would definitely buy again.", "author": "Omar", "meta": "Verified buyer" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

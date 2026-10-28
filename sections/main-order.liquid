@@ -1,0 +1,105 @@
+<div class="nayro-customer nayro-customer--wide">
+  <div class="nayro-customer__card">
+    <div class="nayro-customer__head">
+      <div>
+        <h1>{{ 'customer.general.order' | t }} {{ order.name | escape }}</h1>
+        <p>{{ order.created_at | date: '%b %d, %Y' }}</p>
+      </div>
+      <a class="nayro-btn nayro-btn--ghost nayro-btn--sm" href="{{ routes.account_url }}">{{ 'customer.general.account' | t }}</a>
+    </div>
+
+    {%- if order.cancelled -%}
+      <div class="nayro-notice nayro-notice--error" role="status">
+        {{ 'customer.general.order' | t }} {{ order.cancelled_at | date: '%b %d, %Y' }} — {{ order.cancel_reason_label | escape }}
+      </div>
+    {%- endif -%}
+
+    <table class="nayro-customer__orders">
+      <thead>
+        <tr>
+          <th scope="col">{{ 'cart.general.product' | t }}</th>
+          <th scope="col">{{ 'cart.general.price' | t }}</th>
+          <th scope="col">{{ 'cart.general.quantity' | t }}</th>
+          <th scope="col">{{ 'cart.general.line_total' | t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for line_item in order.line_items -%}
+          <tr>
+            <td>
+              <div class="nayro-cart-product">
+                {%- if line_item.image != blank -%}
+                  {{ line_item.image | image_url: width: 160 | image_tag: loading: 'lazy', width: 64, height: 64, alt: line_item.image.alt | default: line_item.title }}
+                {%- endif -%}
+                <div>
+                  <a class="nayro-cart-product__name" href="{{ line_item.url }}">{{ line_item.title | escape }}</a>
+                  {%- unless line_item.product.has_only_default_variant -%}
+                    <span class="nayro-cart-product__variant">{{ line_item.variant.title | escape }}</span>
+                  {%- endunless -%}
+                  {%- if line_item.selling_plan_allocation != blank -%}
+                    <span class="nayro-cart-product__variant">{{ line_item.selling_plan_allocation.selling_plan.name | escape }}</span>
+                  {%- endif -%}
+                </div>
+              </div>
+            </td>
+            <td>{{ line_item.original_price | money }}</td>
+            <td>{{ line_item.quantity }}</td>
+            <td>{{ line_item.final_line_price | money }}</td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">{{ 'cart.general.subtotal' | t }}</td>
+          <td>{{ order.subtotal_price | money }}</td>
+        </tr>
+        {%- for shipping_method in order.shipping_methods -%}
+          <tr>
+            <td colspan="3">{{ shipping_method.title | escape }}</td>
+            <td>{{ shipping_method.price | money }}</td>
+          </tr>
+        {%- endfor -%}
+        {%- for tax_line in order.tax_lines -%}
+          <tr>
+            <td colspan="3">{{ tax_line.title | escape }} {{ tax_line.rate | times: 100 }}%</td>
+            <td>{{ tax_line.price | money }}</td>
+          </tr>
+        {%- endfor -%}
+        <tr>
+          <td colspan="3"><b>{{ 'cart.general.total' | t }}</b></td>
+          <td><b>{{ order.total_price | money }}</b></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div class="nayro-order-addresses">
+      <div>
+        <h2>{{ 'customer.general.address1' | t }}</h2>
+        {%- if order.shipping_address -%}
+          <p>{{ order.shipping_address | format_address }}</p>
+        {%- else -%}
+          <p>{{ 'products.product.unavailable' | t }}</p>
+        {%- endif -%}
+      </div>
+      <div>
+        <h2>{{ 'customer.general.payment_status' | t }}</h2>
+        <p>{{ order.financial_status_label | escape }}</p>
+        <h2>{{ 'customer.general.fulfillment_status' | t }}</h2>
+        <p>{{ order.fulfillment_status_label | escape }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Order",
+  "class": "nayro-main-order-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Order"
+    }
+  ]
+}
+{% endschema %}

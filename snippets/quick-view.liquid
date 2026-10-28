@@ -1,0 +1,14 @@
+{%- comment -%}
+  Quick view dialog shell. Content is filled by assets/nayro.js.
+{%- endcomment -%}
+<div class="nayro-quickview" id="nayro-quickview" role="dialog" aria-modal="true" aria-label="{{ 'products.product.quick_view' | t }}" aria-hidden="true" hidden>
+  <div class="nayro-quickview__backdrop" data-close-quickview></div>
+  <div class="nayro-quickview__body" role="document">
+    <button type="button" class="nayro-icon-btn nayro-quickview__close" data-close-quickview aria-label="{{ 'general.accessibility.close' | t }}">
+      {% render 'icon', name: 'close' %}
+    </button>
+    <div class="nayro-quickview__content" id="nayro-quickview-content">
+      <p class="nayro-quickview__error">{{ 'general.accessibility.loading' | t }}…</p>
+    </div>
+  </div>
+</div>

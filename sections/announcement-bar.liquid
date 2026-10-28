@@ -1,0 +1,88 @@
+{%- if section.settings.show -%}
+  <div class="nayro-announcement" role="region" aria-label="{{ 'sections.announcement.label' | t }}">
+    <div class="nayro-container nayro-announcement__inner">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.settings.text != blank -%}
+            {%- unless forloop.first -%}
+              <span class="nayro-announcement__sep" aria-hidden="true">•</span>
+            {%- endunless -%}
+            <span class="nayro-announcement__item" {{ block.shopify_attributes }}>
+              {%- if block.settings.link != blank -%}
+                <a href="{{ block.settings.link }}">{{ block.settings.text | escape }}</a>
+              {%- else -%}
+                {{ block.settings.text | escape }}
+              {%- endif -%}
+            </span>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        <span class="nayro-announcement__item">Free delivery from 500 DH</span>
+        <span class="nayro-announcement__sep" aria-hidden="true">•</span>
+        <span class="nayro-announcement__item">Cash on delivery everywhere</span>
+        <span class="nayro-announcement__sep" aria-hidden="true">•</span>
+        <span class="nayro-announcement__item">7-day returns</span>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "class": "nayro-announcement-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show",
+      "label": "Show announcement bar",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free delivery from 500 DH"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "Announcement bar",
+      "blocks": [
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "Free delivery from 500 DH"
+          }
+        },
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "Cash on delivery everywhere"
+          }
+        },
+        {
+          "type": "announcement",
+          "settings": {
+            "text": "7-day returns"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

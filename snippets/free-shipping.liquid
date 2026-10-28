@@ -1,0 +1,21 @@
+{%- comment -%}
+  Free shipping progress bar. Accepts: total (cart.total_price).
+{%- endcomment -%}
+{%- if settings.show_free_shipping_bar and settings.free_shipping_threshold > 0 -%}
+  {%- liquid
+    assign threshold = settings.free_shipping_threshold | times: 100
+    assign percent = total | times: 100.0 | divided_by: threshold | at_most: 100
+    assign remaining = threshold | minus: total
+    assign remaining_money = remaining | money
+  -%}
+  <div class="nayro-drawer__free" data-free-shipping>
+    {%- if remaining > 0 -%}
+      <span>{{ 'cart.general.free_shipping' | t: amount: remaining_money }}</span>
+    {%- else -%}
+      <span>{{ 'cart.general.free_shipping_qualified' | t }}</span>
+    {%- endif -%}
+    <div class="nayro-shipbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ percent | round }}">
+      <span style="width: {{ percent }}%"></span>
+    </div>
+  </div>
+{%- endif -%}

@@ -1,0 +1,191 @@
+{%- liquid
+  assign per_page = section.settings.results_per_page | default: 24
+  assign current_sort = search.sort_by | default: search.default_sort_by
+  assign search_type = ''
+  if search.filters.size > 0
+    assign search_type = 'product'
+  endif
+  assign search_terms_encoded = search.terms | url_encode
+  assign search_reset_url = routes.search_url | append: '?q=' | append: search_terms_encoded | append: '&options%5Bprefix%5D=last'
+  if search_type != blank
+    assign search_reset_url = search_reset_url | append: '&type=' | append: search_type
+  endif
+  assign active_filter_count = 0
+  for filter in search.filters
+    assign active_filter_count = active_filter_count | plus: filter.active_values.size
+    if filter.type == 'price_range'
+      if filter.min_value.value != nil or filter.max_value.value != nil
+        assign active_filter_count = active_filter_count | plus: 1
+      endif
+    endif
+  endfor
+-%}
+<div class="nayro-search-page">
+  <div class="nayro-container">
+    {% render 'breadcrumbs' %}
+
+    <div class="nayro-page__head">
+      <h1 class="nayro-page__title">{{ 'search.title' | t }}</h1>
+      {%- if search.performed and search.terms != blank -%}
+        <p class="nayro-page__lead">{{ 'search.results_for' | t }} “{{ search.terms | escape }}”</p>
+      {%- endif -%}
+    </div>
+
+    <form class="nayro-search-page__form" action="{{ routes.search_url }}" method="get" role="search">
+      <label class="nayro-visually-hidden" for="SearchPageInput">{{ 'general.accessibility.search' | t }}</label>
+      <input id="SearchPageInput" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'search.placeholder' | t }}" autocomplete="off">
+      <input type="hidden" name="options[prefix]" value="last">
+      {%- if search_type != blank -%}
+        <input type="hidden" name="type" value="{{ search_type }}">
+      {%- endif -%}
+      <button type="submit">{{ 'search.submit' | t }}</button>
+    </form>
+
+    {%- if search.performed -%}
+      <p class="nayro-search-page__meta" role="status">
+        {{ search.results_count }} {{ 'search.result_count' | t }}
+        {%- if search.terms != blank %} · {{ search.terms | escape }}{% endif -%}
+      </p>
+
+      <div class="nayro-shop{% if search.filters.size == 0 %} nayro-shop--nosidebar{% endif %}" data-shop-view>
+        {%- if search.filters.size > 0 -%}
+          <aside class="nayro-shop__sidebar" id="SearchFacets-{{ section.id }}" data-facets-sidebar aria-label="{{ 'collections.general.filters' | t }}">
+            <div class="nayro-facets__mobile-head">
+              <span class="nayro-filters__title">{{ 'collections.general.filters' | t }}</span>
+              <button type="button" class="nayro-icon-btn" data-close-facets aria-label="{{ 'general.accessibility.close' | t }}">
+                {% render 'icon', name: 'close' %}
+              </button>
+            </div>
+            {% render 'facets', results: search, form_action: routes.search_url, reset_url: search_reset_url, current_sort: current_sort, is_search: true, search_terms: search.terms, search_type: search_type %}
+          </aside>
+        {%- endif -%}
+
+        <div class="nayro-shop__main">
+          <div class="nayro-shop__toolbar">
+            <p class="nayro-shop__count" role="status">
+              {{ search.results_count }} {{ 'search.result_count' | t }}
+              {%- if active_filter_count > 0 %} · {{ active_filter_count }} {{ 'collections.general.filters' | t | downcase }}{% endif -%}
+            </p>
+            <div class="nayro-shop__tools">
+              {%- if search.filters.size > 0 -%}
+                <button type="button" class="nayro-filters-toggle" data-toggle-facets aria-controls="SearchFacets-{{ section.id }}" aria-expanded="false">
+                  {% render 'icon', name: 'filter' %}
+                  {{ 'collections.general.filters' | t }}
+                </button>
+              {%- endif -%}
+
+              <form class="nayro-sort" method="get" action="{{ routes.search_url }}" data-sort-form>
+                <input type="hidden" name="q" value="{{ search.terms | escape }}">
+                <input type="hidden" name="options[prefix]" value="last">
+                {%- if search_type != blank -%}
+                  <input type="hidden" name="type" value="{{ search_type }}">
+                {%- endif -%}
+                <label for="SearchSort-{{ section.id }}">{{ 'collections.general.sort_by' | t }}</label>
+                <select id="SearchSort-{{ section.id }}" name="sort_by" data-sort-select>
+                  {%- for option in search.sort_options -%}
+                    <option value="{{ option.value }}" {% if option.value == current_sort %}selected{% endif %}>{{ option.name | escape }}</option>
+                  {%- endfor -%}
+                </select>
+                {%- for filter in search.filters -%}
+                  {%- if filter.type == 'price_range' -%}
+                    {%- if filter.min_value.value -%}
+                      <input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}">
+                    {%- endif -%}
+                    {%- if filter.max_value.value -%}
+                      <input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}">
+                    {%- endif -%}
+                  {%- else -%}
+                    {%- for value in filter.active_values -%}
+                      <input type="hidden" name="{{ value.param_name }}" value="{{ value.value }}">
+                    {%- endfor -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                <noscript><button type="submit" class="nayro-btn nayro-btn--ghost nayro-btn--sm">{{ 'collections.general.apply' | t }}</button></noscript>
+              </form>
+
+              <div class="nayro-view-toggle" role="group" aria-label="{{ 'collections.general.grid_view' | t }} / {{ 'collections.general.list_view' | t }}">
+                <button type="button" class="nayro-view-btn is-active" data-view="grid" aria-pressed="true" aria-label="{{ 'collections.general.grid_view' | t }}" title="{{ 'collections.general.grid_view' | t }}">
+                  {% render 'icon', name: 'grid' %}
+                </button>
+                <button type="button" class="nayro-view-btn" data-view="list" aria-pressed="false" aria-label="{{ 'collections.general.list_view' | t }}" title="{{ 'collections.general.list_view' | t }}">
+                  {% render 'icon', name: 'list' %}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {%- paginate search.results by per_page -%}
+            {%- if search.results.size > 0 -%}
+              {%- assign product_results = search.results | where: 'object_type', 'product' -%}
+              {%- if product_results.size > 0 -%}
+                <ul class="products nayro-products" data-product-grid>
+                  {%- for item in product_results -%}
+                    {% render 'product-card', product: item, index: forloop.index %}
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+
+              {%- assign other_results = search.results | where: 'object_type', 'article' -%}
+              {%- assign page_results = search.results | where: 'object_type', 'page' -%}
+              {%- assign other_count = other_results.size | plus: page_results.size -%}
+              {%- if other_count > 0 -%}
+                <div class="nayro-search-results" style="margin-top: 28px;">
+                  {%- for item in other_results -%}
+                    <article class="nayro-search-result">
+                      <div>
+                        <span class="nayro-search-result__type">{{ 'search.articles' | t }}</span>
+                        <h3><a href="{{ item.url }}">{{ item.title | escape }}</a></h3>
+                        <p>{{ item.excerpt_or_content | strip_html | truncatewords: 24 }}</p>
+                      </div>
+                    </article>
+                  {%- endfor -%}
+                  {%- for item in page_results -%}
+                    <article class="nayro-search-result">
+                      <div>
+                        <span class="nayro-search-result__type">{{ 'search.pages' | t }}</span>
+                        <h3><a href="{{ item.url }}">{{ item.title | escape }}</a></h3>
+                        <p>{{ item.content | strip_html | truncatewords: 24 }}</p>
+                      </div>
+                    </article>
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+
+              {% render 'pagination', paginate: paginate %}
+            {%- else -%}
+              <div class="nayro-empty-state">
+                {% render 'icon', name: 'search' %}
+                <h2>{{ 'search.no_results' | t }}</h2>
+                <p>{{ 'search.no_results_text' | t }}</p>
+                <a class="nayro-btn nayro-btn--primary nayro-btn--sm" href="{{ routes.all_products_collection_url }}">{{ 'collections.general.view_all' | t }}</a>
+              </div>
+            {%- endif -%}
+          {%- endpaginate -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Search results",
+  "class": "nayro-main-search-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "results_per_page",
+      "label": "Results per page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24
+    }
+  ],
+  "presets": [
+    {
+      "name": "Search results"
+    }
+  ]
+}
+{% endschema %}

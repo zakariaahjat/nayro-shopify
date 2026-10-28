@@ -1,0 +1,61 @@
+<div class="nayro-customer">
+  <div class="nayro-customer__card">
+    <h1>{{ 'customer.general.login' | t }}</h1>
+
+    {%- form 'customer_login', novalidate: 'novalidate', class: 'nayro-form' -%}
+      {%- if form.errors -%}
+        <div class="nayro-notice nayro-notice--error" role="alert">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+
+      <div>
+        <label for="CustomerEmail">{{ 'customer.general.email' | t }}</label>
+        <input id="CustomerEmail" type="email" name="customer[email]" value="{{ form.email | escape }}" autocomplete="email" autocorrect="off" autocapitalize="off" required>
+      </div>
+
+      {%- if form.password_needed -%}
+        <div>
+          <label for="CustomerPassword">{{ 'customer.general.password' | t }}</label>
+          <input id="CustomerPassword" type="password" name="customer[password]" autocomplete="current-password" required>
+        </div>
+      {%- endif -%}
+
+      <button type="submit" class="nayro-btn nayro-btn--primary nayro-btn--block">{{ 'customer.general.login' | t }}</button>
+    {%- endform -%}
+
+    <div class="nayro-customer__links">
+      <a href="#recover">{{ 'customer.general.forgot_password' | t }}</a>
+      <a href="{{ routes.account_register_url }}">{{ 'customer.general.register' | t }}</a>
+    </div>
+
+    <details class="nayro-customer__recover" id="recover">
+      <summary>{{ 'customer.general.reset_password' | t }}</summary>
+      {%- form 'recover_customer_password', class: 'nayro-form' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="nayro-notice nayro-notice--success" role="status">{{ 'customer.general.reset_success' | t }}</p>
+        {%- elsif form.errors -%}
+          <div class="nayro-notice nayro-notice--error" role="alert">{{ form.errors | default_errors }}</div>
+        {%- endif -%}
+        <div>
+          <label for="RecoverEmail">{{ 'customer.general.email' | t }}</label>
+          <input id="RecoverEmail" type="email" name="email" autocomplete="email" required>
+        </div>
+        <button type="submit" class="nayro-btn nayro-btn--ghost">{{ 'customer.general.reset_password' | t }}</button>
+      {%- endform -%}
+    </details>
+
+    <p class="nayro-customer__note">{{ 'customer.general.no_account' | t }} <a href="{{ routes.account_register_url }}">{{ 'customer.general.register' | t }}</a></p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Login",
+  "class": "nayro-main-login-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Login"
+    }
+  ]
+}
+{% endschema %}

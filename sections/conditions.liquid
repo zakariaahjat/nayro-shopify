@@ -1,0 +1,114 @@
+<div class="nayro-home">
+  <section class="nh-section" id="conditions-{{ section.id }}">
+    <div class="nh-wrap">
+      <div class="nh-head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="nh-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+          {%- endif -%}
+          <h2 class="nh-title">{{ section.settings.title | default: 'Shop by condition' | escape }}</h2>
+        </div>
+        {%- if section.settings.link != blank -%}
+          <a class="nh-link" href="{{ section.settings.link }}">{{ section.settings.link_label | default: 'Learn more' | escape }} {% render 'icon', name: 'arrow', class: 'nh-icon' %}</a>
+        {%- endif -%}
+      </div>
+
+      <div class="nh-cond">
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            <a class="nh-cond__card" href="{{ block.settings.link | default: routes.all_products_collection_url }}" {{ block.shopify_attributes }}>
+              <h3><span class="nh-cond__dot"></span>{{ block.settings.title | escape }}</h3>
+              <p>{{ block.settings.text | escape }}</p>
+            </a>
+          {%- endfor -%}
+        {%- else -%}
+          <a class="nh-cond__card" href="{{ routes.all_products_collection_url }}">
+            <h3><span class="nh-cond__dot"></span>New</h3>
+            <p>Sealed products with full warranty and original accessories.</p>
+          </a>
+          <a class="nh-cond__card" href="{{ routes.all_products_collection_url }}">
+            <h3><span class="nh-cond__dot"></span>Used</h3>
+            <p>Tested devices in great shape at a better price.</p>
+          </a>
+          <a class="nh-cond__card" href="{{ routes.all_products_collection_url }}">
+            <h3><span class="nh-cond__dot"></span>Refurbished</h3>
+            <p>Professionally restored and checked before delivery.</p>
+          </a>
+          <a class="nh-cond__card" href="{{ routes.all_products_collection_url }}">
+            <h3><span class="nh-cond__dot"></span>Accessories</h3>
+            <p>Chargers, cases, cables and everything in between.</p>
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Conditions",
+  "class": "nayro-conditions-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Know what you buy"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop by condition"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Header link"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Header link label",
+      "default": "Learn more"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "condition",
+      "name": "Condition",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "New"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Sealed products with full warranty."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Conditions",
+      "blocks": [
+        { "type": "condition", "settings": { "title": "New", "text": "Sealed products with full warranty." } },
+        { "type": "condition", "settings": { "title": "Used", "text": "Tested devices in great shape." } },
+        { "type": "condition", "settings": { "title": "Refurbished", "text": "Professionally restored and checked." } },
+        { "type": "condition", "settings": { "title": "Accessories", "text": "Chargers, cases and cables." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

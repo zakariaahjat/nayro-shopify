@@ -1,0 +1,69 @@
+{%- paginate customer.orders by 20 -%}
+  <div class="nayro-customer nayro-customer--wide">
+    <div class="nayro-customer__card">
+      <div class="nayro-customer__head">
+        <div>
+          <h1>{{ 'customer.general.account' | t }}</h1>
+          <p>{{ customer.name | default: customer.email | escape }}</p>
+        </div>
+        <a class="nayro-btn nayro-btn--ghost nayro-btn--sm" href="{{ routes.account_logout_url }}">{{ 'customer.general.logout' | t }}</a>
+      </div>
+
+      <h2>{{ 'customer.general.orders' | t }}</h2>
+      {%- if customer.orders.size > 0 -%}
+        <table class="nayro-customer__orders">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'customer.general.order' | t }}</th>
+              <th scope="col">{{ 'customer.general.date' | t }}</th>
+              <th scope="col">{{ 'customer.general.payment_status' | t }}</th>
+              <th scope="col">{{ 'customer.general.fulfillment_status' | t }}</th>
+              <th scope="col">{{ 'customer.general.total' | t }}</th>
+              <th scope="col"><span class="nayro-visually-hidden">{{ 'customer.general.view_order' | t }}</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            {%- for order in customer.orders -%}
+              <tr>
+                <td><a href="{{ order.customer_url }}">{{ order.name | escape }}</a></td>
+                <td>{{ order.created_at | date: '%b %d, %Y' }}</td>
+                <td>{{ order.financial_status_label | escape }}</td>
+                <td>{{ order.fulfillment_status_label | escape }}</td>
+                <td>{{ order.total_price | money }}</td>
+                <td><a class="nayro-btn nayro-btn--ghost nayro-btn--sm" href="{{ order.customer_url }}">{{ 'customer.general.view_order' | t }}</a></td>
+              </tr>
+            {%- endfor -%}
+          </tbody>
+        </table>
+        {% render 'pagination', paginate: paginate %}
+      {%- else -%}
+        <p>{{ 'customer.general.no_orders' | t }}</p>
+        <a class="nayro-btn nayro-btn--primary nayro-btn--sm" href="{{ routes.all_products_collection_url }}">{{ 'collections.general.view_all' | t }}</a>
+      {%- endif -%}
+
+      <div class="nayro-customer__section">
+        <h2>{{ 'customer.general.addresses' | t }}</h2>
+        {%- if customer.default_address -%}
+          <div class="nayro-address">
+            <p>{{ customer.default_address | format_address }}</p>
+            <span class="nayro-address__badge">{{ 'customer.general.default_address' | t }}</span>
+          </div>
+        {%- endif -%}
+        <a class="nayro-btn nayro-btn--ghost nayro-btn--sm" href="{{ routes.account_addresses_url }}">{{ 'customer.general.addresses' | t }}</a>
+      </div>
+    </div>
+  </div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "Account",
+  "class": "nayro-main-account-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Account"
+    }
+  ]
+}
+{% endschema %}

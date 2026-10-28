@@ -1,0 +1,89 @@
+<div class="nayro-home">
+  <section class="nh-section nh-alt nh-section--tight" aria-label="Why buy from us">
+    <div class="nh-wrap nh-trust">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          <div class="nh-trust__item" {{ block.shopify_attributes }}>
+            <span class="nh-trust__ico">{% render 'icon', name: block.settings.icon, class: 'nh-icon' %}</span>
+            <div>
+              <b>{{ block.settings.title | escape }}</b>
+              <span>{{ block.settings.text | escape }}</span>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        <div class="nh-trust__item">
+          <span class="nh-trust__ico">{% render 'icon', name: 'shield', class: 'nh-icon' %}</span>
+          <div><b>Warranty included</b><span>On selected products</span></div>
+        </div>
+        <div class="nh-trust__item">
+          <span class="nh-trust__ico">{% render 'icon', name: 'truck', class: 'nh-icon' %}</span>
+          <div><b>Fast delivery</b><span>Across the country</span></div>
+        </div>
+        <div class="nh-trust__item">
+          <span class="nh-trust__ico">{% render 'icon', name: 'check', class: 'nh-icon' %}</span>
+          <div><b>Quality checked</b><span>Every item inspected</span></div>
+        </div>
+        <div class="nh-trust__item">
+          <span class="nh-trust__ico">{% render 'icon', name: 'cash', class: 'nh-icon' %}</span>
+          <div><b>Cash on delivery</b><span>Pay when you receive</span></div>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Trust bar",
+  "class": "nayro-trust-section",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "trust",
+      "name": "Trust item",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "shield", "label": "Shield" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "check", "label": "Check" },
+            { "value": "cash", "label": "Cash" },
+            { "value": "box", "label": "Box" },
+            { "value": "chat", "label": "Chat" },
+            { "value": "tag", "label": "Tag" }
+          ],
+          "default": "shield"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Warranty included"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "On selected products"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Trust bar",
+      "blocks": [
+        { "type": "trust", "settings": { "icon": "shield", "title": "Warranty included", "text": "On selected products" } },
+        { "type": "trust", "settings": { "icon": "truck", "title": "Fast delivery", "text": "Across the country" } },
+        { "type": "trust", "settings": { "icon": "check", "title": "Quality checked", "text": "Every item inspected" } },
+        { "type": "trust", "settings": { "icon": "cash", "title": "Cash on delivery", "text": "Pay when you receive" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

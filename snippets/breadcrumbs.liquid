@@ -1,0 +1,44 @@
+{%- comment -%}
+  Breadcrumbs. Uses the objects available in the current template.
+{%- endcomment -%}
+<nav aria-label="{{ 'general.accessibility.breadcrumb' | t }}">
+  <ol class="nayro-breadcrumbs">
+    <li><a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a></li>
+
+    {%- case template.name -%}
+      {%- when 'collection' -%}
+        {%- if collection.handle != 'all' -%}
+          <li><a href="{{ routes.collections_url }}">{{ 'general.shop' | t }}</a></li>
+          <li><span aria-current="page">{{ collection.title }}</span></li>
+        {%- else -%}
+          <li><span aria-current="page">{{ collection.title }}</span></li>
+        {%- endif -%}
+
+      {%- when 'product' -%}
+        <li><a href="{{ routes.collections_url }}">{{ 'general.shop' | t }}</a></li>
+        {%- if collection != blank -%}
+          <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+        {%- endif -%}
+        <li><span aria-current="page">{{ product.title }}</span></li>
+
+      {%- when 'blog' -%}
+        <li><span aria-current="page">{{ blog.title }}</span></li>
+
+      {%- when 'article' -%}
+        <li><a href="{{ blog.url }}">{{ blog.title }}</a></li>
+        <li><span aria-current="page">{{ article.title }}</span></li>
+
+      {%- when 'page' -%}
+        <li><span aria-current="page">{{ page.title }}</span></li>
+
+      {%- when 'cart' -%}
+        <li><span aria-current="page">{{ 'cart.general.title' | t }}</span></li>
+
+      {%- when 'search' -%}
+        <li><span aria-current="page">{{ 'search.title' | t }}</span></li>
+
+      {%- when 'list-collections' -%}
+        <li><span aria-current="page">{{ 'general.shop' | t }}</span></li>
+    {%- endcase -%}
+  </ol>
+</nav>

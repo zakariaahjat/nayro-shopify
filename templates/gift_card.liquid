@@ -1,0 +1,25 @@
+<div class="gift-card-box">
+  <h1>{{ 'gift_card.title' | t }}</h1>
+  <p>{{ 'gift_card.subtitle' | t }}</p>
+
+  {%- if gift_card.expired -%}
+    <div class="gift-card-expired" role="alert">{{ 'gift_card.expired' | t }}</div>
+  {%- endif -%}
+  {%- unless gift_card.enabled -%}
+    <div class="gift-card-expired" role="alert">{{ 'gift_card.disabled' | t }}</div>
+  {%- endunless -%}
+
+  <div class="gift-card-balance">{{ gift_card.balance | money }}</div>
+  <span>{{ 'gift_card.remaining' | t }}</span>
+
+  <div>
+    <span class="gift-card-code">{{ gift_card.code | escape }}</span>
+  </div>
+
+  <p>{{ 'gift_card.initial' | t }}: {{ gift_card.initial_value | money }}</p>
+
+  <div class="gift-card-actions">
+    <button type="button" class="nayro-btn nayro-btn--ghost" onclick="window.print();">{{ 'gift_card.print' | t }}</button>
+    <a class="nayro-btn nayro-btn--primary" href="{{ shop.url }}">{{ 'gift_card.shop' | t }}</a>
+  </div>
+</div>

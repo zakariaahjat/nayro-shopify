@@ -1,0 +1,1163 @@
+/*!
+ * Nayro theme — main stylesheet
+ * Colors: primary #FF6B00, secondary #111827, accent #00B894, used #F59E0B
+ * Mobile-first, rounded (12px), soft shadows.
+ */
+
+/* ==========================================================================
+   1. Design tokens
+   ========================================================================== */
+:root {
+	--n-primary: #FF6B00;
+	--n-primary-dark: #E85D00;
+	--n-secondary: #111827;
+	--n-accent: #00B894;
+	--n-used: #F59E0B;
+	--n-sale: #EF4444;
+	--n-bg: #FAFAFA;
+	--n-text: #1F2937;
+	--n-muted: #6B7280;
+	--n-surface: #FFFFFF;
+	--n-surface-2: #F3F4F6;
+	--n-border: #E5E7EB;
+	--n-radius: 12px;
+	--n-radius-sm: 8px;
+	--n-radius-lg: 20px;
+	--n-shadow: 0 4px 16px rgba(17, 24, 39, .06);
+	--n-shadow-lg: 0 14px 34px rgba(17, 24, 39, .12);
+	--n-font-head: "Poppins", system-ui, sans-serif;
+	--n-font-body: "Inter", system-ui, sans-serif;
+	--n-container: 1240px;
+	--n-header-h: 68px;
+	--n-transition: .22s cubic-bezier(.4, 0, .2, 1);
+}
+
+[data-theme="dark"] {
+	--n-secondary: #F9FAFB;
+	--n-bg: #0B1220;
+	--n-text: #E5E7EB;
+	--n-muted: #9CA3AF;
+	--n-surface: #111827;
+	--n-surface-2: #1B2536;
+	--n-border: #1F2A3D;
+	--n-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+	--n-shadow-lg: 0 14px 34px rgba(0, 0, 0, .55);
+}
+
+/* ==========================================================================
+   2. Reset & base
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+	margin: 0;
+	font-family: var(--n-font-body);
+	font-size: 16px;
+	line-height: 1.6;
+	color: var(--n-text);
+	background: var(--n-bg);
+	overflow-x: hidden;
+}
+
+img, svg, video { max-width: 100%; height: auto; display: block; }
+
+a { color: inherit; text-decoration: none; transition: color var(--n-transition); }
+a:hover { color: var(--n-primary); }
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: var(--n-font-head);
+	font-weight: 600;
+	line-height: 1.25;
+	margin: 0 0 .5em;
+	color: var(--n-text);
+}
+
+p { margin: 0 0 1em; }
+
+ul, ol { padding-left: 1.2em; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+:focus-visible {
+	outline: 3px solid var(--n-primary);
+	outline-offset: 2px;
+	border-radius: 4px;
+}
+
+.nayro-container {
+	width: 100%;
+	max-width: var(--n-container);
+	margin: 0 auto;
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+.nayro-main { min-height: 50vh; }
+.nayro-content-area { padding: 28px 16px 60px; }
+
+/* ==========================================================================
+   3. Buttons
+   ========================================================================== */
+.nayro-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 11px 20px;
+	border: 1px solid transparent;
+	border-radius: var(--n-radius);
+	font-family: var(--n-font-head);
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 1;
+	text-align: center;
+	white-space: nowrap;
+	transition: transform var(--n-transition), background var(--n-transition), box-shadow var(--n-transition), color var(--n-transition);
+}
+.nayro-btn:hover { transform: translateY(-2px); }
+.nayro-btn:active { transform: translateY(0); }
+
+.nayro-btn--primary { background: var(--n-primary); color: #fff; box-shadow: 0 6px 16px rgba(255, 107, 0, .28); }
+.nayro-btn--primary:hover { background: var(--n-primary-dark); color: #fff; }
+
+.nayro-btn--ghost { background: var(--n-surface); color: var(--n-text); border-color: var(--n-border); }
+.nayro-btn--ghost:hover { color: var(--n-primary); border-color: var(--n-primary); }
+
+.nayro-btn--outline-light { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .6); }
+.nayro-btn--outline-light:hover { background: #fff; color: var(--n-secondary); }
+
+.nayro-btn--whatsapp { background: #25D366; color: #fff; }
+.nayro-btn--whatsapp:hover { background: #1EBE57; color: #fff; }
+
+.nayro-btn--sm { padding: 8px 14px; font-size: 13px; }
+.nayro-btn--lg { padding: 14px 28px; font-size: 15px; }
+.nayro-btn--block { width: 100%; }
+
+.nayro-icon-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	width: 42px;
+	height: 42px;
+	border: 0;
+	border-radius: var(--n-radius);
+	background: transparent;
+	color: var(--n-text);
+	transition: background var(--n-transition), color var(--n-transition);
+}
+.nayro-icon-btn:hover { background: var(--n-surface-2); color: var(--n-primary); }
+
+.nayro-count {
+	position: absolute;
+	top: 2px;
+	inset-inline-end: 2px;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 4px;
+	border-radius: 9px;
+	background: var(--n-primary);
+	color: #fff;
+	font-size: 11px;
+	font-weight: 700;
+	line-height: 18px;
+	text-align: center;
+}
+
+/* ==========================================================================
+   4. Announcement bar
+   ========================================================================== */
+.nayro-announcement {
+	background: var(--n-secondary);
+	color: #fff;
+	font-size: 13px;
+}
+.nayro-announcement__inner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	text-align: center;
+}
+.nayro-announcement__sep { opacity: .5; }
+[data-theme="dark"] .nayro-announcement { background: #05080f; color: #E5E7EB; }
+
+/* ==========================================================================
+   5. Header
+   ========================================================================== */
+.nayro-header {
+	background: var(--n-surface);
+	box-shadow: var(--n-shadow);
+	position: relative;
+	z-index: 90;
+}
+.nayro-header.is-sticky {
+	position: sticky;
+	top: 0;
+	animation: nayro-drop .3s ease;
+}
+.admin-bar .nayro-header.is-sticky { top: 32px; }
+@keyframes nayro-drop { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+
+.nayro-header__inner {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	min-height: var(--n-header-h);
+}
+
+.nayro-burger { display: none; }
+
+.nayro-logo { flex: 0 0 auto; }
+.nayro-logo img { max-height: 44px; width: auto; }
+.nayro-logo__text { display: inline-flex; align-items: center; gap: 8px; font-family: var(--n-font-head); font-weight: 700; font-size: 22px; color: var(--n-text); }
+.nayro-logo__mark {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
+	border-radius: 10px;
+	background: linear-gradient(135deg, var(--n-primary), var(--n-used));
+	color: #fff;
+	font-weight: 700;
+}
+
+/* Search */
+.nayro-search { flex: 1 1 auto; max-width: 620px; }
+.nayro-search__form {
+	display: flex;
+	align-items: stretch;
+	background: var(--n-surface-2);
+	border: 1px solid var(--n-border);
+	border-radius: var(--n-radius);
+	overflow: hidden;
+}
+.nayro-search__cat {
+	border: 0;
+	background: transparent;
+	padding: 0 10px;
+	max-width: 160px;
+	color: var(--n-muted);
+	font-size: 13px;
+}
+.nayro-search__input {
+	flex: 1 1 auto;
+	border: 0;
+	background: transparent;
+	padding: 12px 8px;
+	min-width: 0;
+}
+.nayro-search__input:focus { outline: none; }
+.nayro-search__btn {
+	border: 0;
+	background: var(--n-primary);
+	color: #fff;
+	padding: 0 22px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: background var(--n-transition);
+}
+.nayro-search__btn:hover { background: var(--n-primary-dark); }
+
+/* Actions */
+.nayro-actions { display: flex; align-items: center; gap: 2px; margin-inline-start: auto; }
+.nayro-theme-toggle .nayro-icon-moon { display: none; }
+[data-theme="dark"] .nayro-theme-toggle .nayro-icon-sun { display: none; }
+[data-theme="dark"] .nayro-theme-toggle .nayro-icon-moon { display: block; }
+
+.nayro-cart-count {
+	position: absolute;
+	top: 2px;
+	inset-inline-end: 2px;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 4px;
+	border-radius: 9px;
+	background: var(--n-primary);
+	color: #fff;
+	font-size: 11px;
+	font-weight: 700;
+	line-height: 18px;
+	text-align: center;
+}
+
+/* Language */
+.nayro-lang { position: relative; }
+.nayro-lang__current {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	border: 0;
+	background: transparent;
+	padding: 8px 6px;
+	font-size: 13px;
+	font-weight: 600;
+}
+.nayro-lang__list {
+	position: absolute;
+	top: 100%;
+	inset-inline-end: 0;
+	margin: 0;
+	padding: 6px;
+	list-style: none;
+	min-width: 130px;
+	background: var(--n-surface);
+	border: 1px solid var(--n-border);
+	border-radius: var(--n-radius-sm);
+	box-shadow: var(--n-shadow-lg);
+	display: none;
+	z-index: 120;
+}
+.nayro-lang:hover .nayro-lang__list,
+.nayro-lang:focus-within .nayro-lang__list,
+.nayro-lang.is-open .nayro-lang__list { display: block; }
+.nayro-lang__list button,
+.nayro-lang__list a {
+	display: block;
+	width: 100%;
+	text-align: start;
+	border: 0;
+	background: transparent;
+	padding: 8px 10px;
+	border-radius: 6px;
+	font-size: 13px;
+}
+.nayro-lang__list button:hover,
+.nayro-lang__list a:hover { background: var(--n-surface-2); color: var(--n-primary); }
+.nayro-lang--pll ul { list-style: none; margin: 0; padding: 6px; }
+
+/* Main nav */
+.nayro-nav-wrap { border-top: 1px solid var(--n-border); }
+.nayro-mainnav { display: flex; align-items: center; gap: 10px; }
+.nayro-menu { display: flex; align-items: center; gap: 4px; list-style: none; margin: 0; padding: 0; }
+.nayro-menu__item { position: relative; }
+.nayro-menu > .nayro-menu__item > a {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 14px 12px;
+	font-family: var(--n-font-head);
+	font-weight: 500;
+	font-size: 14px;
+	color: var(--n-text);
+}
+.nayro-menu > .nayro-menu__item:hover > a,
+.nayro-menu > .current-menu-item > a { color: var(--n-primary); }
+.nayro-caret { transition: transform var(--n-transition); }
+.nayro-menu__item:hover > a .nayro-caret { transform: rotate(180deg); }
+
+/* Dropdown */
+.nayro-dropdown {
+	position: absolute;
+	top: 100%;
+	inset-inline-start: 0;
+	margin: 0;
+	padding: 8px;
+	list-style: none;
+	min-width: 230px;
+	background: var(--n-surface);
+	border: 1px solid var(--n-border);
+	border-radius: var(--n-radius);
+	box-shadow: var(--n-shadow-lg);
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(8px);
+	transition: opacity var(--n-transition), transform var(--n-transition), visibility var(--n-transition);
+	z-index: 110;
+}
+.nayro-menu__item:hover > .nayro-dropdown,
+.nayro-menu__item:focus-within > .nayro-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+.nayro-dropdown li a { display: block; padding: 9px 12px; border-radius: 6px; font-size: 14px; }
+.nayro-dropdown li a:hover { background: var(--n-surface-2); }
+.nayro-submenu { list-style: none; margin: 4px 0 4px 12px; padding: 0; }
+
+/* Mega menu */
+.nayro-menu__item.nayro-mega { position: static; }
+.nayro-menu__item.nayro-mega > .nayro-dropdown {
+	inset-inline-start: 0;
+	inset-inline-end: 0;
+	width: 100%;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 6px 22px;
+	padding: 22px;
+	max-width: none;
+}
+.nayro-menu__item.nayro-mega > .nayro-dropdown > li > a { font-weight: 600; }
+.nayro-nav-cta { margin-inline-start: auto; padding: 8px 0; }
+
+/* ==========================================================================
+   6. Mobile panel, overlay, drawer, modal
+   ========================================================================== */
+.nayro-mobile-panel {
+	position: fixed;
+	top: 0;
+	inset-inline-start: 0;
+	width: min(360px, 88vw);
+	height: 100vh;
+	height: 100dvh;
+	background: var(--n-surface);
+	z-index: 1101;
+	transform: translateX(-100%);
+	transition: transform var(--n-transition);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	-webkit-overflow-scrolling: touch;
+	padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+	box-shadow: var(--n-shadow-lg);
+}
+[dir="rtl"] .nayro-mobile-panel { transform: translateX(100%); }
+.nayro-mobile-panel.is-open { transform: translateX(0); }
+.nayro-mobile-panel__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.nayro-mobile-panel__title { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--n-muted); margin: 16px 0 8px; }
+.nayro-mobile-cats { list-style: none; margin: 0; padding: 0; }
+.nayro-mobile-cats a { display: flex; justify-content: space-between; padding: 11px 12px; border-radius: var(--n-radius-sm); font-size: 14px; }
+.nayro-mobile-cats a:hover { background: var(--n-surface-2); }
+.nayro-mobile-cats__count { color: var(--n-muted); font-size: 12px; }
+.nayro-mobile-menu { list-style: none; margin: 12px 0 0; padding: 0; }
+.nayro-mobile-menu a { display: block; padding: 11px 12px; border-radius: var(--n-radius-sm); font-weight: 500; }
+.nayro-mobile-menu a:hover { background: var(--n-surface-2); }
+.nayro-mobile-panel__actions { display: grid; gap: 10px; margin-top: 20px; }
+
+.nayro-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(17, 24, 39, .5);
+	z-index: 150;
+	opacity: 0;
+	transition: opacity var(--n-transition);
+}
+.nayro-overlay.is-open { opacity: 1; }
+
+.nayro-cart-drawer {
+	position: fixed;
+	top: 0;
+	inset-inline-end: 0;
+	width: min(400px, 92vw);
+	height: 100%;
+	background: var(--n-surface);
+	/* Keep the drawer above the sticky header and mobile navigation. */
+	z-index: 1100;
+	transform: translateX(100%);
+	transition: transform var(--n-transition);
+	display: flex;
+	flex-direction: column;
+	box-shadow: var(--n-shadow-lg);
+}
+[dir="rtl"] .nayro-cart-drawer { transform: translateX(-100%); }
+.nayro-cart-drawer.is-open { transform: translateX(0); }
+.nayro-drawer__head { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--n-border); }
+.nayro-drawer__title { margin: 0; font-size: 17px; }
+.nayro-mini-cart-contents { flex: 1 1 auto; overflow-y: auto; padding: 14px; }
+
+.nayro-quickview { position: fixed; inset: 0; z-index: 220; display: flex; align-items: center; justify-content: center; }
+.nayro-quickview__backdrop { position: absolute; inset: 0; background: rgba(17, 24, 39, .6); }
+.nayro-quickview__body {
+	position: relative;
+	width: min(900px, 94vw);
+	max-height: 90vh;
+	overflow-y: auto;
+	background: var(--n-surface);
+	border-radius: var(--n-radius-lg);
+	box-shadow: var(--n-shadow-lg);
+	padding: 26px;
+	z-index: 1;
+}
+.nayro-quickview__close { position: absolute; top: 10px; inset-inline-end: 10px; }
+
+.nayro-toast {
+	position: fixed;
+	bottom: 90px;
+	inset-inline-start: 50%;
+	transform: translateX(-50%) translateY(20px);
+	background: var(--n-secondary);
+	color: #fff;
+	padding: 12px 22px;
+	border-radius: 999px;
+	font-size: 14px;
+	font-weight: 500;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--n-transition), transform var(--n-transition);
+	z-index: 300;
+}
+[data-theme="dark"] .nayro-toast { background: #fff; color: var(--n-secondary); }
+.nayro-toast.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.nayro-post-engagement {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	margin: 28px 0;
+	padding: 14px 16px;
+	border: 1px solid var(--n-border);
+	border-radius: var(--n-radius);
+	background: var(--n-surface);
+}
+.nayro-post-engagement__views { color: var(--n-muted); font-size: 14px; }
+.nayro-post-engagement__reactions { display: flex; flex-wrap: wrap; gap: 8px; }
+.nayro-post-engagement__button {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 9px 12px;
+	border: 1px solid var(--n-border);
+	border-radius: 999px;
+	background: var(--n-surface);
+	color: var(--n-text);
+	cursor: pointer;
+	font: inherit;
+}
+.nayro-post-engagement__button:hover,
+.nayro-post-engagement__button[aria-pressed="true"] {
+	border-color: var(--n-primary);
+	color: var(--n-primary);
+	background: var(--n-surface-2);
+}
+.nayro-post-engagement__button:disabled { opacity: .6; cursor: wait; }
+@media (max-width: 480px) {
+	.nayro-post-engagement { align-items: flex-start; flex-direction: column; }
+}
+
+/* ==========================================================================
+   7. Hero
+   ========================================================================== */
+.nayro-hero { position: relative; background: var(--n-secondary); overflow: hidden; }
+.nayro-hero__track { position: relative; }
+.nayro-hero__slide {
+	position: absolute;
+	inset: 0;
+	display: none;
+	align-items: center;
+	min-height: 380px;
+	background-size: cover;
+	background-position: center;
+	padding: 56px 0;
+}
+.nayro-hero__slide.is-active { display: flex; position: relative; animation: nayro-fade .6s ease; }
+@keyframes nayro-fade { from { opacity: .3; } to { opacity: 1; } }
+.nayro-hero__slide--1 { background-image: linear-gradient(120deg, #FF6B00, #FF9F45); }
+.nayro-hero__slide--2 { background-image: linear-gradient(120deg, #111827, #374151); }
+.nayro-hero__slide--3 { background-image: linear-gradient(120deg, #00876b, #00B894); }
+.nayro-hero__overlay { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(17, 24, 39, .55), rgba(17, 24, 39, 0)); }
+[dir="rtl"] .nayro-hero__overlay { background: linear-gradient(-90deg, rgba(17, 24, 39, .55), rgba(17, 24, 39, 0)); }
+.nayro-hero__content { position: relative; z-index: 2; color: #fff; max-width: 620px; }
+.nayro-hero__eyebrow { display: inline-block; margin-bottom: 12px; padding: 5px 12px; border-radius: 999px; background: rgba(255, 255, 255, .18); font-size: 12px; font-weight: 600; letter-spacing: .03em; }
+.nayro-hero__title { color: #fff; font-size: clamp(26px, 4vw, 46px); margin-bottom: 12px; }
+.nayro-hero__text { font-size: clamp(15px, 1.6vw, 18px); opacity: .95; margin-bottom: 22px; }
+.nayro-hero__nav {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 44px;
+	height: 44px;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, .85);
+	color: var(--n-secondary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 3;
+	transition: background var(--n-transition);
+}
+.nayro-hero__nav:hover { background: #fff; color: var(--n-primary); }
+.nayro-hero__nav--prev { inset-inline-start: 16px; }
+.nayro-hero__nav--next { inset-inline-end: 16px; }
+.nayro-hero__dots { position: absolute; bottom: 16px; inset-inline-start: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 3; }
+.nayro-hero__dots button { width: 9px; height: 9px; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .5); }
+.nayro-hero__dots button.is-active { background: #fff; width: 26px; border-radius: 5px; }
+.nayro-hero__perks { display: flex; flex-wrap: wrap; gap: 10px 24px; list-style: none; margin: 0; padding: 14px 16px; background: var(--n-surface); color: var(--n-text); font-size: 13px; font-weight: 500; justify-content: center; }
+.nayro-hero__perks li::before { content: "✓"; color: var(--n-accent); font-weight: 700; margin-inline-end: 6px; }
+
+/* ==========================================================================
+   8. Generic section
+   ========================================================================== */
+.nayro-section { padding: 44px 0; }
+.nayro-section--alt { background: var(--n-surface); }
+.nayro-section__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin-bottom: 24px; }
+.nayro-section__title { font-size: clamp(20px, 2.4vw, 28px); margin: 0; }
+.nayro-section__subtitle { margin: 4px 0 0; color: var(--n-muted); font-size: 14px; }
+.nayro-section__link { font-weight: 600; color: var(--n-primary); white-space: nowrap; }
+
+/* ==========================================================================
+   9. Condition cards
+   ========================================================================== */
+.nayro-conditions__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.nayro-condition-card {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 28px 24px;
+	border-radius: var(--n-radius-lg);
+	background: var(--n-surface);
+	border: 1px solid var(--n-border);
+	box-shadow: var(--n-shadow);
+	position: relative;
+	overflow: hidden;
+	transition: transform var(--n-transition), box-shadow var(--n-transition);
+}
+.nayro-condition-card:hover { transform: translateY(-4px); box-shadow: var(--n-shadow-lg); color: inherit; }
+.nayro-condition-card__icon { width: 62px; height: 62px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.nayro-condition-card__title { font-family: var(--n-font-head); font-weight: 700; font-size: 20px; }
+.nayro-condition-card__desc { color: var(--n-muted); font-size: 14px; }
+.nayro-condition-card__cta { margin-top: 8px; font-weight: 600; font-size: 14px; }
+.nayro-condition-card--new .nayro-condition-card__icon { background: rgba(0, 184, 148, .12); color: var(--n-accent); }
+.nayro-condition-card--new .nayro-condition-card__cta { color: var(--n-accent); }
+.nayro-condition-card--used .nayro-condition-card__icon { background: rgba(245, 158, 11, .14); color: var(--n-used); }
+.nayro-condition-card--used .nayro-condition-card__cta { color: var(--n-used); }
+.nayro-condition-card--refurbished .nayro-condition-card__icon { background: rgba(255, 107, 0, .12); color: var(--n-primary); }
+.nayro-condition-card--refurbished .nayro-condition-card__cta { color: var(--n-primary); }
+
+/* ==========================================================================
+   10. Categories
+   ========================================================================== */
+.nayro-categories__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.nayro-category-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	padding: 22px 14px;
+	background: var(--n-surface);
+	border: 1px solid var(--n-border);
+	border-radius: var(--n-radius);
+	text-align: center;
+	box-shadow: var(--n-shadow);
+	transition: transform var(--n-transition), box-shadow var(--n-transition), border-color var(--n-transition);
+}
+.nayro-category-card:hover { transform: translateY(-4px); box-shadow: var(--n-shadow-lg); border-color: var(--n-primary); color: inherit; }
+.nayro-category-card__media { width: 74px; height: 74px; border-radius: 50%; overflow: hidden; background: var(--n-surface-2); display: flex; align-items: center; justify-content: center; }
+.nayro-category-card__media img { width: 100%; height: 100%; object-fit: cover; }
+.nayro-category-card__icon { font-size: 34px; line-height: 1; }
+.nayro-category-card__name { font-weight: 600; font-size: 15px; }
+.nayro-category-card__count { font-size: 12px; color: var(--n-muted); }
+
+/* ==========================================================================
+   11. Product grid & cards
+   ========================================================================== */
+ul.products,
+.nayro-products-wrap ul.products {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 18px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.nayro-product {
+	background: var(--n-surface);
+	border: 1px solid var(--n-border);
+	border-radius: var(--n-radius);
+	overflow: hidden;
+	box-shadow: var(--n-shadow);
+	display: flex;
+	flex-direction: column;
+	transition: transform var(--n-transition), box-shadow var(--n-transition);
+	position: relative;
+}
+.nayro-product:hover { transform: translateY(-4px); box-shadow: var(--n-shadow-lg); }
+
+.nayro-product__media { position: relative; overflow: hidden; background: var(--n-surface-2); aspect-ratio: 1 / 1; }
+.nayro-product__image-link { display: block; height: 100%; }
+.nayro-product__image-link img,
+.nayro-product__img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform .5s ease, opacity .35s ease;
+}
+.nayro-product__img--hover { position: absolute; inset: 0; opacity: 0; }
+.nayro-product:hover .nayro-product__image-link img:first-child { transform: scale(1.06); }
+.nayro-product:hover .nayro-product__img--hover { opacity: 1; }
+
+.nayro-badges { position: absolute; top: 10px; inset-inline-start: 10px; display: flex; flex-direction: column; gap: 6px; z-index: 2; }
+.nayro-badge {
+	display: inline-block;
+	padding: 4px 10px;
+	border-radius: 999px;
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: .02em;
+	color: #fff;
+}
+.nayro-badge--new { background: var(--n-accent); }
+.nayro-badge--used { background: var(--n-used); }
+.nayro-badge--refurbished { background: var(--n-primary); }
+.nayro-badge--sale { background: var(--n-sale); }
+.nayro-badge--out { background: var(--n-muted); }
+
+.nayro-product__quick {
+	position: absolute;
+	top: 10px;
+	inset-inline-end: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	opacity: 0;
+	transform: translateX(8px);
+	transition: opacity var(--n-transition), transform var(--n-transition);
+	z-index: 2;
+}
+.nayro-product:hover .nayro-product__quick { opacity: 1; transform: translateX(0); }
+.nayro-quick-btn,
+.nayro-wish-btn,
+.nayro-compare-btn {
+	width: 38px;
+	height: 38px;
+	border: 0;
+	border-radius: 50%;
+	background: var(--n-surface);
+	color: var(--n-text);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: var(--n-shadow);
+	transition: background var(--n-transition), color var(--n-transition);
+}
+.nayro-quick-btn:hover,
+.nayro-wish-btn:hover,
+.nayro-compare-btn:hover { background: var(--n-primary); color: #fff; }
+.nayro-wish-btn.is-active { background: var(--n-primary); color: #fff; }
+.nayro-wish-btn.is-active svg { fill: currentColor; }
+.nayro-compare-btn.is-active { background: var(--n-secondary); color: #fff; }
+[data-theme="dark"] .nayro-compare-btn.is-active { background: #fff; color: #111827; }
+
+.nayro-product__body { padding: 14px; display: flex; flex-direction: column; gap: 6px; flex: 1 1 auto; }
+.nayro-product__cat { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--n-muted); }
+.nayro-product__title { font-size: 15px; margin: 0; line-height: 1.35; }
+.nayro-product__title a { color: var(--n-text); }
+.nayro-product__title a:hover { color: var(--n-primary); }
+.nayro-product__rating { display: flex; align-items: center; gap: 6px; }
+.nayro-product__rating .star-rating { margin: 0; font-size: 13px; color: var(--n-used); }
+.nayro-product__reviews { font-size: 12px; color: var(--n-muted); }
+.nayro-product__price { font-family: var(--n-font-head); font-weight: 700; font-size: 17px; color: var(--n-secondary); }
+[data-theme="dark"] .nayro-product__price { color: var(--n-text); }
+.nayro-product__price del { color: var(--n-muted); font-weight: 400; font-size: 14px; margin-inline-end: 6px; }
+.nayro-product__price ins { text-decoration: none; color: var(--n-sale); }
+.nayro-product__footer { margin-top: auto; padding-top: 8px; }
+.nayro-product__footer .button,
+.nayro-product__footer a.button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	gap: 8px;
+	padding: 10px 14px;
+	border: 0;
+	border-radius: var(--n-radius-sm);
+	background: var(--n-secondary);
+	color: #fff;
+	font-family: var(--n-font-head);
+	font-weight: 600;
+	font-size: 13px;
+	transition: background var(--n-transition);
+}
+.nayro-product__footer a.button:hover { background: var(--n-primary); color: #fff; }
+.nayro-product__footer .added_to_cart { display: none; }
+.nayro-product__footer .button.loading { opacity: .7; }
+
+/* ==========================================================================
+   12. Flash deals & countdown
+   ========================================================================== */
+.nayro-flash { background: linear-gradient(180deg, rgba(255, 107, 0, .06), transparent); }
+.nayro-flash__head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.nayro-flash__intro .nayro-section__title { display: flex; align-items: center; gap: 8px; }
+.nayro-countdown { display: flex; gap: 10px; }
+.nayro-countdown__unit { min-width: 60px; padding: 8px 6px; text-align: center; background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius-sm); box-shadow: var(--n-shadow); }
+.nayro-countdown__unit span { display: block; font-family: var(--n-font-head); font-weight: 700; font-size: 22px; color: var(--n-primary); }
+.nayro-countdown__unit small { font-size: 11px; color: var(--n-muted); text-transform: uppercase; }
+
+/* ==========================================================================
+   13. Tabs
+   ========================================================================== */
+.nayro-tabs__nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; border-bottom: 1px solid var(--n-border); }
+.nayro-tabs__tab { border: 0; background: transparent; padding: 12px 18px; font-family: var(--n-font-head); font-weight: 600; font-size: 15px; color: var(--n-muted); border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.nayro-tabs__tab.is-active { color: var(--n-primary); border-color: var(--n-primary); }
+.nayro-tabs__panel { display: none; }
+.nayro-tabs__panel.is-active { display: block; }
+
+/* ==========================================================================
+   14. Sell banner
+   ========================================================================== */
+.nayro-sell-banner { padding: 44px 16px; }
+.nayro-sell-banner__inner {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+	padding: 40px;
+	border-radius: var(--n-radius-lg);
+	background: linear-gradient(120deg, var(--n-secondary), #2b3648);
+	color: #fff;
+	overflow: hidden;
+	position: relative;
+}
+.nayro-sell-banner__content { position: relative; z-index: 2; max-width: 620px; }
+.nayro-sell-banner__eyebrow { color: var(--n-primary); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; }
+.nayro-sell-banner__title { color: #fff; font-size: clamp(24px, 3vw, 34px); margin: 6px 0 12px; }
+.nayro-sell-banner__text { opacity: .9; }
+.nayro-sell-banner__actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 18px 0; }
+.nayro-sell-banner__steps { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13px; opacity: .85; }
+.nayro-sell-banner__art { color: var(--n-primary); opacity: .35; margin-inline-start: auto; }
+
+/* ==========================================================================
+   15. Trust
+   ========================================================================== */
+.nayro-trust { background: var(--n-surface); border-top: 1px solid var(--n-border); border-bottom: 1px solid var(--n-border); padding: 24px 0; }
+.nayro-trust__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; list-style: none; margin: 0; padding: 0; }
+.nayro-trust__item { display: flex; align-items: center; gap: 12px; }
+.nayro-trust__icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(255, 107, 0, .1); color: var(--n-primary); display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.nayro-trust__text strong { display: block; font-family: var(--n-font-head); font-size: 14px; }
+.nayro-trust__text small { color: var(--n-muted); font-size: 12px; }
+
+/* ==========================================================================
+   16. Testimonials
+   ========================================================================== */
+.nayro-testimonials__track { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(300px, 1fr); gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; scrollbar-width: none; }
+.nayro-testimonials__track::-webkit-scrollbar { display: none; }
+.nayro-testimonial { margin: 0; padding: 24px; background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius); box-shadow: var(--n-shadow); scroll-snap-align: start; }
+.nayro-testimonial__stars { display: flex; gap: 2px; color: var(--n-used); margin-bottom: 12px; }
+.nayro-testimonial__quote { margin: 0 0 16px; font-size: 15px; }
+.nayro-testimonial__author { display: flex; align-items: center; gap: 10px; font-weight: 600; font-family: var(--n-font-head); font-size: 14px; }
+.nayro-testimonial__avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--n-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.nayro-slider-nav { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
+.nayro-slider-nav__btn { width: 42px; height: 42px; border: 1px solid var(--n-border); border-radius: 50%; background: var(--n-surface); color: var(--n-text); display: flex; align-items: center; justify-content: center; }
+.nayro-slider-nav__btn:hover { background: var(--n-primary); color: #fff; border-color: var(--n-primary); }
+
+/* ==========================================================================
+   17. Brands
+   ========================================================================== */
+.nayro-brands__marquee { overflow: hidden; }
+.nayro-brands__track { display: flex; gap: 40px; align-items: center; animation: nayro-marquee 26s linear infinite; width: max-content; padding: 10px 0; }
+.nayro-brands__marquee:hover .nayro-brands__track { animation-play-state: paused; }
+@keyframes nayro-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+[dir="rtl"] .nayro-brands__track { animation-direction: reverse; }
+.nayro-brand { display: flex; align-items: center; justify-content: center; min-width: 120px; height: 56px; }
+.nayro-brand img { max-height: 46px; width: auto; filter: grayscale(1); opacity: .7; transition: filter var(--n-transition), opacity var(--n-transition); }
+.nayro-brand:hover img { filter: none; opacity: 1; }
+.nayro-brand__name { font-family: var(--n-font-head); font-weight: 700; font-size: 20px; color: var(--n-muted); }
+
+/* ==========================================================================
+   18. Newsletter
+   ========================================================================== */
+.nayro-newsletter { padding: 44px 0; background: linear-gradient(120deg, var(--n-primary), #ff9f45); }
+.nayro-newsletter__inner { display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap; }
+.nayro-newsletter__text { color: #fff; max-width: 520px; }
+.nayro-newsletter__title { color: #fff; font-size: clamp(22px, 2.6vw, 30px); margin-bottom: 6px; }
+.nayro-newsletter__text p { margin: 0; opacity: .95; }
+.nayro-newsletter__form { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; position: relative; }
+.nayro-newsletter__form input[type="email"] { min-width: 280px; padding: 13px 16px; border: 0; border-radius: var(--n-radius); }
+.nayro-newsletter__form .nayro-btn { background: var(--n-secondary); color: #fff; }
+.nayro-newsletter__note { flex-basis: 100%; margin: 0; font-size: 12px; color: rgba(255, 255, 255, .85); }
+
+/* ==========================================================================
+   19. Footer
+   ========================================================================== */
+.nayro-footer { background: var(--n-secondary); color: #D1D5DB; padding: 50px 0 0; }
+[data-theme="dark"] .nayro-footer { background: #05080f; }
+.nayro-footer__grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.3fr; gap: 30px; padding-bottom: 34px; }
+.nayro-footer__logo { display: inline-flex; align-items: center; gap: 8px; font-family: var(--n-font-head); font-weight: 700; font-size: 22px; color: #fff; margin-bottom: 10px; }
+.nayro-footer__slogan { color: #9CA3AF; font-size: 14px; }
+.nayro-footer__title { color: #fff; font-size: 15px; margin-bottom: 14px; }
+.nayro-footer__menu { list-style: none; margin: 0; padding: 0; }
+.nayro-footer__menu li a { display: block; padding: 5px 0; color: #9CA3AF; font-size: 14px; }
+.nayro-footer__menu li a:hover { color: var(--n-primary); }
+.nayro-footer__contact { list-style: none; margin: 0 0 14px; padding: 0; }
+.nayro-footer__contact li { display: flex; gap: 10px; align-items: flex-start; padding: 4px 0; color: #9CA3AF; font-size: 14px; }
+.nayro-footer__contact svg { flex: 0 0 auto; margin-top: 3px; color: var(--n-primary); }
+.nayro-footer__contact a:hover { color: var(--n-primary); }
+.nayro-socials { display: flex; gap: 10px; list-style: none; margin: 12px 0 0; padding: 0; }
+.nayro-socials a { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(255, 255, 255, .08); color: #fff; }
+.nayro-socials a:hover { background: var(--n-primary); color: #fff; }
+.nayro-footer__bottom { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 18px 0; border-top: 1px solid rgba(255, 255, 255, .1); }
+.nayro-footer__copy { margin: 0; font-size: 13px; color: #9CA3AF; }
+.nayro-payments { display: flex; gap: 8px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+.nayro-pay { padding: 5px 12px; border-radius: 6px; background: rgba(255, 255, 255, .1); color: #fff; font-size: 12px; font-weight: 600; }
+
+/* ==========================================================================
+   20. Floating WhatsApp & mobile bottom nav
+   ========================================================================== */
+.nayro-whatsapp-float {
+	position: fixed;
+	bottom: 22px;
+	inset-inline-end: 22px;
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: #25D366;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 10px 26px rgba(37, 211, 102, .45);
+	z-index: 140;
+	animation: nayro-pulse 2.4s infinite;
+}
+.nayro-whatsapp-float:hover { color: #fff; transform: scale(1.06); }
+@keyframes nayro-pulse { 0%, 100% { box-shadow: 0 10px 26px rgba(37, 211, 102, .45); } 50% { box-shadow: 0 10px 26px rgba(37, 211, 102, .75); } }
+
+.nayro-bottomnav {
+	display: none;
+	position: fixed;
+	bottom: 0;
+	inset-inline: 0;
+	background: var(--n-surface);
+	border-top: 1px solid var(--n-border);
+	z-index: 130;
+	padding-bottom: env(safe-area-inset-bottom);
+}
+.nayro-bottomnav__item {
+	flex: 1 1 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 3px;
+	padding: 9px 4px;
+	border: 0;
+	background: transparent;
+	color: var(--n-muted);
+	font-size: 11px;
+	font-weight: 500;
+}
+.nayro-bottomnav__item:hover,
+.nayro-bottomnav__item.is-active { color: var(--n-primary); }
+
+/* ==========================================================================
+   21. Breadcrumbs, page head, entry, layout
+   ========================================================================== */
+.nayro-breadcrumbs { font-size: 13px; color: var(--n-muted); margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.nayro-breadcrumbs a { color: var(--n-muted); }
+.nayro-breadcrumbs a:hover { color: var(--n-primary); }
+.nayro-page-head { margin-bottom: 24px; }
+.nayro-page-head__title { font-size: clamp(24px, 3vw, 36px); margin: 0; }
+.nayro-page-head__desc { color: var(--n-muted); margin-top: 8px; }
+.nayro-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 34px; align-items: start; }
+.nayro-layout__aside { position: sticky; top: 90px; }
+.nayro-entry { font-size: 16px; line-height: 1.75; }
+.nayro-entry h2, .nayro-entry h3 { margin-top: 1.4em; }
+.nayro-entry img { border-radius: var(--n-radius); }
+
+/* Blog cards */
+.nayro-posts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.nayro-card-post { background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius); overflow: hidden; box-shadow: var(--n-shadow); display: flex; flex-direction: column; }
+.nayro-card-post__thumb img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.nayro-card-post__body { padding: 18px; display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; }
+.nayro-card-post__meta { font-size: 12px; color: var(--n-muted); display: flex; gap: 8px; }
+.nayro-card-post__title { font-size: 19px; margin: 0; }
+.nayro-card-post__excerpt { color: var(--n-muted); font-size: 14px; flex: 1 1 auto; }
+.nayro-card-post__more { font-weight: 600; color: var(--n-primary); }
+
+/* Pagination */
+.nayro-pagination, .woocommerce-pagination { margin: 30px 0; text-align: center; }
+.nayro-pagination .page-numbers,
+.woocommerce-pagination ul.page-numbers { display: inline-flex; gap: 6px; list-style: none; margin: 0; padding: 0; border: 0; }
+.nayro-pagination .page-numbers,
+.woocommerce-pagination ul.page-numbers li a,
+.woocommerce-pagination ul.page-numbers li span {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 42px;
+	height: 42px;
+	padding: 0 12px;
+	border-radius: var(--n-radius-sm);
+	background: var(--n-surface);
+	border: 1px solid var(--n-border);
+	color: var(--n-text);
+	font-weight: 600;
+}
+.nayro-pagination .page-numbers.current,
+.woocommerce-pagination ul.page-numbers li span.current { background: var(--n-primary); border-color: var(--n-primary); color: #fff; }
+.nayro-pagination a.page-numbers:hover,
+.woocommerce-pagination ul.page-numbers li a:hover { border-color: var(--n-primary); color: var(--n-primary); }
+
+/* Widgets */
+.nayro-widget { background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius); padding: 18px; margin-bottom: 20px; box-shadow: var(--n-shadow); }
+.nayro-widget__title { font-size: 16px; margin-bottom: 12px; }
+.nayro-widget ul { list-style: none; margin: 0; padding: 0; }
+.nayro-widget ul li { padding: 6px 0; border-bottom: 1px solid var(--n-border); font-size: 14px; }
+.nayro-widget ul li:last-child { border-bottom: 0; }
+
+/* ==========================================================================
+   22. Forms
+   ========================================================================== */
+.nayro-form { background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius); padding: 24px; box-shadow: var(--n-shadow); }
+.nayro-form__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.nayro-form__field { margin: 0 0 16px; display: flex; flex-direction: column; gap: 6px; }
+.nayro-form__field label { font-weight: 600; font-size: 14px; }
+.nayro-form input[type="text"],
+.nayro-form input[type="email"],
+.nayro-form input[type="tel"],
+.nayro-form input[type="number"],
+.nayro-form select,
+.nayro-form textarea {
+	padding: 12px 14px;
+	border: 1px solid var(--n-border);
+	border-radius: var(--n-radius-sm);
+	background: var(--n-surface);
+	width: 100%;
+}
+.nayro-form input:focus, .nayro-form select:focus, .nayro-form textarea:focus { outline: none; border-color: var(--n-primary); box-shadow: 0 0 0 3px rgba(255, 107, 0, .15); }
+.nayro-form__note { font-size: 12px; color: var(--n-muted); margin-top: 10px; }
+
+/* ==========================================================================
+   23. Contact & FAQ
+   ========================================================================== */
+.nayro-contact { display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; margin: 30px 0; }
+.nayro-contact__list { list-style: none; margin: 0 0 20px; padding: 0; }
+.nayro-contact__list li { padding: 6px 0; }
+.nayro-contact__map { margin-top: 30px; border-radius: var(--n-radius); overflow: hidden; }
+.nayro-contact__map iframe { display: block; width: 100%; }
+
+.nayro-faq { display: grid; gap: 12px; margin-top: 24px; }
+.nayro-faq__item { background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius); padding: 4px 18px; box-shadow: var(--n-shadow); }
+.nayro-faq__q { cursor: pointer; font-family: var(--n-font-head); font-weight: 600; font-size: 16px; padding: 14px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.nayro-faq__q::-webkit-details-marker { display: none; }
+.nayro-faq__q::after { content: "+"; font-size: 22px; color: var(--n-primary); }
+.nayro-faq__item[open] .nayro-faq__q::after { content: "–"; }
+.nayro-faq__a { padding: 0 0 16px; color: var(--n-muted); }
+.nayro-faq__cta { margin-top: 30px; text-align: center; }
+
+/* ==========================================================================
+   24. Wishlist / Compare / 404 / states
+   ========================================================================== */
+.nayro-wishlist-page,
+.nayro-compare-page { margin-top: 20px; }
+.nayro-wishlist-page__loading,
+.nayro-compare-page__loading { color: var(--n-muted); }
+.nayro-empty-state { text-align: center; padding: 40px 0; color: var(--n-muted); }
+.nayro-compare-table { width: 100%; border-collapse: collapse; background: var(--n-surface); border-radius: var(--n-radius); overflow: hidden; box-shadow: var(--n-shadow); }
+.nayro-compare-table th, .nayro-compare-table td { padding: 14px; border: 1px solid var(--n-border); text-align: start; vertical-align: top; }
+.nayro-compare-table th { background: var(--n-surface-2); font-family: var(--n-font-head); }
+
+.nayro-404 { text-align: center; padding: 60px 0; }
+.nayro-404__code { font-family: var(--n-font-head); font-weight: 700; font-size: clamp(70px, 14vw, 160px); line-height: 1; color: var(--n-primary); opacity: .18; }
+.nayro-404__title { font-size: clamp(22px, 3vw, 32px); }
+.nayro-404__text { color: var(--n-muted); max-width: 520px; margin: 0 auto 24px; }
+.nayro-404__actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px; }
+.nayro-404__search { max-width: 440px; margin: 0 auto; }
+.nayro-searchform { display: flex; gap: 8px; }
+.nayro-searchform__input { flex: 1 1 auto; padding: 12px 14px; border: 1px solid var(--n-border); border-radius: var(--n-radius-sm); }
+
+.nayro-no-content { text-align: center; padding: 50px 0; }
+.nayro-no-content .nayro-searchform { max-width: 420px; margin: 20px auto 0; }
+
+/* Condition details box & meter (also used on single product) */
+.nayro-condition-box { margin: 16px 0; padding: 16px 18px; background: var(--n-surface-2); border: 1px solid var(--n-border); border-radius: var(--n-radius); }
+.nayro-condition-box__title { display: flex; align-items: center; gap: 8px; font-size: 15px; margin-bottom: 12px; color: var(--n-primary); }
+.nayro-condition-box__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.nayro-condition-row { display: flex; justify-content: space-between; gap: 16px; align-items: center; font-size: 14px; }
+.nayro-condition-row__label { color: var(--n-muted); }
+.nayro-condition-row__value { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.nayro-meter { display: inline-block; width: 90px; height: 8px; border-radius: 4px; background: var(--n-border); overflow: hidden; }
+.nayro-meter__bar { display: block; height: 100%; background: linear-gradient(90deg, var(--n-used), var(--n-accent)); }
+
+/* ==========================================================================
+   24b. Homepage extras: featured, how it works, stats, blog
+   ========================================================================== */
+.nayro-featured .nayro-products-wrap { margin-top: 2px; }
+
+/* How it works */
+.nayro-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.nayro-step { position: relative; background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius-lg); padding: 34px 24px 26px; box-shadow: var(--n-shadow); text-align: center; transition: transform var(--n-transition), box-shadow var(--n-transition); }
+.nayro-step:hover { transform: translateY(-4px); box-shadow: var(--n-shadow-lg); }
+.nayro-step__num { position: absolute; top: -16px; inset-inline-start: 24px; width: 34px; height: 34px; border-radius: 50%; background: var(--n-primary); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-family: var(--n-font-head); font-weight: 700; font-size: 15px; box-shadow: 0 6px 14px rgba(255, 107, 0, .32); }
+.nayro-step__icon { display: inline-flex; width: 64px; height: 64px; border-radius: 18px; align-items: center; justify-content: center; font-size: 30px; line-height: 1; background: rgba(255, 107, 0, .1); margin-bottom: 14px; }
+.nayro-step__title { font-size: 18px; margin: 0 0 6px; }
+.nayro-step__text { color: var(--n-muted); font-size: 14px; margin: 0; }
+
+/* Stats band */
+.nayro-stats { background: linear-gradient(135deg, var(--n-secondary), #1f2937); color: #fff; padding: 36px 0; }
+.nayro-stats__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; text-align: center; }
+.nayro-stat__value { display: block; font-family: var(--n-font-head); font-weight: 700; font-size: clamp(24px, 3vw, 36px); color: #fff; line-height: 1.1; }
+.nayro-stat__label { display: block; margin-top: 6px; font-size: 13px; color: rgba(255, 255, 255, .78); }
+
+/* Blog grid on the homepage */
+.nayro-posts--home { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* ==========================================================================
+   25. Dark mode helpers (images/logos stay readable)
+   ========================================================================== */
+[data-theme="dark"] .nayro-search__form,
+[data-theme="dark"] .nayro-widget,
+[data-theme="dark"] .nayro-form { background: var(--n-surface); }
+
+/* ==========================================================================
+   26. Motion preference
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}
+
+/* ==========================================================================
+   27. Responsive
+   ========================================================================== */
+@media (max-width: 1024px) {
+	ul.products, .nayro-products-wrap ul.products { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	.nayro-layout { grid-template-columns: 1fr; }
+	.nayro-layout__aside { position: static; }
+	.nayro-footer__grid { grid-template-columns: repeat(2, 1fr); }
+	.nayro-contact { grid-template-columns: 1fr; }
+	.nayro-posts--home { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+	.nayro-burger { display: inline-flex; }
+	.nayro-search { order: 3; flex-basis: 100%; max-width: 100%; margin-bottom: 10px; }
+	.nayro-header__inner { flex-wrap: wrap; padding-bottom: 8px; }
+	.nayro-nav-wrap { display: none; }
+	.nayro-theme-toggle { display: none; }
+	.nayro-bottomnav { display: flex; }
+	.nayro-whatsapp-float { bottom: 84px; }
+	.nayro-conditions__grid { grid-template-columns: 1fr; }
+	.nayro-categories__grid { grid-template-columns: repeat(3, 1fr); }
+	.nayro-trust__grid { grid-template-columns: repeat(2, 1fr); }
+	body { padding-bottom: 64px; }
+	.nayro-posts { grid-template-columns: 1fr; }
+	.nayro-form__grid { grid-template-columns: 1fr; }
+	.nayro-steps { grid-template-columns: 1fr; }
+	.nayro-stats__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+	ul.products, .nayro-products-wrap ul.products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+	.nayro-categories__grid { grid-template-columns: repeat(2, 1fr); }
+	.nayro-hero__slide { min-height: 340px; padding: 40px 0; }
+	.nayro-hero__perks { font-size: 12px; gap: 8px 14px; }
+	.nayro-footer__grid { grid-template-columns: 1fr; }
+	.nayro-section { padding: 32px 0; }
+	.nayro-sell-banner__inner { padding: 26px; }
+	.nayro-sell-banner__art { display: none; }
+	.nayro-newsletter__form input[type="email"] { min-width: 0; width: 100%; }
+	.nayro-newsletter__form { width: 100%; }
+	.nayro-newsletter__form .nayro-btn { width: 100%; }
+	.nayro-product__quick { opacity: 1; transform: none; }
+	.nayro-section__head { flex-direction: column; align-items: flex-start; }
+	.nayro-countdown__unit { min-width: 52px; }
+	.nayro-stat__value { font-size: 22px; }
+	.nayro-steps { gap: 26px; }
+}
+
+/* Quickview force close */
+.nayro-quickview[hidden], body:not(.nayro-quickview-open) .nayro-quickview { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+body.nayro-quickview-open .nayro-quickview:not([hidden]) { display: flex !important; pointer-events: auto !important; visibility: visible !important; }
+
+/* Show every configured brand at once with a responsive logo grid. */
+.nayro-brands__marquee{overflow:visible}
+.nayro-brands__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:16px;align-items:stretch;margin-top:24px}
+.nayro-brands__grid .nayro-brand{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:116px;height:100%;padding:18px 16px;border:1px solid var(--n-border);border-radius:16px;background:var(--n-surface);text-decoration:none;box-shadow:var(--n-shadow);transition:transform var(--n-transition),border-color var(--n-transition),box-shadow var(--n-transition)}
+.nayro-brands__grid .nayro-brand:hover{transform:translateY(-3px);border-color:var(--n-primary);box-shadow:var(--n-shadow-lg)}
+.nayro-brands__grid .nayro-brand img{display:block;width:100%;height:58px;max-height:58px;object-fit:contain;filter:none;opacity:1}
+.nayro-brands__grid .nayro-brand__caption{color:var(--n-muted);font-size:13px;font-weight:600;text-align:center}
+.nayro-brands__grid .nayro-brand__name{display:flex;flex:1;align-items:center;justify-content:center;color:var(--n-text);font-weight:700;text-align:center}
+@media(max-width:480px){.nayro-brands__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.nayro-brands__grid .nayro-brand{min-height:104px;padding:14px 12px}}

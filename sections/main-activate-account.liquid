@@ -1,0 +1,39 @@
+<div class="nayro-customer">
+  <div class="nayro-customer__card">
+    <h1>{{ 'customer.general.activate' | t }}</h1>
+    <p class="nayro-customer__note">{{ 'customer.general.activate_text' | t }}</p>
+
+    {%- form 'activate_customer_password', class: 'nayro-form' -%}
+      {%- if form.errors -%}
+        <div class="nayro-notice nayro-notice--error" role="alert">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+
+      <div>
+        <label for="ActivatePassword">{{ 'customer.general.password' | t }}</label>
+        <input id="ActivatePassword" type="password" name="customer[password]" autocomplete="new-password" required>
+      </div>
+
+      <div>
+        <label for="ActivatePasswordConfirm">{{ 'customer.general.confirm_password' | t }}</label>
+        <input id="ActivatePasswordConfirm" type="password" name="customer[password_confirmation]" autocomplete="new-password" required>
+      </div>
+
+      <button type="submit" class="nayro-btn nayro-btn--primary nayro-btn--block">{{ 'customer.general.activate' | t }}</button>
+
+      <button type="submit" name="decline" class="nayro-btn nayro-btn--ghost nayro-btn--block">{{ 'customer.general.decline' | t }}</button>
+    {%- endform -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Activate account",
+  "class": "nayro-main-activate-account-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Activate account"
+    }
+  ]
+}
+{% endschema %}

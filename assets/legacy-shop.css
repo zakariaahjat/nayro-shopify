@@ -1,0 +1,977 @@
+/*!
+ * Nayro - legacy shop styles
+ *
+ * Preserved from the original theme's shop stylesheet to keep the visual
+ * design identical. Class names are inert leftovers and do not depend on
+ * any WordPress or WooCommerce runtime. Native Shopify markup lives in
+ * nayro-shopify.css.
+ */
+
+/* ==========================================================================
+   Shop layout
+   ========================================================================== */
+.nayro-shop { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 30px; align-items: start; }
+.nayro-shop__sidebar { position: sticky; top: 90px; }
+.nayro-shop__main { min-width: 0; }
+.nayro-filters-toggle { display: none; margin-bottom: 16px; }
+
+.woocommerce .woocommerce-result-count { float: none; margin: 0; color: var(--n-muted); font-size: 14px; }
+.woocommerce .woocommerce-ordering { float: none; margin: 0; }
+.woocommerce .woocommerce-ordering select { padding: 9px 12px; border: 1px solid var(--n-border); border-radius: var(--n-radius-sm); background: var(--n-surface); }
+.woocommerce .woocommerce-notices-wrapper,
+.woocommerce-before-shop-loop { margin-bottom: 14px; }
+
+/* Toolbar row */
+.woocommerce-before-shop-loop,
+.nayro-shop__main .woocommerce-result-count { }
+.nayro-shop .woocommerce-result-count { order: 1; }
+.nayro-shop .woocommerce-ordering { order: 2; }
+
+/* Make the toolbar a flex row even though WC splits it */
+.nayro-shop__main::before { content: none; }
+.nayro-shop__main { display: block; }
+
+/* Track the toolbar container (WC injects both inline) */
+.nayro-shop__main > .woocommerce { }
+.nayro-shop__main .woocommerce-result-count,
+.nayro-shop__main .woocommerce-ordering,
+.nayro-shop__main .nayro-view-toggle { display: inline-block; vertical-align: middle; }
+.nayro-view-toggle { display: inline-flex; gap: 4px; margin-inline-start: 12px; border: 1px solid var(--n-border); border-radius: var(--n-radius-sm); padding: 3px; background: var(--n-surface); }
+.nayro-view-btn { border: 0; background: transparent; width: 34px; height: 34px; border-radius: 6px; color: var(--n-muted); display: inline-flex; align-items: center; justify-content: center; }
+.nayro-view-btn.is-active { background: var(--n-primary); color: #fff; }
+.nayro-view-btn:hover { color: var(--n-primary); }
+.nayro-view-btn.is-active:hover { color: #fff; }
+
+/* ==========================================================================
+   Filters sidebar
+   ========================================================================== */
+.nayro-filters { background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius); padding: 18px; box-shadow: var(--n-shadow); }
+.nayro-filters__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.nayro-filters__title { font-family: var(--n-font-head); font-weight: 700; font-size: 17px; }
+.nayro-filters__reset { border: 0; background: transparent; color: var(--n-primary); font-size: 13px; font-weight: 600; }
+.nayro-filter-group { padding: 14px 0; border-top: 1px solid var(--n-border); }
+.nayro-filter-group__title { font-size: 14px; text-transform: uppercase; letter-spacing: .03em; color: var(--n-muted); margin-bottom: 10px; }
+.nayro-filter-list { list-style: none; margin: 0; padding: 0; }
+.nayro-filter-item label { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 14px; cursor: pointer; }
+.nayro-filter-item input { accent-color: var(--n-primary); }
+.nayro-filter-item__label { flex: 1 1 auto; display: inline-flex; align-items: center; gap: 2px; }
+.nayro-filter-item__count { color: var(--n-muted); font-size: 12px; }
+.nayro-filter-item--new .nayro-filter-item__label { color: var(--n-accent); font-weight: 600; }
+.nayro-filter-item--used .nayro-filter-item__label { color: var(--n-used); font-weight: 600; }
+.nayro-filter-item--refurbished .nayro-filter-item__label { color: var(--n-primary); font-weight: 600; }
+.nayro-filter-cats ul.children { padding-inline-start: 16px; }
+.nayro-filter-cats li { padding: 3px 0; font-size: 14px; }
+.nayro-filter-price { display: flex; align-items: center; gap: 8px; }
+.nayro-filter-price input { width: 100%; padding: 9px 10px; border: 1px solid var(--n-border); border-radius: var(--n-radius-sm); }
+.nayro-filter-rating .nayro-filter-item__label svg { color: var(--n-used); }
+.nayro-filters__actions { margin-top: 16px; }
+
+.nayro-load-more-wrap { text-align: center; margin: 26px 0; }
+.woocommerce nav.woocommerce-pagination { margin-top: 26px; }
+
+/* ==========================================================================
+   Grid / list toggle
+   ========================================================================== */
+.nayro-shop.nayro-view-list ul.products { grid-template-columns: 1fr; }
+.nayro-view-list ul.products .nayro-product { flex-direction: row; }
+.nayro-view-list ul.products .nayro-product__media { width: 240px; flex: 0 0 240px; aspect-ratio: auto; }
+.nayro-view-list ul.products .nayro-product__body { padding: 20px; }
+.nayro-view-list ul.products .nayro-product__title { font-size: 19px; }
+.nayro-view-list ul.products .nayro-product__footer { max-width: 240px; }
+
+/* ==========================================================================
+   Notices
+   ========================================================================== */
+.woocommerce-message,
+.woocommerce-info,
+.woocommerce-error {
+	border: 0;
+	border-radius: var(--n-radius);
+	background: var(--n-surface);
+	border-inline-start: 4px solid var(--n-accent);
+	box-shadow: var(--n-shadow);
+	padding: 14px 18px;
+	margin-bottom: 16px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+.woocommerce-error { border-inline-start-color: var(--n-sale); }
+.woocommerce-info { border-inline-start-color: var(--n-primary); }
+.woocommerce-message .button,
+.woocommerce-info .button,
+.woocommerce-error .button {
+	margin-inline-start: auto;
+	padding: 9px 16px;
+	border-radius: var(--n-radius-sm);
+	background: var(--n-primary);
+	color: #fff !important;
+	font-weight: 600;
+	font-family: var(--n-font-head);
+}
+
+/* ==========================================================================
+   Single product
+   ========================================================================== */
+.nayro-single.woocommerce { }
+.nayro-single .woocommerce-product-gallery { border-radius: var(--n-radius); overflow: hidden; }
+.single-product div.product { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+.single-product div.product .woocommerce-product-gallery { margin: 0; }
+.single-product div.product .summary { margin: 0; }
+
+.nayro-single__summary .product_title { font-size: clamp(22px, 3vw, 32px); }
+.nayro-single__summary .price { font-family: var(--n-font-head); font-size: 28px; font-weight: 700; color: var(--n-secondary); }
+[data-theme="dark"] .nayro-single__summary .price { color: var(--n-text); }
+.nayro-single__summary .price del { color: var(--n-muted); font-size: 18px; font-weight: 400; }
+.nayro-single__summary .price ins { text-decoration: none; color: var(--n-sale); }
+.nayro-single__summary .woocommerce-product-details__short-description { color: var(--n-muted); }
+.nayro-single__summary .woocommerce-product-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+
+.single-product .stock.in-stock { color: var(--n-accent); font-weight: 600; }
+.single-product .stock.out-of-stock { color: var(--n-sale); font-weight: 600; }
+
+.nayro-single__summary form.cart { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 18px 0; }
+.nayro-qty-wrap { display: inline-flex; align-items: center; border: 1px solid var(--n-border); border-radius: var(--n-radius-sm); overflow: hidden; }
+.nayro-qty-btn { width: 42px; height: 46px; border: 0; background: var(--n-surface-2); color: var(--n-text); font-size: 18px; font-weight: 700; }
+.nayro-qty-btn:hover { background: var(--n-primary); color: #fff; }
+.nayro-qty-wrap input.qty { width: 60px; height: 46px; border: 0; text-align: center; -moz-appearance: textfield; }
+.nayro-qty-wrap input.qty::-webkit-outer-spin-button,
+.nayro-qty-wrap input.qty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.single-product .single_add_to_cart_button { padding: 14px 30px; border: 0; border-radius: var(--n-radius); background: var(--n-primary); color: #fff; font-family: var(--n-font-head); font-weight: 600; font-size: 15px; }
+.single-product .single_add_to_cart_button:hover { background: var(--n-primary-dark); }
+.nayro-buy-whatsapp { margin: 4px 0 16px; }
+
+/* Tabs */
+.woocommerce-tabs { margin-top: 40px; }
+.woocommerce-tabs ul.tabs { display: flex; gap: 6px; list-style: none; margin: 0 0 20px; padding: 0; border-bottom: 1px solid var(--n-border); flex-wrap: wrap; }
+.woocommerce-tabs ul.tabs li a { display: inline-block; padding: 12px 18px; font-family: var(--n-font-head); font-weight: 600; color: var(--n-muted); border-bottom: 3px solid transparent; }
+.woocommerce-tabs ul.tabs li.active a { color: var(--n-primary); border-color: var(--n-primary); }
+.woocommerce-tabs .panel { background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius); padding: 24px; box-shadow: var(--n-shadow); }
+.woocommerce-tabs .shop_attributes th { text-align: start; width: 200px; }
+.woocommerce-tabs .shop_attributes th,
+.woocommerce-tabs .shop_attributes td { padding: 10px 14px; border-bottom: 1px solid var(--n-border); }
+
+/* Reviews */
+.woocommerce-Reviews { margin-top: 20px; }
+.woocommerce-Reviews ol.commentlist { list-style: none; margin: 0; padding: 0; }
+.woocommerce-Reviews ol.commentlist li { margin-bottom: 16px; }
+.woocommerce-Reviews .comment_container { display: flex; gap: 12px; background: var(--n-surface-2); padding: 16px; border-radius: var(--n-radius); }
+.woocommerce-Reviews .comment-text { flex: 1 1 auto; }
+.woocommerce-Reviews .star-rating { color: var(--n-used); }
+.comment-form input, .comment-form textarea { padding: 12px 14px; border: 1px solid var(--n-border); border-radius: var(--n-radius-sm); width: 100%; }
+.comment-form .submit input { background: var(--n-primary); color: #fff; border: 0; }
+
+/* Star rating (shared) */
+.star-rating { position: relative; display: inline-block; overflow: hidden; font-family: star; line-height: 1; }
+.woocommerce .star-rating::before { content: "sssss"; opacity: .3; }
+.woocommerce .star-rating span::before { content: "SSSSS"; }
+.star-rating span { position: absolute; top: 0; inset-inline-start: 0; white-space: nowrap; overflow: hidden; }
+
+/* ==========================================================================
+   Mini cart drawer
+   ========================================================================== */
+.nayro-mini-list { list-style: none; margin: 0; padding: 0; }
+.nayro-mini-list .woocommerce-mini-cart-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--n-border); position: relative; }
+.nayro-mini-list__thumb img { width: 64px; height: 64px; border-radius: var(--n-radius-sm); object-fit: cover; }
+.nayro-mini-list__info { flex: 1 1 auto; display: flex; flex-direction: column; gap: 4px; }
+.nayro-mini-list__name { font-weight: 600; font-size: 14px; padding-inline-end: 20px; }
+.nayro-mini-list__qty { color: var(--n-muted); font-size: 13px; }
+.nayro-mini-list__remove { position: absolute; top: 10px; inset-inline-end: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--n-surface-2); color: var(--n-muted); text-align: center; line-height: 22px; font-size: 16px; }
+.nayro-mini-list__remove:hover { background: var(--n-sale); color: #fff; }
+.nayro-mini-footer { padding-top: 14px; }
+.woocommerce-mini-cart__total { display: flex; justify-content: space-between; font-family: var(--n-font-head); font-weight: 700; font-size: 17px; }
+.woocommerce-mini-cart__buttons { display: grid; gap: 8px; margin: 12px 0 0; }
+.woocommerce-mini-cart__buttons a.button { display: block; text-align: center; padding: 12px; border-radius: var(--n-radius-sm); background: var(--n-surface-2); color: var(--n-text); font-weight: 600; }
+.woocommerce-mini-cart__buttons a.checkout { background: var(--n-primary); color: #fff; }
+.woocommerce-mini-cart__buttons a:hover { color: var(--n-primary); }
+.woocommerce-mini-cart__buttons a.checkout:hover { color: #fff; background: var(--n-primary-dark); }
+.nayro-mini-empty { text-align: center; color: var(--n-muted); display: grid; gap: 12px; justify-items: center; padding: 40px 0; }
+.nayro-mini-empty svg { color: var(--n-border); }
+
+/* ==========================================================================
+   Cart & checkout
+   ========================================================================== */
+.woocommerce-cart-form table.shop_table,
+.woocommerce-checkout-review-order table.shop_table,
+.woocommerce table.shop_table {
+	width: 100%;
+	border-collapse: collapse;
+	background: var(--n-surface);
+	border: 1px solid var(--n-border);
+	border-radius: var(--n-radius);
+	overflow: hidden;
+}
+.woocommerce table.shop_table th,
+.woocommerce table.shop_table td { padding: 14px; border-bottom: 1px solid var(--n-border); text-align: start; }
+.woocommerce table.shop_table th { background: var(--n-surface-2); font-family: var(--n-font-head); }
+.woocommerce table.shop_table img { width: 60px; border-radius: var(--n-radius-sm); }
+.cart_totals table { width: 100%; }
+.cart_totals { background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius); padding: 20px; box-shadow: var(--n-shadow); }
+.woocommerce-cart .cart-collaterals { display: flex; justify-content: flex-end; margin-top: 24px; }
+.woocommerce .checkout_coupon,
+.woocommerce .woocommerce-checkout { }
+.woocommerce form.checkout_coupon { border: 1px solid var(--n-border); border-radius: var(--n-radius); }
+.woocommerce-checkout #customer_details,
+.woocommerce-checkout #order_review { background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius); padding: 22px; box-shadow: var(--n-shadow); }
+.woocommerce-checkout.col2-set { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; }
+.woocommerce-checkout .col2-set .form-row input,
+.woocommerce-checkout .col2-set .form-row select,
+.woocommerce-checkout .col2-set .form-row textarea { padding: 12px 14px; border: 1px solid var(--n-border); border-radius: var(--n-radius-sm); width: 100%; }
+.woocommerce-checkout #place_order,
+.woocommerce .button.alt,
+.woocommerce-cart .checkout-button { padding: 14px 30px; border-radius: var(--n-radius); background: var(--n-primary); color: #fff !important; font-family: var(--n-font-head); font-weight: 600; border: 0; }
+.woocommerce-checkout #place_order:hover { background: var(--n-primary-dark); }
+.woocommerce-checkout .woocommerce-terms-and-conditions-wrapper { margin-bottom: 16px; }
+
+/* Account */
+.woocommerce-account .woocommerce-MyAccount-navigation { background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius); padding: 10px; box-shadow: var(--n-shadow); }
+.woocommerce-account .woocommerce-MyAccount-navigation ul { list-style: none; margin: 0; padding: 0; }
+.woocommerce-account .woocommerce-MyAccount-navigation li a { display: block; padding: 10px 14px; border-radius: var(--n-radius-sm); }
+.woocommerce-account .woocommerce-MyAccount-navigation li.is-active a { background: var(--n-primary); color: #fff; }
+.woocommerce-account .woocommerce-MyAccount-content { background: var(--n-surface); border: 1px solid var(--n-border); border-radius: var(--n-radius); padding: 22px; box-shadow: var(--n-shadow); }
+.woocommerce-account .woocommerce { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 24px; align-items: start; }
+.woocommerce form.login,
+.woocommerce form.register { border: 1px solid var(--n-border); border-radius: var(--n-radius); padding: 24px; }
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+@media (max-width: 1024px) {
+	.nayro-shop { grid-template-columns: 1fr; }
+	.nayro-shop__sidebar { position: fixed; top: 0; inset-inline-start: 0; width: min(340px, 90vw); height: 100%; z-index: 200; background: var(--n-bg); padding: 16px; overflow-y: auto; transform: translateX(-100%); transition: transform var(--n-transition); box-shadow: var(--n-shadow-lg); }
+	[dir="rtl"] .nayro-shop__sidebar { transform: translateX(100%); }
+	.nayro-shop__sidebar.is-open { transform: translateX(0); }
+	.nayro-filters-toggle { display: inline-flex; }
+	.single-product div.product { grid-template-columns: 1fr; }
+	.woocommerce-account .woocommerce { grid-template-columns: 1fr; }
+	.woocommerce-checkout.col2-set { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+	.nayro-view-list ul.products .nayro-product { flex-direction: column; }
+	.nayro-view-list ul.products .nayro-product__media { width: 100%; flex-basis: auto; aspect-ratio: 1 / 1; }
+}
+
+/* ==========================================================================
+   Nayro 2.0 - Product cards, gallery, specs
+   ========================================================================== */
+.nayro-product{background:var(--n-surface);border:1px solid var(--n-border);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--n-shadow);transition:transform var(--n-transition),box-shadow var(--n-transition),border-color var(--n-transition);height:100%}
+.nayro-product:hover{transform:translateY(-6px);box-shadow:var(--n-shadow-lg);border-color:rgba(255,107,0,.4)}
+.nayro-product__media{position:relative;aspect-ratio:4/5;background:var(--n-surface-2);overflow:hidden}
+.nayro-product__image-link{display:block;height:100%}
+.nayro-product__slides{position:relative;display:block;height:100%}
+.nayro-product__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s ease,transform .8s ease;transform:scale(1.02)}
+.nayro-product__img.is-active{opacity:1;transform:scale(1)}
+.nayro-product:hover .nayro-product__img.is-active{transform:scale(1.05)}
+.nayro-product__media:hover .nayro-product__quick{opacity:1;transform:translateX(0);pointer-events:auto}
+.nayro-product__quick{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:8px;opacity:0;transform:translateX(10px);transition:var(--n-transition);pointer-events:none}
+.nayro-quick-btn,.nayro-wish-btn,.nayro-compare-btn{width:38px;height:38px;border-radius:999px;border:1px solid var(--n-border);background:rgba(255,255,255,.95);color:var(--n-text);display:inline-flex;align-items:center;justify-content:center;box-shadow:var(--n-shadow);cursor:pointer}
+[data-theme=\"dark\"] .nayro-quick-btn,[data-theme=\"dark\"] .nayro-wish-btn,[data-theme=\"dark\"] .nayro-compare-btn{background:rgba(17,24,39,.95)}
+.nayro-product__dots{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:6px}
+.nayro-product__dot{width:7px;height:7px;border-radius:999px;background:rgba(255,255,255,.7);box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.nayro-product__dot.is-active{background:var(--n-primary);width:18px}
+.nayro-product__body{padding:16px;display:flex;flex-direction:column;gap:8px}
+.nayro-product__meta-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nayro-product__cat,.nayro-product__brand{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--n-muted)}
+.nayro-product__title{font-size:16px;margin:0;line-height:1.4}.nayro-product__title a{color:var(--n-text)}.nayro-product__title a:hover{color:var(--n-primary)}
+.nayro-product__desc{margin:0;font-size:13px;color:var(--n-muted);line-height:1.6}
+.nayro-product__footer{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+.nayro-product__price{font-family:var(--n-font-head);font-size:20px;font-weight:700;color:var(--n-secondary)}
+[data-theme=\"dark\"] .nayro-product__price{color:var(--n-text)}.nayro-product__price del{color:var(--n-muted);font-size:15px;font-weight:400}.nayro-product__price ins{color:var(--n-sale);text-decoration:none}
+.nayro-product__actions .button,.nayro-product__actions a.button{width:100%;justify-content:center;border-radius:999px;background:var(--n-secondary);color:#fff;font-weight:600}
+.nayro-product__actions .button:hover{background:var(--n-primary)}
+@media(max-width:768px){.nayro-product__quick{opacity:1;transform:none;flex-direction:row;top:auto;bottom:10px;left:10px;right:10px;justify-content:center}}
+
+/* Gallery specs hero extras */.nayro-gallery{display:flex;flex-direction:column;gap:12px}.nayro-gallery__stage{position:relative;border-radius:18px;overflow:hidden;background:var(--n-surface-2);aspect-ratio:1/1}.nayro-gallery__slide{position:absolute;inset:0;opacity:0;transition:opacity .4s ease;display:flex;align-items:center;justify-content:center}.nayro-gallery__slide.is-active{opacity:1}.nayro-gallery__img{width:100%;height:100%;object-fit:cover}.nayro-gallery__nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:999px;border:1px solid var(--n-border);background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;z-index:2}.nayro-gallery__nav--prev{left:12px}.nayro-gallery__nav--next{right:12px}.nayro-gallery__thumbs{display:flex;gap:10px;overflow-x:auto}.nayro-gallery__thumb{flex:0 0 78px;height:78px;border-radius:12px;overflow:hidden;border:1px solid var(--n-border);padding:0;background:var(--n-surface)}.nayro-gallery__thumb.is-active{border-color:var(--n-primary);box-shadow:0 0 0 2px rgba(255,107,0,.25)}.nayro-gallery__thumb img{width:100%;height:100%;object-fit:cover}.nayro-gallery .onsale,.nayro-gallery .nayro-badge{position:absolute;top:12px;left:12px;z-index:2}.nayro-gallery__lightbox{position:fixed;inset:0;background:rgba(10,15,25,.9);display:flex;align-items:center;justify-content:center;z-index:9999}.nayro-gallery__lightbox[hidden]{display:none}.nayro-gallery__lightbox-img{max-width:90vw;max-height:90vh;border-radius:12px}.nayro-gallery__lightbox-close{position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:999px;border:0;background:rgba(255,255,255,.9);font-size:22px}.nayro-specs-summary{margin-top:18px;padding:16px;border:1px solid var(--n-border);border-radius:14px;background:var(--n-surface)}.nayro-specs-summary__title{margin:0 0 10px;font-family:var(--n-font-head);font-size:17px}.nayro-specs-table{width:100%;border-collapse:collapse}.nayro-specs-table th,.nayro-specs-table td{padding:9px 10px;border-bottom:1px solid var(--n-border);text-align:left;font-size:14px}.nayro-specs-table th{color:var(--n-muted);font-weight:500;width:40%}.nayro-hero__actions{display:flex;gap:10px;flex-wrap:wrap}.nayro-hero__slide--align-center .nayro-hero__content{text-align:center;margin:0 auto;align-items:center}.nayro-hero__slide--align-end .nayro-hero__content{text-align:right;margin-left:auto;align-items:flex-end}
+
+/* ==========================================================================
+   Nayro 2.1 - Wider, upscaled product cards
+   ========================================================================== */
+ul.products, .nayro-products-wrap ul.products{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.nayro-product{border-radius:16px}
+.nayro-product__media{aspect-ratio:1/1}
+.nayro-product__body{padding:22px;gap:12px}
+.nayro-product__title{font-size:18px}
+.nayro-product__price{font-size:24px}
+.nayro-product__desc{font-size:14px}
+.nayro-product__actions .button,.nayro-product__actions a.button{padding:14px 20px;font-size:15px;min-height:48px}
+.nayro-quick-btn,.nayro-wish-btn,.nayro-compare-btn{width:44px;height:44px}
+.nayro-shop{grid-template-columns:280px minmax(0,1fr);gap:32px}
+.nayro-products-wrap--slider{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(320px,360px);gap:24px;overflow-x:auto;padding-bottom:10px}
+.nayro-products-wrap--slider ul.products{display:contents}
+.nayro-single-product{display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr);gap:40px;align-items:start}
+.nayro-product-gallery{position:sticky;top:90px}
+.nayro-product-summary{max-width:640px}
+@media(max-width:1180px){ul.products,.nayro-products-wrap ul.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.nayro-single-product{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}}
+@media(max-width:860px){.nayro-shop{grid-template-columns:1fr;gap:20px}.nayro-shop__sidebar{order:2}.nayro-shop__main{order:1}.nayro-single-product{grid-template-columns:1fr;gap:22px}.nayro-product-gallery{position:static}}
+@media(max-width:560px){ul.products,.nayro-products-wrap ul.products{grid-template-columns:1fr;gap:16px}.nayro-product__media{aspect-ratio:4/3}.nayro-product__body{padding:18px}}
+
+/* Nayro Responsive Fix - Modern Product Cards */
+.woocommerce ul.products,
+.woocommerce-page ul.products,
+ul.products,
+.nayro-products-wrap ul.products{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+  width:100%;
+  margin:0;
+  padding:0;
+  float:none !important;
+}
+.woocommerce ul.products::before,
+.woocommerce ul.products::after,
+.woocommerce-page ul.products::before,
+.woocommerce-page ul.products::after,
+ul.products::before,
+ul.products::after{display:none !important;content:none !important}
+.woocommerce ul.products li.product,
+.woocommerce-page ul.products li.product,
+ul.products li.product,
+li.nayro-product{
+  float:none !important;
+  clear:none !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  margin:0 !important;
+  box-sizing:border-box;
+  height:100%;
+}
+.woocommerce ul.products li.product .woocommerce-loop-product__link,
+.nayro-product__image-link{width:100%}
+.woocommerce ul.products li.product img,
+.nayro-product img,
+.nayro-product__img{display:block;width:100%;height:100%;max-width:100%;object-fit:cover}
+.nayro-product__media{width:100%;aspect-ratio:1/1}
+.nayro-product__body{min-width:0}
+.nayro-product__title{word-break:break-word}
+.nayro-product__footer .button{width:100%;justify-content:center}
+@media(max-width:379px){
+  .woocommerce ul.products,
+  .woocommerce-page ul.products,
+  ul.products,
+  .nayro-products-wrap ul.products{grid-template-columns:minmax(0,1fr)}
+}
+@media(min-width:600px){
+  .woocommerce ul.products,
+  .woocommerce-page ul.products,
+  ul.products,
+  .nayro-products-wrap ul.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+}
+@media(min-width:768px){
+  .woocommerce ul.products,
+  .woocommerce-page ul.products,
+  ul.products,
+  .nayro-products-wrap ul.products{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+}
+@media(min-width:1024px){
+  .woocommerce ul.products,
+  .woocommerce-page ul.products,
+  ul.products,
+  .nayro-products-wrap ul.products{grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+}
+@media(min-width:1280px){
+  .woocommerce ul.products,
+  .woocommerce-page ul.products,
+  ul.products,
+  .nayro-products-wrap ul.products{grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+}
+/* Cart responsive */
+.woocommerce-cart-form table.shop_table,
+.woocommerce-cart table.shop_table{width:100%}
+.woocommerce-cart .cart-collaterals{margin-top:24px}
+.woocommerce-cart .cart_totals{width:100%}
+@media(max-width:768px){
+  .woocommerce-cart-form .shop_table_responsive tr{display:block;border:1px solid var(--n-border);border-radius:12px;margin-bottom:16px;padding:12px}
+  .woocommerce-cart-form .shop_table_responsive td{display:flex;align-items:center;justify-content:space-between;border:none;padding:10px 0;text-align:right}
+  .woocommerce-cart-form .shop_table_responsive td::before{content:attr(data-title);font-weight:600;color:var(--n-text);margin-right:12px}
+  .woocommerce-cart-form .shop_table_responsive td.product-thumbnail{justify-content:center}
+  .woocommerce-cart-form .shop_table_responsive td.product-thumbnail::before{display:none}
+  .woocommerce-cart-form .shop_table_responsive thead{display:none}
+  .woocommerce .cart_totals{float:none;width:100%}
+  .woocommerce .coupon{display:flex;flex-direction:column;gap:10px}
+  .woocommerce .coupon .input-text{width:100%}
+}
+.nayro-product-meta-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}.nayro-brand-inline{display:inline-flex;align-items:center;gap:7px;font-weight:700}.nayro-brand-inline__image{display:block;width:auto;max-width:72px;height:auto;max-height:30px;object-fit:contain}
+.nayro-stock-status{display:inline-flex;align-items:center;width:max-content;border-radius:999px;padding:5px 10px;font-size:12px;line-height:1.2;font-weight:700;background:var(--n-surface-2);color:var(--n-text)}.nayro-stock-status--instock{background:rgba(22,163,74,.12);color:#15803d}.nayro-stock-status--outofstock{background:rgba(107,114,128,.14);color:#4b5563}.nayro-stock-status--onbackorder{background:rgba(37,99,235,.12);color:#1d4ed8}.nayro-stock-status--card{font-size:11px;padding:5px 8px;white-space:nowrap}.nayro-product-description{margin:28px 0;padding:22px;border:1px solid var(--n-border);border-radius:16px;background:var(--n-surface)}.nayro-product-description h2{margin:0 0 14px;font-size:22px}.nayro-product-description>:last-child{margin-bottom:0}
+.nayro-product-identifiers{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:8px 0 16px;color:var(--n-muted);font-size:13px}.nayro-product-identifiers__brand{display:inline-flex;align-items:center;gap:7px;color:var(--n-text);font-weight:700}.nayro-product-identifiers .nayro-brand-inline__image{max-height:24px}.nayro-product-details-grid{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;margin:30px 0}.nayro-product-details-grid>div{min-width:0;padding:22px;border:1px solid var(--n-border);border-radius:16px;background:var(--n-surface)}.nayro-product-details-grid h2{margin:0 0 16px;font-size:22px}.nayro-product-details-grid .nayro-specs-table{margin:0}.nayro-single>.related.products{grid-column:1/-1;width:100%}@media(max-width:700px){.nayro-product-details-grid{grid-template-columns:1fr;gap:16px}}
+.nayro-product-brand-logo{display:flex;justify-content:center;align-items:center;width:100%;margin:8px auto 20px;text-align:center}.nayro-product-brand-logo__image{display:block;width:auto;max-width:min(220px,70%);max-height:72px;object-fit:contain}
+.nayro-stock-status--preorder{background:rgba(124,58,237,.12);color:#6d28d9}.nayro-stock-status--coming_soon{background:rgba(217,119,6,.14);color:#b45309}
+
+ul.products,.nayro-products-wrap ul.products,.woocommerce ul.products,.woocommerce-page ul.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;width:100%;min-width:0;margin:0;padding:0}
+.woocommerce ul.products li.product.nayro-product,.woocommerce-page ul.products li.product.nayro-product,ul.products li.product.nayro-product{float:none;clear:none;width:auto;min-width:0;max-width:none;height:auto;margin:0;box-sizing:border-box}
+.nayro-product{width:100%;min-width:0;height:100%}.nayro-product__media{width:100%;min-width:0;aspect-ratio:1/1}
+.nayro-product__image-link,.nayro-product__slides{display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-width:0}
+.nayro-product__img,.nayro-product__image-link img{display:block;width:100%;height:100%;max-width:100%;object-fit:contain;padding:12px}
+.nayro-product__body{flex:1 1 auto;min-width:0;max-width:100%}
+.nayro-product__body>.nayro-badges{position:static;inset:auto;display:flex;flex:0 0 auto;flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px;min-width:0;max-width:100%}
+.nayro-product__body>.nayro-badges>*{flex:0 0 auto;max-width:100%}
+.nayro-product__meta-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 10px;min-width:0}
+.nayro-product__cat,.nayro-product__brand,.nayro-product__title,.nayro-product__title a{min-width:0;max-width:100%;white-space:normal;word-break:normal;overflow-wrap:normal}
+.nayro-product__title a{display:block}.nayro-product__footer,.nayro-product__price-row,.nayro-product__actions{min-width:0;max-width:100%}
+.nayro-product__price{overflow-wrap:normal;word-break:normal}.nayro-product__footer .button,.nayro-product__footer a.button{width:100%;min-width:0;min-height:44px;white-space:normal}
+.woocommerce-cart-form{width:100%;min-width:0}.woocommerce-cart table.shop_table.cart{width:100%;table-layout:fixed}
+.woocommerce-cart table.shop_table.cart .product-remove{width:44px}.woocommerce-cart table.shop_table.cart .product-thumbnail{width:86px}
+.woocommerce-cart table.shop_table.cart .product-price,.woocommerce-cart table.shop_table.cart .product-subtotal{width:140px}.woocommerce-cart table.shop_table.cart .product-quantity{width:150px}
+.woocommerce-cart table.shop_table.cart td.product-thumbnail img{display:block;width:72px;height:72px;object-fit:contain;margin:0 auto}
+.woocommerce-cart table.shop_table.cart td.product-name,.woocommerce-cart table.shop_table.cart td.product-name a{min-width:0;max-width:100%;white-space:normal;word-break:normal;overflow-wrap:normal}
+.woocommerce-cart .cart_totals{width:min(100%,460px)}
+.nayro-mini-list .woocommerce-mini-cart-item{min-width:0}.nayro-mini-list__thumb{flex:0 0 64px}.nayro-mini-list__thumb img{display:block;width:64px;height:64px;object-fit:contain}
+.nayro-mini-list__info{flex:1 1 0;min-width:0;overflow-wrap:normal;word-break:normal}.nayro-mini-list__name{min-width:0;max-width:100%;white-space:normal;word-break:normal;overflow-wrap:normal}
+@media(max-width:1199px){ul.products,.nayro-products-wrap ul.products,.woocommerce ul.products,.woocommerce-page ul.products{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}}
+@media(max-width:767px){
+ul.products,.nayro-products-wrap ul.products,.woocommerce ul.products,.woocommerce-page ul.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.nayro-product__body{padding:14px;gap:8px}.nayro-product__title{font-size:16px}.nayro-product__price{font-size:19px}
+.nayro-product__actions .button,.nayro-product__actions a.button{padding:10px 8px;font-size:13px}
+.nayro-flash__head{align-items:flex-start}.nayro-countdown{max-width:100%;flex-wrap:wrap;gap:6px}.nayro-countdown__unit{min-width:52px}
+.woocommerce-cart table.shop_table.cart{table-layout:auto;border:0;background:transparent;overflow:visible}.woocommerce-cart-form .shop_table_responsive thead{display:none}
+.woocommerce-cart-form .shop_table_responsive tr{display:grid;grid-template-columns:76px minmax(0,1fr);grid-template-areas:"thumb name" "remove remove" "price price" "quantity quantity" "subtotal subtotal";column-gap:12px;margin-bottom:14px;padding:12px;border:1px solid var(--n-border);border-radius:14px;background:var(--n-surface)}
+.woocommerce-cart-form .shop_table_responsive td{display:flex;align-items:center;justify-content:space-between;min-width:0;border:0;padding:9px 0;text-align:end}
+.woocommerce-cart-form .shop_table_responsive td::before{flex:0 0 auto;margin-inline-end:12px;color:var(--n-text);font-weight:600}
+.woocommerce-cart-form .shop_table_responsive td.product-thumbnail{grid-area:thumb;justify-content:center;align-self:start}.woocommerce-cart-form .shop_table_responsive td.product-thumbnail::before{display:none}
+.woocommerce-cart-form .shop_table_responsive td.product-name{grid-area:name;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;min-width:0;padding:4px 0 10px;text-align:start}
+.woocommerce-cart-form .shop_table_responsive td.product-name::before{align-self:flex-start;margin:0 0 4px}.woocommerce-cart-form .shop_table_responsive td.product-name>a{display:block;min-width:0;max-width:100%;white-space:normal;word-break:normal;overflow-wrap:normal}
+.woocommerce-cart-form .shop_table_responsive td.product-remove{grid-area:remove;justify-content:flex-end;padding:0}.woocommerce-cart-form .shop_table_responsive td.product-remove::before{display:none}
+.woocommerce-cart-form .shop_table_responsive td.product-price{grid-area:price}.woocommerce-cart-form .shop_table_responsive td.product-quantity{grid-area:quantity}.woocommerce-cart-form .shop_table_responsive td.product-subtotal{grid-area:subtotal}
+.woocommerce-cart-form .shop_table_responsive td.product-thumbnail img{width:72px;height:72px;object-fit:contain}.woocommerce-cart-form .shop_table_responsive td.product-quantity input.qty{max-width:90px}
+.woocommerce-cart .cart-collaterals{display:block}.woocommerce-cart .cart_totals{width:100%}.woocommerce .coupon{display:flex;flex-direction:column;gap:10px}.woocommerce .coupon .input-text{width:100%}
+}
+@media(max-width:359px){ul.products,.nayro-products-wrap ul.products,.woocommerce ul.products,.woocommerce-page ul.products{grid-template-columns:minmax(0,1fr);gap:14px}}
+
+.woocommerce ul.products li.product img.nayro-product__img,.woocommerce-page ul.products li.product img.nayro-product__img{object-fit:contain}
+/* Single product: refined layout, concise summary and clear specifications. */
+.single-product .nayro-woocommerce{width:100%;max-width:1320px;margin-inline:auto;padding-inline:clamp(16px,3vw,36px)}
+.single-product div.product.nayro-single{grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr);gap:clamp(28px,4vw,56px);align-items:start}
+.single-product .nayro-single .woocommerce-product-gallery{position:relative;overflow:hidden;padding:clamp(14px,2vw,24px);border:1px solid var(--n-border);border-radius:24px;background:var(--n-surface);box-shadow:var(--n-shadow)}
+.single-product .nayro-single .woocommerce-product-gallery__wrapper,.single-product .nayro-single .woocommerce-product-gallery__image{min-width:0}
+.single-product .nayro-single .woocommerce-product-gallery__image img{display:block;width:100%;height:auto;max-height:640px;aspect-ratio:1/1;object-fit:contain;border-radius:16px}
+.single-product .nayro-single__summary{max-width:none;min-width:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+.single-product .nayro-single__summary .product_title{margin:0 0 12px;font-size:clamp(30px,3.4vw,44px);line-height:1.08;letter-spacing:-.035em;overflow-wrap:anywhere}
+.single-product .nayro-single__summary .price{margin:14px 0;font-size:clamp(30px,3vw,40px);line-height:1.15}
+.single-product .nayro-single__summary .woocommerce-product-rating{margin:0 0 14px}
+.single-product .nayro-product-meta-row{margin:14px 0 18px}
+.single-product .nayro-single__summary form.cart{margin:22px 0 16px;gap:12px}
+.single-product .nayro-single__summary .single_add_to_cart_button{min-height:50px;padding:14px 26px;border-radius:14px;font-size:16px}
+.single-product .nayro-buy-whatsapp{display:flex;justify-content:center;align-items:center;min-height:50px;margin:10px 0 12px;padding:13px 18px;border-radius:14px;font-weight:700}
+.single-product .nayro-product-brand-logo{margin:12px auto 0;padding-top:14px;border-top:1px solid var(--n-border)}
+.single-product .nayro-product-brand-logo__image{max-width:min(200px,70%);max-height:60px}
+.single-product .nayro-product-identifiers{margin:14px 0 18px;color:var(--n-muted)}
+.single-product .nayro-product-details-grid{gap:24px;margin:clamp(36px,5vw,64px) 0 48px}
+.single-product .nayro-product-details-grid>div{padding:clamp(22px,3vw,32px);border-radius:22px;box-shadow:var(--n-shadow)}
+.single-product .nayro-product-details-grid h2{margin-bottom:20px;font-size:clamp(22px,2vw,28px);line-height:1.2;letter-spacing:-.02em}
+.single-product .nayro-product-details-grid__description{font-size:16px;line-height:1.75;color:var(--n-muted)}
+.single-product .nayro-product-details-grid__description>:last-child{margin-bottom:0}
+.single-product .nayro-product-details-grid .nayro-specs-table th{width:42%;color:var(--n-muted);font-weight:600}
+.single-product .nayro-product-details-grid .nayro-specs-table td{font-weight:600;color:var(--n-text)}
+.single-product .nayro-condition-box{margin:20px 0;padding:18px 20px;border-radius:16px}
+.single-product .related.products{margin-top:36px}
+.single-product .related.products>h2{margin-bottom:22px;font-size:clamp(24px,2.5vw,32px);letter-spacing:-.025em}
+@media(max-width:900px){.single-product div.product.nayro-single{grid-template-columns:minmax(0,1fr);gap:22px}.single-product .nayro-single__summary{padding:clamp(20px,5vw,32px)}.single-product .nayro-product-details-grid{grid-template-columns:1fr;gap:16px}}
+@media(max-width:600px){.single-product .nayro-single .woocommerce-product-gallery{border-radius:18px;padding:10px}.single-product .nayro-single__summary{border-radius:18px}.single-product .nayro-single__summary .product_title{font-size:clamp(28px,8vw,36px)}.single-product .nayro-product-details-grid>div{padding:20px;border-radius:18px}.single-product .nayro-single__summary form.cart .single_add_to_cart_button{flex:1 1 100%;width:100%}}
+/* Keep product identity and buying details open, clean and unboxed. */
+.single-product .nayro-single__summary .product_title{max-width:18ch;margin:0 0 14px;font-size:clamp(32px,3.6vw,48px);line-height:1.05;letter-spacing:-.04em}
+.single-product .nayro-single__summary .price{margin:18px 0 12px;font-size:clamp(32px,3.2vw,42px);font-weight:800}
+.single-product .nayro-product-identifiers{display:flex;align-items:center;gap:10px;margin:12px 0 18px;padding:0;border:0;background:transparent;box-shadow:none;color:var(--n-muted);font-size:14px}
+.single-product .nayro-product-identifiers__sku{display:inline-flex;align-items:center;gap:5px}
+.single-product .nayro-product-identifiers__sku strong{color:var(--n-text);font-weight:700}
+.single-product .nayro-single__summary .woocommerce-product-rating{margin-bottom:14px}
+.single-product .nayro-product-meta-row{margin:16px 0 20px}
+.single-product .nayro-single__summary form.cart{margin:22px 0 16px}
+@media(max-width:600px){.single-product .nayro-single__summary .product_title{font-size:clamp(29px,8vw,38px)}.single-product .nayro-single__summary .price{font-size:32px}}
+.nayro-stock-status--in-stock{background:rgba(22,163,74,.12);color:#15803d}
+.nayro-stock-status--arrivage{background:rgba(217,119,6,.14);color:#b45309}
+.nayro-stock-status--commande{background:rgba(37,99,235,.12);color:#1d4ed8}
+.nayro-badge--condition{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:700}
+
+/* Keep the mobile filter sheet above the sticky site header. */
+@media (max-width: 900px) {
+	.nayro-shop__sidebar { z-index: 1100; }
+	.nayro-shop__sidebar.is-open { box-shadow: 0 24px 70px rgba(15, 23, 42, .24); }
+	.nayro-filters { border-radius: 20px; }
+	.nayro-shop { gap: 16px; }
+	.nayro-shop__main .woocommerce-result-count { display: block; margin: 0 0 12px; font-weight: 600; }
+	.nayro-shop__main .woocommerce-ordering { display: block; width: 100%; margin: 0 0 18px; }
+	.nayro-shop__main .woocommerce-ordering select { width: 100%; min-height: 48px; border-radius: 14px; }
+	.nayro-shop__main ul.products { gap: 14px; }
+}
+
+/* The header is sticky; the drawer must cover it so its title and empty state stay visible. */
+.nayro-cart-drawer { z-index: 1100; }
+.nayro-overlay { z-index: 1090; }
+.nayro-cart-drawer .nayro-drawer__head { position: relative; z-index: 1; flex: 0 0 auto; min-height: 68px; background: var(--n-surface); color: var(--n-text); }
+.nayro-cart-drawer .nayro-drawer__title { color: var(--n-text); }
+.nayro-cart-drawer .nayro-drawer__head .nayro-icon-btn { color: var(--n-text); }
+.admin-bar .nayro-cart-drawer { top: 32px; height: calc(100% - 32px); }
+.admin-bar .nayro-overlay { top: 32px; }
+.nayro-mini-empty { align-content: start; min-height: 220px; padding: 32px 8px; font-size: 15px; line-height: 1.5; }
+.nayro-mini-empty svg { width: 54px; height: 54px; color: var(--n-muted); opacity: .65; }
+.nayro-mini-empty .nayro-btn { margin-top: 4px; }
+
+/* Larger, navigable product photos with a clear gallery rail. */
+.single-product .nayro-single .woocommerce-product-gallery { overflow: visible; }
+.single-product .nayro-single .woocommerce-product-gallery .flex-viewport { overflow: hidden !important; border-radius: 18px; }
+.single-product .nayro-single .woocommerce-product-gallery__image img { width: 100%; max-height: min(72vh, 760px); aspect-ratio: 1 / 1; object-fit: contain; background: #fff; }
+.single-product .nayro-single .woocommerce-product-gallery .flex-control-thumbs { display: flex; gap: 12px; margin: 14px 0 0; padding: 0; overflow-x: auto; }
+.single-product .nayro-single .woocommerce-product-gallery .flex-control-thumbs li { flex: 0 0 82px; width: 82px; margin: 0; padding: 4px; border: 1px solid var(--n-border); border-radius: 12px; background: var(--n-surface); }
+.single-product .nayro-single .woocommerce-product-gallery .flex-control-thumbs img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; opacity: .72; }
+.single-product .nayro-single .woocommerce-product-gallery .flex-control-thumbs img.flex-active { opacity: 1; outline: 2px solid var(--n-primary); }
+.nayro-copy-language { margin: 12px 0; padding: 12px; border: 1px solid #c3c4c7; background: #fff; }
+.nayro-copy-language summary { cursor: pointer; font-weight: 700; }
+html[dir="rtl"] .single-product .nayro-single__summary,
+html[dir="rtl"] .single-product .woocommerce-tabs,
+html[dir="rtl"] .nayro-product-details-grid { text-align: right; direction: rtl; }
+@media (max-width: 700px) {
+	.single-product .nayro-single .woocommerce-product-gallery__image img { max-height: 68vh; }
+	.single-product .nayro-single .woocommerce-product-gallery .flex-control-thumbs { gap: 8px; }
+	.single-product .nayro-single .woocommerce-product-gallery .flex-control-thumbs li { flex-basis: 68px; width: 68px; }
+}
+.nayro-brand-mark { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.nayro-brand-mark__image, .nayro-brand-mark__wordmark { display: block; width: 86px; height: 28px; object-fit: contain; }
+.nayro-product__meta-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.nayro-product__brand-mark .nayro-brand-mark__image, .nayro-product__brand-mark .nayro-brand-mark__wordmark { width: 66px; height: 22px; }
+.nayro-product__brand-mark .nayro-brand-mark__wordmark rect { stroke: transparent; }
+.nayro-product__brand-mark .nayro-brand-mark__wordmark text { font-size: 15px; }
+.nayro-single-brand-mark { display: flex; justify-content: flex-start; margin: 0 0 14px; }
+.nayro-single-brand-mark .nayro-brand-mark__image, .nayro-single-brand-mark .nayro-brand-mark__wordmark { width: 120px; height: 34px; }
+
+/* Product details: large gallery first, then specifications beside the full description. */
+.single-product div.product.nayro-single { grid-template-columns: minmax(0, 1.16fr) minmax(340px, .84fr); column-gap: clamp(28px, 4vw, 60px); row-gap: 0; }
+.single-product .nayro-single .woocommerce-product-gallery,
+.single-product .nayro-single > .nayro-single__summary { float: none; width: 100%; max-width: none; min-width: 0; }
+.single-product .nayro-single .woocommerce-product-gallery { padding: clamp(12px, 1.5vw, 20px); border-radius: 28px; background: linear-gradient(145deg, var(--n-surface), var(--n-surface-2)); }
+.single-product .nayro-single .woocommerce-product-gallery__image img { max-height: min(78vh, 820px); }
+.single-product .nayro-single .woocommerce-product-gallery .flex-viewport { width: 100%; }
+.single-product .nayro-single .woocommerce-product-gallery__image img { transform: scale(1.1); transform-origin: center; }
+.single-product .nayro-single__summary .product_title { max-width: none; }
+.single-product .nayro-single .nayro-single-brand-mark { justify-content: center; margin: 0 auto 18px; }
+.single-product .nayro-single .nayro-single-brand-mark .nayro-brand-mark__image,
+.single-product .nayro-single .nayro-single-brand-mark .nayro-brand-mark__wordmark { width: 180px; height: 72px; object-fit: contain; }
+.single-product .nayro-single button.single_add_to_cart_button.button.alt,
+.nayro-shop__main .nayro-product__actions .button { background: #ff4b12; color: #fff; }
+.single-product .nayro-single button.single_add_to_cart_button.button.alt:hover,
+.nayro-shop__main .nayro-product__actions .button:hover { background: #e63e0b; color: #fff; }
+.single-product .nayro-single .woocommerce-tabs { grid-column: 1 / -1; display: block; margin: clamp(36px, 5vw, 64px) 0 0; direction: ltr; }
+.single-product .nayro-single .woocommerce-tabs > #tab-nayro_specs,
+.single-product .nayro-single .woocommerce-tabs > #tab-description { float: none; width: 100%; margin: 0; padding: clamp(22px, 3vw, 34px); border: 1px solid var(--n-border); border-radius: 24px; background: var(--n-surface); box-shadow: var(--n-shadow); }
+.single-product .nayro-single .woocommerce-tabs > #tab-nayro_specs h2,
+.single-product .nayro-single .woocommerce-tabs > #tab-description h2 { margin: 0 0 20px; font-size: clamp(22px, 2.2vw, 30px); letter-spacing: -.025em; }
+.single-product .nayro-single .woocommerce-tabs > #tab-description { color: var(--n-muted); font-size: 16px; line-height: 1.85; }
+.single-product .nayro-single .woocommerce-tabs > #tab-description > :last-child { margin-bottom: 0; }
+.single-product .nayro-single .woocommerce-tabs .nayro-specs-table th { width: 38%; color: var(--n-muted); font-weight: 600; }
+.single-product .nayro-single .woocommerce-tabs .nayro-specs-table th,
+.single-product .nayro-single .woocommerce-tabs .nayro-specs-table td { padding: 13px 10px; border-bottom: 1px solid var(--n-border); vertical-align: top; line-height: 1.55; }
+
+/* More consistent catalog cards and a clearer archive toolbar. */
+.nayro-shop__main .woocommerce-products-header { margin: 0 0 22px; padding: clamp(22px, 3vw, 36px); border: 1px solid var(--n-border); border-radius: 26px; background: radial-gradient(ellipse at 100% 0, rgba(255, 107, 0, .13), transparent 45%), var(--n-surface); box-shadow: var(--n-shadow); }
+.nayro-shop__main .woocommerce-products-header__title { margin: 0; font-size: clamp(28px, 3.5vw, 42px); line-height: 1.1; letter-spacing: -.035em; }
+.nayro-shop__main > .page-title { margin: 0 0 18px; padding: clamp(22px, 3vw, 36px); border: 1px solid var(--n-border); border-radius: 26px; background: radial-gradient(ellipse at 100% 0, rgba(255, 107, 0, .13), transparent 45%), var(--n-surface); box-shadow: var(--n-shadow); font-size: clamp(28px, 3.5vw, 42px); line-height: 1.1; letter-spacing: -.035em; }
+.nayro-shop__main .woocommerce-result-count { margin: 0 0 14px; color: var(--n-muted); font-size: 14px; }
+.nayro-shop__main .woocommerce-ordering { margin: 0 0 18px; }
+.nayro-shop__main .woocommerce-ordering select { min-height: 48px; padding: 0 16px; border: 1px solid var(--n-border); border-radius: 14px; background: var(--n-surface); color: var(--n-text); }
+.nayro-shop .nayro-filters { border: 1px solid var(--n-border); border-radius: 22px; box-shadow: var(--n-shadow); }
+.nayro-shop .nayro-filters__actions .nayro-btn { min-height: 46px; border-radius: 13px; }
+
+@media (max-width: 900px) {
+	.single-product div.product.nayro-single { grid-template-columns: minmax(0, 1fr); row-gap: 22px; }
+	.single-product .nayro-single .woocommerce-tabs { grid-column: 1; grid-template-columns: minmax(0, 1fr); grid-template-areas: "specs" "description"; gap: 14px; margin-top: 12px; }
+	.single-product .nayro-single .woocommerce-tabs > #tab-nayro_specs,
+	.single-product .nayro-single .woocommerce-tabs > #tab-description { padding: clamp(18px, 4vw, 26px); border-radius: 20px; }
+	.nayro-shop__main .woocommerce-products-header { border-radius: 20px; }
+	.nayro-shop__main > .page-title { border-radius: 20px; }
+}
+
+@media (max-width: 600px) {
+	.nayro-shop__main .woocommerce-products-header { padding: 20px; }
+	.nayro-shop__main > .page-title { padding: 20px; }
+}
+
+/* Shared catalog-card layout for shop, home, related and recently viewed products. */
+.nayro-product { display: flex; flex-direction: column; min-width: 0; height: 100%; }
+.nayro-product__media { aspect-ratio: 1 / 1; background: var(--n-surface-2); }
+.nayro-product__image-link,
+.nayro-product__slides { display: block; width: 100%; height: 100%; }
+.nayro-product__img,
+.nayro-product__image-link img { object-fit: contain; padding: 6%; }
+.nayro-product__body { box-sizing: border-box; display: flex; flex: 1 1 auto; flex-direction: column; min-width: 0; min-height: 0; padding: 15px; gap: 9px; }
+.nayro-product__body > .nayro-badges { position: static; inset: auto; display: flex; align-self: stretch; flex-wrap: wrap; gap: 6px; min-height: 22px; max-width: 100%; margin: 0; overflow: visible; }
+.nayro-product__body > .nayro-badges > * { max-width: 100%; white-space: normal; }
+.nayro-product__meta-top { display: flex; min-width: 0; min-height: 22px; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 8px; }
+.nayro-product__cat,
+.nayro-product__brand { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; letter-spacing: .06em; }
+.nayro-product__meta-top .nayro-product__brand-mark { flex: 0 0 48px; width: 48px; height: 18px; overflow: hidden; }
+.woocommerce ul.products li.product .nayro-product__brand-mark img.nayro-brand-mark__image,
+.nayro-product__meta-top .nayro-product__brand-mark img.nayro-brand-mark__image,
+.nayro-product__meta-top .nayro-product__brand-mark .nayro-brand-mark__wordmark { width: 48px; height: 18px; object-fit: contain; }
+.nayro-product__title { min-width: 0; margin: 0; font-size: clamp(15px, 1.3vw, 18px); line-height: 1.35; }
+.nayro-product__title a { display: block; overflow-wrap: anywhere; }
+.nayro-product__rating:empty { display: none; }
+.nayro-product__footer { display: flex; flex-direction: column; align-items: stretch; gap: 9px; min-width: 0; max-width: 100%; margin-top: auto; padding-top: 8px; }
+.nayro-product__price-row,
+.nayro-product__price,
+.nayro-product__actions { min-width: 0; max-width: 100%; }
+.nayro-product__price { font-size: clamp(17px, 1.5vw, 21px); line-height: 1.25; white-space: normal; overflow-wrap: anywhere; }
+.nayro-product__price del { margin-inline-end: 5px; }
+.nayro-product__price ins { white-space: nowrap; }
+.nayro-product__actions { flex: 0 1 auto; }
+.nayro-product__footer .button,
+.nayro-product__footer a.button,
+.nayro-shop__main .nayro-product__footer .button { display: flex; width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border-radius: 12px; justify-content: center; text-align: center; white-space: normal; overflow-wrap: anywhere; line-height: 1.25; background: var(--n-primary); color: #fff; }
+.nayro-product__footer .button:hover,
+.nayro-product__footer a.button:hover { background: var(--n-primary-dark); color: #fff; }
+.nayro-shop__main .nayro-product__footer { flex-direction: column; align-items: stretch; }
+.nayro-shop__main .nayro-product__footer .button { background: #FF6B00; }
+.nayro-shop__main .nayro-product__footer .button:hover { background: #E65F00; }
+
+/* Reserve sidebar space on desktop; switch to the existing filter drawer on tablet/mobile. */
+.nayro-shop { grid-template-columns: minmax(220px, 250px) minmax(0, 1fr); gap: clamp(20px, 2.4vw, 32px); }
+.nayro-shop__sidebar { top: 118px; min-width: 0; }
+.nayro-shop__main ul.products { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; gap: clamp(14px, 1.5vw, 22px); }
+.nayro-shop__main li.nayro-product { min-width: 0; }
+.nayro-shop__main .woocommerce-result-count { margin-bottom: 14px; }
+.nayro-shop__main .woocommerce-ordering { margin-bottom: 18px; }
+.admin-bar .nayro-shop__sidebar { top: 150px; }
+
+@media (max-width: 1399px) {
+	.nayro-shop__main ul.products { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 1024px) {
+	.nayro-shop { grid-template-columns: minmax(0, 1fr); }
+	.nayro-shop__main ul.products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.nayro-shop__sidebar { top: 0; }
+	.admin-bar .nayro-shop__sidebar { top: 32px; height: calc(100% - 32px); }
+}
+@media (max-width: 782px) {
+	.admin-bar .nayro-shop__sidebar { top: 46px; height: calc(100% - 46px); }
+}
+@media (max-width: 359px) {
+	.nayro-product__body { padding: 11px; gap: 7px; }
+	.nayro-product__footer .button,
+	.nayro-product__footer a.button,
+	.nayro-shop__main .nayro-product__footer .button { padding-inline: 8px; font-size: 11px; }
+}
+
+@media (min-width: 601px) {
+	.single-product div.product.nayro-single { grid-template-columns: minmax(0, 1.16fr) minmax(340px, .84fr); }
+	.single-product .nayro-single .woocommerce-product-gallery,
+	.single-product .nayro-single > .nayro-single__summary { float: none; width: 100%; max-width: none; min-width: 0; }
+	.single-product .nayro-single .woocommerce-product-gallery__image img { max-height: min(78vh, 820px); }
+	.single-product .nayro-single .nayro-single-brand-mark { justify-content: center; }
+}
+@media (max-width: 782px) {
+	.admin-bar .nayro-cart-drawer { top: 46px; height: calc(100% - 46px); }
+	.admin-bar .nayro-overlay { top: 46px; }
+}
+
+/* Single-product page: balanced gallery and purchase summary, followed by real tabs. */
+.single-product .nayro-woocommerce {
+	width: 100%;
+	max-width: 1280px;
+	margin-inline: auto;
+	padding-inline: clamp(16px, 3vw, 32px);
+}
+.single-product div.product.nayro-single {
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	column-gap: clamp(24px, 3vw, 40px);
+	row-gap: 0;
+	align-items: start;
+}
+.single-product div.product.nayro-single > .woocommerce-product-gallery,
+.single-product div.product.nayro-single > .summary {
+	float: none !important;
+	width: 100% !important;
+}
+.single-product .nayro-single .woocommerce-product-gallery {
+	padding: clamp(12px, 1.5vw, 20px);
+	border-radius: 24px;
+	background: #fff;
+}
+.single-product .nayro-single .woocommerce-product-gallery__wrapper,
+.single-product .nayro-single .woocommerce-product-gallery__image {
+	min-width: 0;
+}
+.single-product .nayro-single .woocommerce-product-gallery__image img {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-height: min(78vh, 760px);
+	aspect-ratio: 1 / 1;
+	object-fit: contain;
+	background: #fff;
+	transform: none;
+}
+.single-product .nayro-single .woocommerce-product-gallery .flex-control-thumbs {
+	scrollbar-width: thin;
+	scrollbar-color: var(--n-primary) var(--n-surface-2);
+}
+.nayro-gallery-thumbnails {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+	margin-top: 12px;
+}
+.nayro-gallery-thumbnails .flex-control-thumbs {
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0 !important;
+	padding: 0 3px 5px !important;
+	overflow-x: auto !important;
+	scroll-behavior: smooth;
+}
+.nayro-gallery-thumbnails .flex-control-thumbs li {
+	flex: 0 0 clamp(58px, 7vw, 78px) !important;
+	width: clamp(58px, 7vw, 78px) !important;
+}
+.nayro-gallery-thumbnails__arrow {
+	display: inline-flex;
+	flex: 0 0 40px;
+	width: 40px;
+	height: 44px;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid var(--n-border);
+	border-radius: 12px;
+	background: #fff;
+	color: var(--n-text);
+	font-size: 28px;
+	line-height: 1;
+	cursor: pointer;
+}
+.nayro-gallery-thumbnails__arrow:hover { border-color: var(--n-primary); color: var(--n-primary); }
+.single-product .nayro-single .nayro-single__summary {
+	float: none;
+	width: 100%;
+	max-width: none;
+	min-width: 0;
+	margin: 0;
+}
+.single-product .nayro-single .nayro-single-brand-mark {
+	justify-content: flex-start;
+	margin: 0 0 12px;
+}
+.single-product .nayro-single .nayro-single-brand-mark .nayro-brand-mark__image,
+.single-product .nayro-single .nayro-single-brand-mark .nayro-brand-mark__wordmark {
+	width: 96px;
+	height: 32px;
+}
+.single-product .nayro-single__summary .product_title {
+	max-width: none;
+	margin: 0 0 14px;
+	font-size: clamp(30px, 3.25vw, 46px);
+	line-height: 1.12;
+	overflow-wrap: normal;
+	word-break: normal;
+}
+.single-product .nayro-single__summary .price {
+	margin: 12px 0;
+	color: #ff4d00 !important;
+	font-size: clamp(30px, 3vw, 40px);
+	font-weight: 800;
+	line-height: 1.2;
+}
+.single-product .nayro-single__summary .price del { color: var(--n-muted); font-size: .62em; }
+.single-product .nayro-single__summary .price ins { color: #ff4d00 !important; text-decoration: none; }
+.single-product .nayro-product-meta {
+	display: grid;
+	gap: 8px;
+	margin: 18px 0;
+	padding: 16px 0;
+	border-top: 1px solid var(--n-border);
+	border-bottom: 1px solid var(--n-border);
+}
+.nayro-product-meta__row {
+	display: grid;
+	grid-template-columns: minmax(100px, .35fr) minmax(0, 1fr);
+	gap: 12px;
+	align-items: baseline;
+	font-size: 14px;
+	line-height: 1.5;
+}
+.nayro-product-meta__row dt { color: var(--n-muted); font-weight: 600; }
+.nayro-product-meta__row dd { min-width: 0; margin: 0; color: var(--n-text); overflow-wrap: anywhere; }
+.nayro-product-meta__row dd a { color: inherit; text-decoration: underline; text-decoration-color: var(--n-border); text-underline-offset: 3px; }
+.nayro-product-meta__row dd a:hover { color: var(--n-primary); }
+.single-product .nayro-single__summary form.cart {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 18px 0 12px;
+}
+.single-product .nayro-single__summary .single_add_to_cart_button {
+	min-height: 52px;
+	border-radius: 14px;
+	background: #ff4d00;
+	color: #fff;
+	font-size: 16px;
+}
+.single-product .nayro-single__summary .single_add_to_cart_button:hover { background: #d94100; }
+.single-product .nayro-buy-whatsapp {
+	display: flex;
+	width: 100%;
+	min-height: 50px;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	margin: 8px 0 14px;
+	padding: 12px 16px;
+	border: 1px solid #159447;
+	border-radius: 14px;
+	background: #fff;
+	color: #11763a;
+	font-weight: 700;
+	text-decoration: none;
+}
+.single-product .nayro-buy-whatsapp:hover { background: #f0faf3; color: #0c5d2d; }
+.nayro-product-trust {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px;
+	margin: 16px 0 20px;
+	padding: 0;
+	list-style: none;
+}
+.nayro-product-trust li {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: 7px;
+	color: var(--n-muted);
+	font-size: 11px;
+	line-height: 1.35;
+}
+.nayro-product-trust__icon { display: inline-flex; flex: 0 0 20px; width: 20px; height: 20px; color: var(--n-primary); }
+.nayro-product-trust__icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+.single-product .nayro-single .woocommerce-tabs {
+	display: block;
+	grid-column: 1 / -1;
+	min-width: 0;
+	margin: clamp(32px, 5vw, 56px) 0 0;
+	direction: ltr;
+}
+.single-product .nayro-single .woocommerce-tabs > .tabs {
+	display: flex !important;
+	gap: 6px;
+	margin: 0 0 18px;
+	padding: 0;
+	border-bottom: 1px solid var(--n-border);
+}
+.single-product .nayro-single .woocommerce-tabs > .tabs li {
+	float: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+}
+.single-product .nayro-single .woocommerce-tabs > .tabs li::before,
+.single-product .nayro-single .woocommerce-tabs > .tabs li::after { display: none; }
+.single-product .nayro-single .woocommerce-tabs > .tabs li a {
+	min-height: 48px;
+	padding: 12px 16px;
+	border-bottom: 3px solid transparent;
+	color: var(--n-muted);
+	font-weight: 700;
+}
+.single-product .nayro-single .woocommerce-tabs > .tabs li.active a {
+	border-color: #ff4d00;
+	color: var(--n-primary);
+}
+.single-product .nayro-single .woocommerce-tabs > .woocommerce-Tabs-panel {
+	float: none;
+	width: 100%;
+	min-width: 0;
+	margin: 0;
+	padding: clamp(20px, 3vw, 32px);
+	border: 1px solid var(--n-border);
+	border-radius: 20px;
+	background: var(--n-surface);
+	box-shadow: var(--n-shadow);
+}
+.single-product .nayro-single .woocommerce-tabs > .woocommerce-Tabs-panel[hidden] {
+	display: none !important;
+}
+.single-product .nayro-single .woocommerce-tabs > .woocommerce-Tabs-panel h2 {
+	margin: 0 0 18px;
+	font-size: clamp(21px, 2.4vw, 28px);
+}
+.single-product .nayro-single #tab-description {
+	color: var(--n-muted);
+	font-size: 16px;
+	line-height: 1.8;
+}
+.single-product .nayro-single #tab-description img { display: none; }
+.single-product .nayro-single .nayro-specs-table th { width: 38%; color: var(--n-muted); font-weight: 600; }
+.single-product .nayro-single .nayro-specs-table th,
+.single-product .nayro-single .nayro-specs-table td {
+	padding: 12px 10px;
+	border-bottom: 1px solid var(--n-border);
+	line-height: 1.55;
+	vertical-align: top;
+}
+.single-product .nayro-single .related.products,
+.single-product .nayro-rv { grid-column: 1 / -1; min-width: 0; margin-top: 40px; }
+.single-product .nayro-single .related.products > h2,
+.single-product .nayro-rv > h2 { margin: 0 0 20px; font-size: clamp(23px, 2.5vw, 32px); }
+.single-product .related.products ul.products,
+.single-product .nayro-rv ul.products { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; gap: clamp(12px, 1.7vw, 20px); }
+.single-product .related.products ul.products::before,
+.single-product .related.products ul.products::after,
+.single-product .nayro-rv ul.products::before,
+.single-product .nayro-rv ul.products::after { display: none; content: none; }
+.single-product .related.products ul.products li.product,
+.single-product .nayro-rv ul.products li.product {
+	display: flex;
+	float: none;
+	width: auto;
+	min-width: 0;
+	height: 100%;
+	margin: 0;
+}
+.single-product .related.products .nayro-product__media,
+.single-product .nayro-rv .nayro-product__media { background: #fff; }
+.single-product .related.products .nayro-product__img,
+.single-product .nayro-rv .nayro-product__img { object-fit: contain; background: #fff; }
+.single-product .related.products .nayro-product__title,
+.single-product .nayro-rv .nayro-product__title {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	min-height: 2.7em;
+	overflow: hidden;
+}
+.single-product .nayro-single :focus-visible,
+.single-product .nayro-rv :focus-visible {
+	outline: 3px solid #ff4d00;
+	outline-offset: 3px;
+}
+.nayro-sticky-atc .nayro-btn { min-height: 44px; }
+.single-product .nayro-sticky-atc { bottom: calc(66px + env(safe-area-inset-bottom)) !important; }
+
+@media (max-width: 900px) {
+	.single-product div.product.nayro-single { grid-template-columns: minmax(0, 1fr); row-gap: 22px; }
+	.single-product .nayro-single .woocommerce-tabs,
+	.single-product .nayro-single .related.products,
+	.single-product .nayro-rv { grid-column: 1; }
+	.single-product .related.products ul.products,
+	.single-product .nayro-rv ul.products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+	.single-product .nayro-single .woocommerce-product-gallery { padding: 10px; border-radius: 18px; }
+	.single-product .nayro-single__summary .product_title { font-size: clamp(29px, 8vw, 38px); }
+	.single-product .nayro-single__summary form.cart .single_add_to_cart_button { flex: 1 1 100%; width: 100%; min-height: 54px; }
+	.single-product .nayro-single .woocommerce-tabs > .tabs { gap: 0; overflow-x: auto; scrollbar-width: thin; }
+	.single-product .nayro-single .woocommerce-tabs > .tabs li { flex: 0 0 auto; }
+	.single-product .nayro-single .woocommerce-tabs > .tabs li a { padding-inline: 12px; white-space: nowrap; }
+	.nayro-product-trust { gap: 5px; }
+	.nayro-product-trust li { flex-direction: column; align-items: flex-start; font-size: 10px; }
+	.nayro-gallery-thumbnails { gap: 5px; }
+	.nayro-gallery-thumbnails__arrow { flex-basis: 36px; width: 36px; height: 42px; }
+	.single-product .related.products ul.products,
+	.single-product .nayro-rv ul.products { gap: 10px; }
+}
+@media (max-width: 359px) {
+	.single-product .nayro-product-meta__row { grid-template-columns: minmax(80px, .4fr) minmax(0, 1fr); gap: 8px; font-size: 13px; }
+}

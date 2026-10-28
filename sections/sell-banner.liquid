@@ -1,0 +1,80 @@
+{%- liquid
+  assign bullets = section.settings.bullets | newline_to_br | split: '<br />'
+  assign sell_url = section.settings.link
+  if sell_url == blank and settings.whatsapp_number != blank
+    assign sell_message = 'Hi, I would like to sell my device.' | url_encode
+    assign sell_url = 'https://wa.me/' | append: settings.whatsapp_number | append: '?text=' | append: sell_message
+  endif
+-%}
+<div class="nayro-home">
+  <section class="nh-section" id="sell-{{ section.id }}" style="padding-top: 0;">
+    <div class="nh-wrap">
+      <div class="nh-panel">
+        <div>
+          <h2>{{ section.settings.title | default: 'Got a device to sell?' | escape }}</h2>
+          <p>{{ section.settings.text | default: 'Send us the details and a few photos and we will get back to you with an offer.' | escape }}</p>
+          {%- if section.settings.bullets != blank -%}
+            <ul>
+              {%- for bullet in bullets -%}
+                {%- assign bullet_text = bullet | strip_html | strip -%}
+                {%- if bullet_text != blank -%}
+                  <li>{{ bullet_text | escape }}</li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </div>
+        {%- if sell_url != blank -%}
+          <a class="nh-btn nh-btn--light" href="{{ sell_url }}" {% if section.settings.link == blank %}target="_blank" rel="noopener"{% endif %}>
+            {% render 'icon', name: 'tag', class: 'nh-icon' %}
+            {{ section.settings.button_label | default: 'Sell your device' | escape }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Sell banner",
+  "class": "nayro-sell-banner-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Got a device to sell?"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Send us the details and a few photos and we will get back to you with an offer."
+    },
+    {
+      "type": "textarea",
+      "id": "bullets",
+      "label": "Bullet points (one per line)",
+      "default": "Free quote\nSend photos on WhatsApp\nNo obligation"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Sell your device"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Button link",
+      "info": "Leave empty to use WhatsApp."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sell banner"
+    }
+  ]
+}
+{% endschema %}

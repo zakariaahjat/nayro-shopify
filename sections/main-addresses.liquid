@@ -1,0 +1,194 @@
+<div class="nayro-customer nayro-customer--wide">
+  <div class="nayro-customer__card">
+    <div class="nayro-customer__head">
+      <div>
+        <h1>{{ 'customer.general.addresses' | t }}</h1>
+        <p>{{ customer.name | default: customer.email | escape }}</p>
+      </div>
+      <a class="nayro-btn nayro-btn--ghost nayro-btn--sm" href="{{ routes.account_url }}">{{ 'customer.general.account' | t }}</a>
+    </div>
+
+    {%- if customer.addresses.size > 0 -%}
+      <div class="nayro-addresses">
+        {%- for address in customer.addresses -%}
+          <div class="nayro-address">
+            {%- if address == customer.default_address -%}
+              <span class="nayro-address__badge">{{ 'customer.general.default_address' | t }}</span>
+            {%- endif -%}
+            <p>{{ address | format_address }}</p>
+
+            <div class="nayro-address__actions">
+              <details class="nayro-address__edit">
+                <summary class="nayro-btn nayro-btn--ghost nayro-btn--sm">{{ 'customer.general.edit_address' | t }}</summary>
+                <div class="nayro-address__form">
+                  {%- form 'customer_address', address, class: 'nayro-form' -%}
+                    {%- if form.errors -%}
+                      <div class="nayro-notice nayro-notice--error" role="alert">{{ form.errors | default_errors }}</div>
+                    {%- endif -%}
+
+                    <div class="nayro-form__row">
+                      <div>
+                        <label for="AddressFirstName_{{ address.id }}">{{ 'customer.general.first_name' | t }}</label>
+                        <input id="AddressFirstName_{{ address.id }}" type="text" name="address[first_name]" value="{{ address.first_name | escape }}" autocomplete="given-name">
+                      </div>
+                      <div>
+                        <label for="AddressLastName_{{ address.id }}">{{ 'customer.general.last_name' | t }}</label>
+                        <input id="AddressLastName_{{ address.id }}" type="text" name="address[last_name]" value="{{ address.last_name | escape }}" autocomplete="family-name">
+                      </div>
+                    </div>
+
+                    <div>
+                      <label for="AddressCompany_{{ address.id }}">{{ 'customer.general.company' | t }}</label>
+                      <input id="AddressCompany_{{ address.id }}" type="text" name="address[company]" value="{{ address.company | escape }}" autocomplete="organization">
+                    </div>
+
+                    <div>
+                      <label for="AddressAddress1_{{ address.id }}">{{ 'customer.general.address1' | t }}</label>
+                      <input id="AddressAddress1_{{ address.id }}" type="text" name="address[address1]" value="{{ address.address1 | escape }}" autocomplete="address-line1">
+                    </div>
+
+                    <div>
+                      <label for="AddressAddress2_{{ address.id }}">{{ 'customer.general.address2' | t }}</label>
+                      <input id="AddressAddress2_{{ address.id }}" type="text" name="address[address2]" value="{{ address.address2 | escape }}" autocomplete="address-line2">
+                    </div>
+
+                    <div class="nayro-form__row">
+                      <div>
+                        <label for="AddressCity_{{ address.id }}">{{ 'customer.general.city' | t }}</label>
+                        <input id="AddressCity_{{ address.id }}" type="text" name="address[city]" value="{{ address.city | escape }}" autocomplete="address-level2">
+                      </div>
+                      <div>
+                        <label for="AddressZip_{{ address.id }}">{{ 'customer.general.zip' | t }}</label>
+                        <input id="AddressZip_{{ address.id }}" type="text" name="address[zip]" value="{{ address.zip | escape }}" autocomplete="postal-code">
+                      </div>
+                    </div>
+
+                    <div class="nayro-form__row">
+                      <div>
+                        <label for="AddressCountry_{{ address.id }}">{{ 'customer.general.country' | t }}</label>
+                        <select id="AddressCountry_{{ address.id }}" name="address[country]" data-default="{{ address.country | escape }}" data-address-country="{{ address.id }}" autocomplete="country">
+                          {{ all_country_option_tags }}
+                        </select>
+                      </div>
+                      <div>
+                        <label for="AddressProvince_{{ address.id }}">{{ 'customer.general.province' | t }}</label>
+                        <select id="AddressProvince_{{ address.id }}" name="address[province]" data-default="{{ address.province | escape }}" data-address-province="{{ address.id }}" autocomplete="address-level1"></select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label for="AddressPhone_{{ address.id }}">{{ 'customer.general.phone' | t }}</label>
+                      <input id="AddressPhone_{{ address.id }}" type="tel" name="address[phone]" value="{{ address.phone | escape }}" autocomplete="tel">
+                    </div>
+
+                    <label class="nayro-checkbox">
+                      <input type="checkbox" name="address[default]" value="1" {% if address == customer.default_address %}checked{% endif %}>
+                      <span>{{ 'customer.general.set_default' | t }}</span>
+                    </label>
+
+                    <button type="submit" class="nayro-btn nayro-btn--primary nayro-btn--sm">{{ 'customer.general.save' | t }}</button>
+                  {%- endform -%}
+                </div>
+              </details>
+
+              <form method="post" action="{{ address.url }}" data-confirm="{{ 'customer.general.delete_confirm' | t }}">
+                <input type="hidden" name="form_type" value="customer_address">
+                <input type="hidden" name="utf8" value="✓">
+                <input type="hidden" name="_method" value="delete">
+                <button type="submit" class="nayro-btn nayro-btn--ghost nayro-btn--sm nayro-btn--danger">{{ 'customer.general.delete_address' | t }}</button>
+              </form>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <p>{{ 'customer.general.default_address' | t }}: —</p>
+    {%- endif -%}
+
+    <details class="nayro-address__new" {% if customer.addresses.size == 0 %}open{% endif %}>
+      <summary class="nayro-btn nayro-btn--primary nayro-btn--sm">{{ 'customer.general.add_address' | t }}</summary>
+      <div class="nayro-address__form">
+        {%- form 'customer_address', customer.new_address, class: 'nayro-form' -%}
+          {%- if form.errors -%}
+            <div class="nayro-notice nayro-notice--error" role="alert">{{ form.errors | default_errors }}</div>
+          {%- endif -%}
+
+          <div class="nayro-form__row">
+            <div>
+              <label for="NewAddressFirstName">{{ 'customer.general.first_name' | t }}</label>
+              <input id="NewAddressFirstName" type="text" name="address[first_name]" autocomplete="given-name">
+            </div>
+            <div>
+              <label for="NewAddressLastName">{{ 'customer.general.last_name' | t }}</label>
+              <input id="NewAddressLastName" type="text" name="address[last_name]" autocomplete="family-name">
+            </div>
+          </div>
+
+          <div>
+            <label for="NewAddressCompany">{{ 'customer.general.company' | t }}</label>
+            <input id="NewAddressCompany" type="text" name="address[company]" autocomplete="organization">
+          </div>
+
+          <div>
+            <label for="NewAddressAddress1">{{ 'customer.general.address1' | t }}</label>
+            <input id="NewAddressAddress1" type="text" name="address[address1]" autocomplete="address-line1">
+          </div>
+
+          <div>
+            <label for="NewAddressAddress2">{{ 'customer.general.address2' | t }}</label>
+            <input id="NewAddressAddress2" type="text" name="address[address2]" autocomplete="address-line2">
+          </div>
+
+          <div class="nayro-form__row">
+            <div>
+              <label for="NewAddressCity">{{ 'customer.general.city' | t }}</label>
+              <input id="NewAddressCity" type="text" name="address[city]" autocomplete="address-level2">
+            </div>
+            <div>
+              <label for="NewAddressZip">{{ 'customer.general.zip' | t }}</label>
+              <input id="NewAddressZip" type="text" name="address[zip]" autocomplete="postal-code">
+            </div>
+          </div>
+
+          <div class="nayro-form__row">
+            <div>
+              <label for="NewAddressCountry">{{ 'customer.general.country' | t }}</label>
+              <select id="NewAddressCountry" name="address[country]" data-default="{{ form.country | default: localization.country.name | escape }}" data-address-country="new" autocomplete="country">
+                {{ all_country_option_tags }}
+              </select>
+            </div>
+            <div>
+              <label for="NewAddressProvince">{{ 'customer.general.province' | t }}</label>
+              <select id="NewAddressProvince" name="address[province]" data-default="{{ form.province }}" data-address-province="new" autocomplete="address-level1"></select>
+            </div>
+          </div>
+
+          <div>
+            <label for="NewAddressPhone">{{ 'customer.general.phone' | t }}</label>
+            <input id="NewAddressPhone" type="tel" name="address[phone]" autocomplete="tel">
+          </div>
+
+          <label class="nayro-checkbox">
+            <input type="checkbox" name="address[default]" value="1">
+            <span>{{ 'customer.general.set_default' | t }}</span>
+          </label>
+
+          <button type="submit" class="nayro-btn nayro-btn--primary">{{ 'customer.general.save' | t }}</button>
+        {%- endform -%}
+      </div>
+    </details>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Addresses",
+  "class": "nayro-main-addresses-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Addresses"
+    }
+  ]
+}
+{% endschema %}

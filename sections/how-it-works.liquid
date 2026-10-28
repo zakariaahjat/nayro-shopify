@@ -1,0 +1,114 @@
+<div class="nayro-home">
+  <section class="nh-section" id="how-it-works-{{ section.id }}">
+    <div class="nh-wrap">
+      <div class="nh-head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="nh-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+          {%- endif -%}
+          <h2 class="nh-title">{{ section.settings.title | default: 'How it works' | escape }}</h2>
+        </div>
+      </div>
+
+      <div class="nh-steps">
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            <div class="nh-step" {{ block.shopify_attributes }}>
+              <span class="nh-trust__ico">{% render 'icon', name: block.settings.icon, class: 'nh-icon' %}</span>
+              <h3>{{ block.settings.title | escape }}</h3>
+              <p>{{ block.settings.text | escape }}</p>
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          <div class="nh-step">
+            <span class="nh-trust__ico">{% render 'icon', name: 'search', class: 'nh-icon' %}</span>
+            <h3>Find your product</h3>
+            <p>Browse by category or condition and compare prices.</p>
+          </div>
+          <div class="nh-step">
+            <span class="nh-trust__ico">{% render 'icon', name: 'chat', class: 'nh-icon' %}</span>
+            <h3>Order or ask us</h3>
+            <p>Checkout online or confirm details with us on WhatsApp.</p>
+          </div>
+          <div class="nh-step">
+            <span class="nh-trust__ico">{% render 'icon', name: 'box', class: 'nh-icon' %}</span>
+            <h3>Get it delivered</h3>
+            <p>We prepare, check and ship your order to your door.</p>
+          </div>
+          <div class="nh-step">
+            <span class="nh-trust__ico">{% render 'icon', name: 'shield', class: 'nh-icon' %}</span>
+            <h3>Enjoy with support</h3>
+            <p>Warranty and after-sales help when you need it.</p>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "How it works",
+  "class": "nayro-how-it-works-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Simple & safe"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "How it works"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "search", "label": "Search" },
+            { "value": "chat", "label": "Chat" },
+            { "value": "box", "label": "Box" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "truck", "label": "Truck" },
+            { "value": "tag", "label": "Tag" }
+          ],
+          "default": "search"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Find your product"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Browse by category or condition and compare prices."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "How it works",
+      "blocks": [
+        { "type": "step", "settings": { "icon": "search", "title": "Find your product", "text": "Browse by category or condition and compare prices." } },
+        { "type": "step", "settings": { "icon": "chat", "title": "Order or ask us", "text": "Checkout online or confirm details with us on WhatsApp." } },
+        { "type": "step", "settings": { "icon": "box", "title": "Get it delivered", "text": "We prepare, check and ship your order to your door." } },
+        { "type": "step", "settings": { "icon": "shield", "title": "Enjoy with support", "text": "Warranty and after-sales help when you need it." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

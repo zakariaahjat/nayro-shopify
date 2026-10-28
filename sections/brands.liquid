@@ -1,0 +1,113 @@
+<div class="nayro-home">
+  <section class="nh-section" id="brands-{{ section.id }}">
+    <div class="nh-wrap">
+      <div class="nh-head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="nh-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+          {%- endif -%}
+          <h2 class="nh-title">{{ section.settings.title | default: 'Shop by brand' | escape }}</h2>
+        </div>
+        {%- if section.settings.show_link -%}
+          <a class="nh-link" href="{{ routes.all_products_collection_url }}">{{ section.settings.link_label | default: 'All products' | escape }} {% render 'icon', name: 'arrow', class: 'nh-icon' %}</a>
+        {%- endif -%}
+      </div>
+
+      <div class="nh-brands">
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            {%- if block.settings.link != blank -%}
+              <a class="nh-brand" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>
+            {%- else -%}
+              <span class="nh-brand" {{ block.shopify_attributes }}>
+            {%- endif -%}
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120, 240', sizes: '140px', alt: block.settings.name | escape }}
+              {%- else -%}
+                {{ block.settings.name | escape }}
+              {%- endif -%}
+            {%- if block.settings.link != blank -%}</a>{%- else -%}</span>{%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          <span class="nh-brand">Apple</span>
+          <span class="nh-brand">Samsung</span>
+          <span class="nh-brand">Dell</span>
+          <span class="nh-brand">Lenovo</span>
+          <span class="nh-brand">HP</span>
+          <span class="nh-brand">Sony</span>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Brands",
+  "class": "nayro-brands-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Trusted names"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop by brand"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_link",
+      "label": "Show link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "All products"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Brand name",
+          "default": "Apple"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Logo"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Brands",
+      "blocks": [
+        { "type": "brand", "settings": { "name": "Apple" } },
+        { "type": "brand", "settings": { "name": "Samsung" } },
+        { "type": "brand", "settings": { "name": "Dell" } },
+        { "type": "brand", "settings": { "name": "Lenovo" } },
+        { "type": "brand", "settings": { "name": "HP" } },
+        { "type": "brand", "settings": { "name": "Sony" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

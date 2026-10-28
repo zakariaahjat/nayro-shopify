@@ -1,0 +1,88 @@
+<div class="nayro-page">
+  <div class="nayro-container">
+    {% render 'breadcrumbs' %}
+
+    <div class="nayro-page__head">
+      <span class="nayro-page__eyebrow">{{ section.settings.eyebrow | default: 'Browse' | escape }}</span>
+      <h1 class="nayro-page__title">{{ section.settings.title | default: 'Collections' | escape }}</h1>
+      {%- if section.settings.intro != blank -%}
+        <p class="nayro-page__lead">{{ section.settings.intro | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- paginate collections by section.settings.collections_per_page -%}
+      {%- if collections.size > 0 -%}
+        <div class="nayro-collections-grid">
+          {%- for collection in collections -%}
+            {%- assign collection_image = collection.image -%}
+            {%- if collection_image == blank -%}
+              {%- assign collection_image = collection.products.first.featured_image -%}
+            {%- endif -%}
+            <a class="nayro-collection-card" href="{{ collection.url }}">
+              {%- if collection_image != blank -%}
+                {{ collection_image | image_url: width: 900 | image_tag:
+                  loading: 'lazy',
+                  widths: '450, 700, 900',
+                  sizes: '(min-width: 1024px) 33vw, (min-width: 720px) 50vw, 100vw',
+                  alt: collection_image.alt | default: collection.title
+                }}
+              {%- endif -%}
+              <span class="nayro-collection-card__text">
+                <b>{{ collection.title | escape }}</b>
+                <span>{{ collection.all_products_count }} {{ 'collections.general.product_count' | t }}</span>
+              </span>
+            </a>
+          {%- endfor -%}
+        </div>
+
+        {% render 'pagination', paginate: paginate %}
+      {%- else -%}
+        <div class="nayro-empty-state">
+          {% render 'icon', name: 'box' %}
+          <h2>{{ 'collections.general.no_products' | t }}</h2>
+          <p>{{ 'collections.general.no_products_text' | t }}</p>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collections list",
+  "class": "nayro-main-list-collections-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Browse"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Collections"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Introduction"
+    },
+    {
+      "type": "range",
+      "id": "collections_per_page",
+      "label": "Collections per page",
+      "min": 6,
+      "max": 30,
+      "step": 3,
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collections list"
+    }
+  ]
+}
+{% endschema %}

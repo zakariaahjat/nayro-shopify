@@ -1,0 +1,73 @@
+{%- liquid
+  assign account_url = routes.account_login_url
+  if shop.customer_accounts_enabled
+    assign account_url = routes.account_url
+  endif
+-%}
+<div class="nayro-page">
+  <div class="nayro-container">
+    {% render 'breadcrumbs' %}
+
+    <div class="nayro-page__head">
+      <span class="nayro-page__eyebrow">{{ section.settings.eyebrow | default: 'Saved items' | escape }}</span>
+      <h1 class="nayro-page__title">{{ 'wishlist.title' | t }}</h1>
+      <p class="nayro-page__lead">{{ section.settings.intro | default: 'Your wishlist is saved in this browser. Create an account to keep your favourites across devices.' | escape }}</p>
+    </div>
+
+    <div data-wishlist-page>
+      <ul class="products nayro-products" data-wishlist-grid hidden></ul>
+
+      <div class="nayro-empty-state" data-wishlist-empty>
+        {% render 'icon', name: 'heart' %}
+        <h2>{{ 'wishlist.empty' | t }}</h2>
+        <p>{{ 'wishlist.empty_text' | t }}</p>
+        <a class="nayro-btn nayro-btn--primary nayro-btn--sm" href="{{ routes.all_products_collection_url }}">{{ 'collections.general.view_all' | t }}</a>
+      </div>
+    </div>
+
+    {%- if section.settings.show_account_link and shop.customer_accounts_enabled -%}
+      <div class="nayro-faq__cta">
+        <p>{{ section.settings.account_text | default: 'Want to keep your wishlist everywhere?' | escape }}</p>
+        <a class="nayro-btn nayro-btn--ghost" href="{{ account_url }}">{{ 'customer.general.login' | t }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Wishlist",
+  "class": "nayro-main-wishlist-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Saved items"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Introduction",
+      "default": "Your wishlist is saved in this browser. Create an account to keep your favourites across devices."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account_link",
+      "label": "Show account link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "account_text",
+      "label": "Account text",
+      "default": "Want to keep your wishlist everywhere?"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wishlist"
+    }
+  ]
+}
+{% endschema %}

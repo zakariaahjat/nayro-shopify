@@ -1,0 +1,183 @@
+{%- liquid
+  assign whatsapp_url = ''
+  if settings.whatsapp_number != blank
+    assign whatsapp_text = settings.whatsapp_message | url_encode
+    assign whatsapp_url = 'https://wa.me/' | append: settings.whatsapp_number | append: '?text=' | append: whatsapp_text
+  endif
+-%}
+<div class="nayro-page">
+  <div class="nayro-container">
+    {% render 'breadcrumbs' %}
+
+    <div class="nayro-page__head">
+      <span class="nayro-page__eyebrow">{{ section.settings.eyebrow | default: 'Contact' | escape }}</span>
+      <h1 class="nayro-page__title">{{ page.title | default: section.settings.title | escape }}</h1>
+      <p class="nayro-page__lead">{{ section.settings.intro | default: 'Questions about a product or an order? Send us a message and we will get back to you.' | escape }}</p>
+    </div>
+
+    <div class="nayro-contact">
+      <div class="nayro-contact__card">
+        {%- form 'contact', class: 'nayro-form' -%}
+          {%- if form.posted_successfully? -%}
+            <p class="nayro-notice nayro-notice--success" role="status">{{ 'contact.form.success' | t }}</p>
+          {%- elsif form.errors -%}
+            <div class="nayro-notice nayro-notice--error" role="alert">{{ form.errors | default_errors }}</div>
+          {%- endif -%}
+
+          <div class="nayro-form__row">
+            <div>
+              <label for="ContactName">{{ 'contact.form.name' | t }}</label>
+              <input id="ContactName" type="text" name="contact[name]" value="{% if form.name %}{{ form.name | escape }}{% elsif customer %}{{ customer.name | escape }}{% endif %}" autocomplete="name" required>
+            </div>
+            <div>
+              <label for="ContactEmail">{{ 'contact.form.email' | t }}</label>
+              <input id="ContactEmail" type="email" name="contact[email]" value="{% if form.email %}{{ form.email | escape }}{% elsif customer %}{{ customer.email | escape }}{% endif %}" autocomplete="email" required>
+            </div>
+          </div>
+
+          <div class="nayro-form__row">
+            <div>
+              <label for="ContactPhone">{{ 'contact.form.phone' | t }}</label>
+              <input id="ContactPhone" type="tel" name="contact[phone]" value="{{ form.phone | escape }}" autocomplete="tel">
+            </div>
+            <div>
+              <label for="ContactSubject">{{ 'contact.form.subject' | t }}</label>
+              <input id="ContactSubject" type="text" name="contact[subject]" value="{{ form.subject | escape }}">
+            </div>
+          </div>
+
+          <div>
+            <label for="ContactMessage">{{ 'contact.form.message' | t }}</label>
+            <textarea id="ContactMessage" name="contact[body]" required>{{ form.body | escape }}</textarea>
+          </div>
+
+          <div class="nayro-form__submit">
+            <button type="submit" class="nayro-btn nayro-btn--primary">{{ 'contact.form.send' | t }}</button>
+          </div>
+        {%- endform -%}
+      </div>
+
+      <aside class="nayro-contact__card">
+        <h2>{{ section.settings.details_title | default: 'Contact details' | escape }}</h2>
+        <ul class="nayro-contact__list">
+          {%- if settings.contact_address != blank -%}
+            <li>{% render 'icon', name: 'pin' %}<span><b>{{ 'sections.footer.contact' | t }}</b>{{ settings.contact_address | escape }}</span></li>
+          {%- endif -%}
+          {%- if settings.contact_phone != blank -%}
+            <li>{% render 'icon', name: 'phone' %}<span><b>{{ 'contact.form.phone' | t }}</b><a href="tel:{{ settings.contact_phone | remove: ' ' }}">{{ settings.contact_phone | escape }}</a></span></li>
+          {%- endif -%}
+          {%- if settings.contact_email != blank -%}
+            <li>{% render 'icon', name: 'mail' %}<span><b>{{ 'contact.form.email' | t }}</b><a href="mailto:{{ settings.contact_email }}">{{ settings.contact_email | escape }}</a></span></li>
+          {%- endif -%}
+          {%- if section.settings.hours != blank -%}
+            <li>{% render 'icon', name: 'refresh' %}<span><b>{{ section.settings.hours_title | default: 'Opening hours' | escape }}</b>{{ section.settings.hours | escape }}</span></li>
+          {%- endif -%}
+        </ul>
+
+        {%- if whatsapp_url != blank -%}
+          <a class="nayro-btn nayro-btn--whatsapp nayro-btn--block" href="{{ whatsapp_url }}" target="_blank" rel="noopener" style="margin-top: 18px;">
+            {% render 'icon', name: 'whatsapp' %}
+            {{ 'sections.footer.chat_whatsapp' | t }}
+          </a>
+        {%- endif -%}
+      </aside>
+    </div>
+
+    {%- if section.settings.show_faq and section.blocks.size > 0 -%}
+      <section class="nayro-contact-faq" aria-labelledby="ContactFaqTitle">
+        <h2 id="ContactFaqTitle">{{ section.settings.faq_title | default: 'Common questions' | escape }}</h2>
+        <div class="nayro-faq">
+          {%- for block in section.blocks -%}
+            <details class="nayro-faq__item" {{ block.shopify_attributes }}>
+              <summary>{{ block.settings.question | escape }}</summary>
+              <div class="nayro-faq__answer">{{ block.settings.answer }}</div>
+            </details>
+          {%- endfor -%}
+        </div>
+      </section>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Contact",
+  "class": "nayro-main-contact-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Contact"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Fallback title",
+      "default": "Get in touch"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Introduction",
+      "default": "Questions about a product or an order? Send us a message and we will get back to you."
+    },
+    {
+      "type": "text",
+      "id": "details_title",
+      "label": "Details heading",
+      "default": "Contact details"
+    },
+    {
+      "type": "text",
+      "id": "hours_title",
+      "label": "Hours heading",
+      "default": "Opening hours"
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "Opening hours",
+      "default": "Monday to Saturday, 9:00 – 19:00"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_faq",
+      "label": "Show FAQ",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "faq_title",
+      "label": "FAQ heading",
+      "default": "Common questions"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "How long does delivery take?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Orders are usually delivered within 1 to 3 business days.</p>"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Contact"
+    }
+  ]
+}
+{% endschema %}

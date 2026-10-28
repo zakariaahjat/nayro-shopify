@@ -1,0 +1,343 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "blocks": {
+        "slide_1": {
+          "type": "slide",
+          "settings": {
+            "heading": "Everything you need, new or used",
+            "text": "Laptops, phones and components, checked, guaranteed and delivered to your door.",
+            "button_label": "Shop now"
+          }
+        },
+        "slide_2": {
+          "type": "slide",
+          "settings": {
+            "heading": "Tech you can trust, prices you will love",
+            "text": "New, used and refurbished devices with warranty and fast delivery.",
+            "button_label": "Browse deals"
+          }
+        }
+      },
+      "block_order": ["slide_1", "slide_2"],
+      "settings": {
+        "show_search": true,
+        "show_chips": true
+      }
+    },
+    "conditions": {
+      "type": "conditions",
+      "blocks": {
+        "condition_1": {
+          "type": "condition",
+          "settings": {
+            "title": "New",
+            "text": "Sealed products with full warranty."
+          }
+        },
+        "condition_2": {
+          "type": "condition",
+          "settings": {
+            "title": "Used",
+            "text": "Tested devices in great shape."
+          }
+        },
+        "condition_3": {
+          "type": "condition",
+          "settings": {
+            "title": "Refurbished",
+            "text": "Professionally restored and checked."
+          }
+        },
+        "condition_4": {
+          "type": "condition",
+          "settings": {
+            "title": "Accessories",
+            "text": "Chargers, cases and cables."
+          }
+        }
+      },
+      "block_order": ["condition_1", "condition_2", "condition_3", "condition_4"],
+      "settings": {}
+    },
+    "trust": {
+      "type": "trust-bar",
+      "blocks": {
+        "trust_1": {
+          "type": "trust",
+          "settings": {
+            "icon": "shield",
+            "title": "Warranty included",
+            "text": "On selected products"
+          }
+        },
+        "trust_2": {
+          "type": "trust",
+          "settings": {
+            "icon": "truck",
+            "title": "Fast delivery",
+            "text": "Across the country"
+          }
+        },
+        "trust_3": {
+          "type": "trust",
+          "settings": {
+            "icon": "check",
+            "title": "Quality checked",
+            "text": "Every item inspected"
+          }
+        },
+        "trust_4": {
+          "type": "trust",
+          "settings": {
+            "icon": "cash",
+            "title": "Cash on delivery",
+            "text": "Pay when you receive"
+          }
+        }
+      },
+      "block_order": ["trust_1", "trust_2", "trust_3", "trust_4"],
+      "settings": {}
+    },
+    "categories": {
+      "type": "collection-list",
+      "settings": {}
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {}
+    },
+    "deals": {
+      "type": "flash-deals",
+      "settings": {}
+    },
+    "product_tabs": {
+      "type": "product-tabs",
+      "settings": {}
+    },
+    "how_it_works": {
+      "type": "how-it-works",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "icon": "search",
+            "title": "Find your product",
+            "text": "Browse by category or condition and compare prices."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "icon": "chat",
+            "title": "Order or ask us",
+            "text": "Checkout online or confirm details with us on WhatsApp."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "icon": "box",
+            "title": "Get it delivered",
+            "text": "We prepare, check and ship your order to your door."
+          }
+        },
+        "step_4": {
+          "type": "step",
+          "settings": {
+            "icon": "shield",
+            "title": "Enjoy with support",
+            "text": "Warranty and after-sales help when you need it."
+          }
+        }
+      },
+      "block_order": ["step_1", "step_2", "step_3", "step_4"],
+      "settings": {}
+    },
+    "sell": {
+      "type": "sell-banner",
+      "settings": {}
+    },
+    "stats": {
+      "type": "stats",
+      "blocks": {
+        "stat_1": {
+          "type": "stat",
+          "settings": {
+            "number": 10000,
+            "suffix": "+",
+            "label": "Happy customers"
+          }
+        },
+        "stat_2": {
+          "type": "stat",
+          "settings": {
+            "number": 98,
+            "suffix": "%",
+            "label": "Would buy again"
+          }
+        },
+        "stat_3": {
+          "type": "stat",
+          "settings": {
+            "number": 24,
+            "suffix": "h",
+            "label": "Fast dispatch"
+          }
+        },
+        "stat_4": {
+          "type": "stat",
+          "settings": {
+            "number": 100,
+            "suffix": "%",
+            "label": "Checked products"
+          }
+        }
+      },
+      "block_order": ["stat_1", "stat_2", "stat_3", "stat_4"],
+      "settings": {
+        "eyebrow": "Why Nayro",
+        "title": "Numbers that speak for us"
+      }
+    },
+    "stores": {
+      "type": "stores",
+      "blocks": {
+        "store_1": {
+          "type": "store",
+          "settings": {
+            "city": "Casablanca",
+            "text": "A place to see, try and compare products before you buy.",
+            "when": "Opening this season"
+          }
+        },
+        "store_2": {
+          "type": "store",
+          "settings": {
+            "city": "Rabat",
+            "text": "Pick up your online order and get help from our team.",
+            "when": "Opening soon"
+          }
+        },
+        "store_3": {
+          "type": "store",
+          "settings": {
+            "city": "Marrakech",
+            "text": "Our next location for in-person advice and after-sales support.",
+            "when": "Announcing soon"
+          }
+        }
+      },
+      "block_order": ["store_1", "store_2", "store_3"],
+      "settings": {}
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "quote": "Ordered a laptop on Monday, received it on Wednesday. Exactly as described and well packed.",
+            "author": "Yassine",
+            "meta": "Verified buyer"
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "quote": "The team answered all my questions on WhatsApp before I ordered. Great service and fair price.",
+            "author": "Salma",
+            "meta": "Verified buyer"
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "quote": "My refurbished phone looks and works like new. I would definitely buy again.",
+            "author": "Omar",
+            "meta": "Verified buyer"
+          }
+        }
+      },
+      "block_order": ["review_1", "review_2", "review_3"],
+      "settings": {}
+    },
+    "brands": {
+      "type": "brands",
+      "blocks": {
+        "brand_1": {
+          "type": "brand",
+          "settings": {
+            "name": "Apple"
+          }
+        },
+        "brand_2": {
+          "type": "brand",
+          "settings": {
+            "name": "Samsung"
+          }
+        },
+        "brand_3": {
+          "type": "brand",
+          "settings": {
+            "name": "Dell"
+          }
+        },
+        "brand_4": {
+          "type": "brand",
+          "settings": {
+            "name": "Lenovo"
+          }
+        },
+        "brand_5": {
+          "type": "brand",
+          "settings": {
+            "name": "HP"
+          }
+        },
+        "brand_6": {
+          "type": "brand",
+          "settings": {
+            "name": "Sony"
+          }
+        }
+      },
+      "block_order": ["brand_1", "brand_2", "brand_3", "brand_4", "brand_5", "brand_6"],
+      "settings": {}
+    },
+    "blog": {
+      "type": "blog-posts",
+      "settings": {}
+    },
+    "recent": {
+      "type": "recently-viewed",
+      "settings": {}
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "conditions",
+    "trust",
+    "categories",
+    "featured",
+    "deals",
+    "product_tabs",
+    "how_it_works",
+    "sell",
+    "stats",
+    "stores",
+    "testimonials",
+    "brands",
+    "blog",
+    "recent",
+    "newsletter"
+  ]
+}

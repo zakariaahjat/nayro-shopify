@@ -1,0 +1,86 @@
+<div class="nayro-home">
+  <section class="nh-section" id="newsletter-{{ section.id }}">
+    <div class="nh-wrap">
+      <div class="nh-panel nh-newsletter">
+        <div>
+          <h2>{{ section.settings.title | default: 'Get the best deals first' | escape }}</h2>
+          <p>{{ section.settings.text | default: 'Join our newsletter for new arrivals, price drops and exclusive offers. No spam.' | escape }}</p>
+        </div>
+
+        <div class="nh-newsletter__form-wrap">
+          {%- form 'customer', class: 'nh-newsletter-form' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            <label class="nayro-visually-hidden" for="NewsletterEmail-{{ section.id }}">{{ 'newsletter.email_placeholder' | t }}</label>
+            <input
+              id="NewsletterEmail-{{ section.id }}"
+              type="email"
+              name="contact[email]"
+              value="{{ form.email | escape }}"
+              placeholder="{{ section.settings.placeholder | default: 'Your email address' | escape }}"
+              autocomplete="email"
+              required
+              {% if form.errors %}aria-invalid="true" aria-describedby="NewsletterError-{{ section.id }}"{% endif %}
+            >
+            <button type="submit" class="nh-btn nh-btn--light">
+              {{ section.settings.button_label | default: 'Subscribe' | escape }}
+              {% render 'icon', name: 'arrow', class: 'nh-icon' %}
+            </button>
+
+            {%- if form.posted_successfully? -%}
+              <p class="nh-newsletter__message" id="NewsletterSuccess-{{ section.id }}" role="status">{{ 'newsletter.success' | t }}</p>
+            {%- elsif form.errors -%}
+              <p class="nh-newsletter__message nh-newsletter__message--error" id="NewsletterError-{{ section.id }}" role="alert">{{ 'newsletter.error' | t }}</p>
+            {%- endif -%}
+          {%- endform -%}
+          {%- if section.settings.note != blank -%}
+            <p class="nh-newsletter__note">{{ section.settings.note | escape }}</p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "class": "nayro-newsletter-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Get the best deals first"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Join our newsletter for new arrivals, price drops and exclusive offers. No spam."
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Email placeholder",
+      "default": "Your email address"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "Small note",
+      "default": "Unsubscribe at any time."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter"
+    }
+  ]
+}
+{% endschema %}

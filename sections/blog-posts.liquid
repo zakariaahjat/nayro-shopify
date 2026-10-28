@@ -1,0 +1,112 @@
+{%- liquid
+  assign posts_blog = section.settings.blog
+  if posts_blog == blank
+    assign posts_blog = blogs.news
+  endif
+  assign post_limit = section.settings.posts_to_show | default: 3
+-%}
+<div class="nayro-home">
+  <section class="nh-section" id="blog-{{ section.id }}">
+    <div class="nh-wrap">
+      <div class="nh-head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="nh-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+          {%- endif -%}
+          <h2 class="nh-title">{{ section.settings.title | default: 'From the blog' | escape }}</h2>
+        </div>
+        {%- if posts_blog != blank and section.settings.show_link -%}
+          <a class="nh-link" href="{{ posts_blog.url }}">{{ section.settings.link_label | default: 'All articles' | escape }} {% render 'icon', name: 'arrow', class: 'nh-icon' %}</a>
+        {%- endif -%}
+      </div>
+
+      {%- if posts_blog != blank and posts_blog.articles.size > 0 -%}
+        <div class="nh-posts">
+          {%- for article in posts_blog.articles limit: post_limit -%}
+            <a class="nh-post" href="{{ article.url }}">
+              <span class="nh-post__img">
+                {%- if article.image != blank -%}
+                  {{ article.image | image_url: width: 700 | image_tag:
+                    loading: 'lazy',
+                    widths: '350, 500, 700',
+                    sizes: '(min-width: 1024px) 33vw, (min-width: 720px) 50vw, 100vw',
+                    alt: article.image.alt | default: article.title
+                  }}
+                {%- endif -%}
+              </span>
+              <span class="nh-post__body">
+                <span class="nh-post__meta">{{ article.published_at | date: '%b %d, %Y' }}{% if article.tags.size > 0 %} · {{ article.tags.first | escape }}{% endif %}</span>
+                <h3>{{ article.title | escape }}</h3>
+                <p>{{ article.excerpt_or_content | strip_html | truncatewords: 20 }}</p>
+              </span>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <div class="nayro-empty-state">
+          {% render 'icon', name: 'box' %}
+          <h2>{{ 'blogs.general.no_articles' | t }}</h2>
+          <p>{{ section.settings.empty_text | default: 'Create a blog and publish your first article to show it here.' | escape }}</p>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "class": "nayro-blog-posts-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Guides & news"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "From the blog"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "range",
+      "id": "posts_to_show",
+      "label": "Posts to show",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "show_link",
+      "label": "Show all-articles link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "All articles"
+    },
+    {
+      "type": "text",
+      "id": "empty_text",
+      "label": "Empty-state text",
+      "default": "Create a blog and publish your first article to show it here."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog posts"
+    }
+  ]
+}
+{% endschema %}

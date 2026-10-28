@@ -1,0 +1,40 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-sell",
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "title": "Send your details",
+            "text": "Tell us the model, condition and what you would like for it."
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "title": "Get a quote",
+            "text": "We check current prices and come back with a fair offer."
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "title": "Ship or drop off",
+            "text": "Send the device to us or arrange a pickup where available."
+          }
+        },
+        "step_4": {
+          "type": "step",
+          "settings": {
+            "title": "Get paid",
+            "text": "Once everything is confirmed, we pay you quickly and securely."
+          }
+        }
+      },
+      "block_order": ["step_1", "step_2", "step_3", "step_4"],
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

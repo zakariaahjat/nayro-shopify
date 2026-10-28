@@ -1,0 +1,100 @@
+{%- comment -%}
+  Facets. Accepts: results (collection or search), form_action, reset_url,
+  current_sort (optional), is_search (optional), search_terms (optional).
+{%- endcomment -%}
+{%- if results.filters.size > 0 -%}
+  <form id="NayroFacetsForm" class="nayro-filters" method="get" action="{{ form_action }}" data-facets-form>
+    {%- if is_search -%}
+      <input type="hidden" name="q" value="{{ search_terms | escape }}">
+      <input type="hidden" name="options[prefix]" value="last">
+      {%- if search_type != blank -%}
+        <input type="hidden" name="type" value="{{ search_type }}">
+      {%- endif -%}
+    {%- endif -%}
+    {%- if current_sort != blank -%}
+      <input type="hidden" name="sort_by" value="{{ current_sort }}">
+    {%- endif -%}
+
+    <div class="nayro-filters__head">
+      <span class="nayro-filters__title">{{ 'collections.general.filters' | t }}</span>
+      <a class="nayro-filters__reset" href="{{ reset_url }}">{{ 'collections.general.clear_all' | t }}</a>
+    </div>
+
+    {%- for filter in results.filters -%}
+      {%- assign filter_open = false -%}
+      {%- if filter.active_values.size > 0 -%}
+        {%- assign filter_open = true -%}
+      {%- endif -%}
+      {%- if filter.type == 'price_range' -%}
+        {%- if filter.min_value.value != blank or filter.max_value.value != blank -%}
+          {%- assign filter_open = true -%}
+        {%- endif -%}
+      {%- endif -%}
+      <details class="nayro-filter-group" {% if filter_open %}open{% endif %}>
+        <summary class="nayro-filter-group__title">{{ filter.label | escape }}</summary>
+
+        {%- case filter.type -%}
+          {%- when 'price_range' -%}
+            <div class="nayro-filter-price">
+              <div>
+                <label for="Filter-{{ filter.label | handle }}-gte">{{ 'collections.general.from' | t }}</label>
+                <input
+                  type="number"
+                  id="Filter-{{ filter.label | handle }}-gte"
+                  name="{{ filter.min_value.param_name }}"
+                  placeholder="0"
+                  min="0"
+                  max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                  value="{% if filter.min_value.value %}{{ filter.min_value.value | money_without_currency | replace: ',', '' }}{% endif %}"
+                  data-facet-input
+                >
+              </div>
+              <div>
+                <label for="Filter-{{ filter.label | handle }}-lte">{{ 'collections.general.to' | t }}</label>
+                <input
+                  type="number"
+                  id="Filter-{{ filter.label | handle }}-lte"
+                  name="{{ filter.max_value.param_name }}"
+                  placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                  min="0"
+                  max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                  value="{% if filter.max_value.value %}{{ filter.max_value.value | money_without_currency | replace: ',', '' }}{% endif %}"
+                  data-facet-input
+                >
+              </div>
+            </div>
+
+          {%- else -%}
+            <ul class="nayro-filter-list">
+              {%- for value in filter.values -%}
+                {%- assign is_disabled = false -%}
+                {%- if value.count == 0 and value.active == false -%}
+                  {%- assign is_disabled = true -%}
+                {%- endif -%}
+                <li class="nayro-filter-item{% if value.active %} is-active{% endif %}{% if is_disabled %} is-disabled{% endif %}">
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="{{ value.param_name }}"
+                      value="{{ value.value }}"
+                      {% if value.active %}checked{% endif %}
+                      {% if is_disabled %}disabled{% endif %}
+                      data-facet-input
+                    >
+                    <span class="nayro-filter-item__label">{{ value.label | escape }}</span>
+                    <span class="nayro-filter-item__count">{{ value.count }}</span>
+                  </label>
+                </li>
+              {%- endfor -%}
+            </ul>
+        {%- endcase -%}
+      </details>
+    {%- endfor -%}
+
+    <div class="nayro-filters__actions">
+      <button type="submit" class="nayro-btn nayro-btn--primary nayro-btn--sm nayro-btn--block">
+        {{ 'collections.general.apply' | t }}
+      </button>
+    </div>
+  </form>
+{%- endif -%}

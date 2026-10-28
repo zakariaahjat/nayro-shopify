@@ -1,0 +1,106 @@
+<div class="nayro-home">
+  <section class="nh-section" id="categories-{{ section.id }}">
+    <div class="nh-wrap">
+      <div class="nh-head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="nh-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+          {%- endif -%}
+          <h2 class="nh-title">{{ section.settings.title | default: 'Shop by category' | escape }}</h2>
+        </div>
+        {%- if section.settings.show_view_all -%}
+          <a class="nh-link" href="{{ routes.collections_url }}">{{ section.settings.link_label | default: 'All products' | escape }} {% render 'icon', name: 'arrow', class: 'nh-icon' %}</a>
+        {%- endif -%}
+      </div>
+
+      <div class="nh-cats">
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            {%- assign cat = block.settings.collection -%}
+            {%- if cat != blank -%}
+              {%- assign cat_image = cat.image -%}
+              {%- if cat_image == blank -%}
+                {%- assign cat_image = cat.products.first.featured_image -%}
+              {%- endif -%}
+              <a class="nh-cat" href="{{ cat.url }}" {{ block.shopify_attributes }}>
+                {%- if cat_image != blank -%}
+                  {{ cat_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350, 500, 700', sizes: '(min-width: 1024px) 25vw, 50vw', alt: cat.title | escape }}
+                {%- endif -%}
+                <span class="nh-cat__txt">
+                  <b>{{ cat.title | escape }}</b>
+                  <span>{{ cat.all_products_count }} {{ 'collections.general.product_count' | t }}</span>
+                </span>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          {%- assign fallback_collections = collections | sort: 'title' -%}
+          {%- for cat in fallback_collections limit: 4 -%}
+            {%- assign cat_image = cat.image | default: cat.products.first.featured_image -%}
+            <a class="nh-cat" href="{{ cat.url }}">
+              {%- if cat_image != blank -%}
+                {{ cat_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350, 500, 700', sizes: '(min-width: 1024px) 25vw, 50vw', alt: cat.title | escape }}
+              {%- endif -%}
+              <span class="nh-cat__txt">
+                <b>{{ cat.title | escape }}</b>
+                <span>{{ cat.all_products_count }} {{ 'collections.general.product_count' | t }}</span>
+              </span>
+            </a>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Collection list",
+  "class": "nayro-collection-list-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Browse"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop by category"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show view-all link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "View-all label",
+      "default": "All products"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Collection list"
+    }
+  ]
+}
+{% endschema %}

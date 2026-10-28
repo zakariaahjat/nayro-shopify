@@ -1,0 +1,43 @@
+<div class="nayro-404">
+  <div class="nayro-container">
+    <div class="nayro-404__code" aria-hidden="true">404</div>
+    <h1>{{ '404.title' | t }}</h1>
+    <p>{{ '404.text' | t }}</p>
+
+    <div class="nayro-404__actions">
+      <a class="nayro-btn nayro-btn--primary" href="{{ routes.root_url }}">{{ '404.home' | t }}</a>
+      <a class="nayro-btn nayro-btn--ghost" href="{{ routes.all_products_collection_url }}">{{ '404.shop' | t }}</a>
+    </div>
+
+    <form class="nayro-search-page__form" action="{{ routes.search_url }}" method="get" role="search">
+      <label class="nayro-visually-hidden" for="NotFoundSearch">{{ 'general.accessibility.search' | t }}</label>
+      <input id="NotFoundSearch" type="search" name="q" placeholder="{{ 'general.search_placeholder' | t }}" autocomplete="off">
+      <input type="hidden" name="type" value="product">
+      <button type="submit">{{ 'search.submit' | t }}</button>
+    </form>
+
+    {%- if collections.size > 0 -%}
+      <div class="nayro-404__collections">
+        <h2>{{ 'general.categories' | t }}</h2>
+        <div class="nayro-brands">
+          {%- for collection in collections limit: 6 -%}
+            <a class="nh-brand" href="{{ collection.url }}">{{ collection.title | escape }}</a>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "404",
+  "class": "nayro-main-404-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "404"
+    }
+  ]
+}
+{% endschema %}

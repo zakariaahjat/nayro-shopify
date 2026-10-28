@@ -1,0 +1,110 @@
+<aside class="nayro-cart-drawer" id="nayro-cart-drawer" aria-label="{{ 'cart.general.title' | t }}" aria-hidden="true">
+  <div class="nayro-drawer__head">
+    <h2 class="nayro-drawer__title">{{ section.settings.title | default: 'Your cart' | escape }}</h2>
+    <button type="button" class="nayro-icon-btn" data-close-panel aria-label="{{ 'general.accessibility.close_cart' | t }}">
+      {% render 'icon', name: 'close' %}
+    </button>
+  </div>
+
+  <div class="nayro-mini-cart-contents" id="nayro-mini-cart">
+    {% render 'free-shipping', total: cart.total_price %}
+
+    {%- if cart.item_count > 0 -%}
+      <div class="nayro-drawer__body">
+        {%- for item in cart.items -%}
+          <div class="nayro-cart-item" data-cart-item data-line="{{ forloop.index }}" data-key="{{ item.key }}">
+            <a class="nayro-cart-item__img" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+              {%- if item.image != blank -%}
+                {{ item.image | image_url: width: 160 | image_tag: loading: 'lazy', width: 72, height: 72, alt: item.image.alt | default: item.product.title }}
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'nayro-placeholder' }}
+              {%- endif -%}
+            </a>
+
+            <div class="nayro-cart-item__info">
+              <span class="nayro-cart-item__name"><a href="{{ item.url }}">{{ item.product.title | escape }}</a></span>
+              {%- unless item.product.has_only_default_variant -%}
+                <span class="nayro-cart-item__variant">{{ item.variant.title | escape }}</span>
+              {%- endunless -%}
+              {%- if item.selling_plan_allocation != blank -%}
+                <span class="nayro-cart-item__variant">{{ item.selling_plan_allocation.selling_plan.name | escape }}</span>
+              {%- endif -%}
+              <span class="nayro-cart-item__price">
+                {%- if item.original_price != item.final_price -%}
+                  <del>{{ item.original_price | money }}</del>
+                  <ins>{{ item.final_price | money }}</ins>
+                {%- else -%}
+                  {{ item.final_price | money }}
+                {%- endif -%}
+              </span>
+
+              <div class="nayro-cart-item__qty">
+                <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity={{ item.quantity | minus: 1 }}" data-cart-qty-change data-line="{{ forloop.index }}" aria-label="{{ 'products.product.quantity' | t }} –">
+                  {% render 'icon', name: 'minus' %}
+                </a>
+                <span aria-live="polite">{{ item.quantity }}</span>
+                <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&amp;quantity={{ item.quantity | plus: 1 }}" data-cart-qty-change data-line="{{ forloop.index }}" aria-label="{{ 'products.product.quantity' | t }} +">
+                  {% render 'icon', name: 'plus' %}
+                </a>
+              </div>
+            </div>
+
+            <a class="nayro-cart-item__remove" href="{{ item.url_to_remove }}" data-cart-remove data-line="{{ forloop.index }}" aria-label="{{ 'cart.general.remove' | t }}: {{ item.product.title | escape }}">
+              {% render 'icon', name: 'trash' %}
+            </a>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="nayro-drawer__foot">
+        {%- if cart.cart_level_discount_applications.size > 0 -%}
+          {%- for discount in cart.cart_level_discount_applications -%}
+            <div class="nayro-drawer__subtotal">
+              <span>{{ discount.title | escape }}</span>
+              <span>−{{ discount.total_allocated_amount | money }}</span>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+        <div class="nayro-drawer__subtotal">
+          <span>{{ 'cart.general.subtotal' | t }}</span>
+          <b>{{ cart.items_subtotal_price | money }}</b>
+        </div>
+        <form action="{{ routes.cart_url }}" method="post" id="CartDrawerForm">
+          <button type="submit" name="checkout" class="nayro-btn nayro-btn--primary nayro-btn--block">
+            {{ 'cart.general.checkout' | t }}
+          </button>
+        </form>
+        <a class="nayro-btn nayro-btn--ghost nayro-btn--block" href="{{ routes.cart_url }}" style="margin-top: 8px;">
+          {{ 'cart.general.view_cart' | t }}
+        </a>
+        <p class="nayro-drawer__note">{{ 'cart.general.shipping_note' | t }}</p>
+      </div>
+    {%- else -%}
+      <div class="nayro-empty-cart nayro-mini-empty">
+        {% render 'icon', name: 'cart' %}
+        <p><b>{{ 'cart.general.empty' | t }}</b><br>{{ 'cart.general.empty_text' | t }}</p>
+        <a class="nayro-btn nayro-btn--primary nayro-btn--sm" href="{{ routes.all_products_collection_url }}" data-close-panel>{{ 'cart.general.continue_shopping' | t }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</aside>
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "class": "nayro-cart-drawer-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Your cart"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cart drawer"
+    }
+  ]
+}
+{% endschema %}

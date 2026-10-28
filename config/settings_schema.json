@@ -1,0 +1,291 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Nayro",
+    "theme_version": "1.0.0",
+    "theme_author": "Nayro",
+    "theme_documentation_url": "https://shopify.dev/docs/storefronts/themes",
+    "theme_support_url": "https://shopify.dev/docs/storefronts/themes"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary",
+        "default": "#ff3c00"
+      },
+      {
+        "type": "color",
+        "id": "color_primary_dark",
+        "label": "Primary (hover)",
+        "default": "#c8380f"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text",
+        "default": "#101828"
+      },
+      {
+        "type": "color",
+        "id": "color_muted",
+        "label": "Muted text",
+        "default": "#475467"
+      },
+      {
+        "type": "color",
+        "id": "color_bg",
+        "label": "Page background",
+        "default": "#f7f8fc"
+      },
+      {
+        "type": "color",
+        "id": "color_surface",
+        "label": "Cards and surfaces",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Borders",
+        "default": "#e5e7eb"
+      },
+      {
+        "type": "color",
+        "id": "color_sale",
+        "label": "Sale price",
+        "default": "#e11d48"
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "container_width",
+        "label": "Container width",
+        "min": 1080,
+        "max": 1440,
+        "step": 20,
+        "unit": "px",
+        "default": 1320
+      },
+      {
+        "type": "checkbox",
+        "id": "sticky_header",
+        "label": "Sticky header",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_dark_mode",
+        "label": "Show dark-mode toggle",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_wishlist",
+        "label": "Enable wishlist (saved in the visitor's browser)",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_second_image",
+        "label": "Show second product image on hover",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_quick_view",
+        "label": "Show quick view button on product cards",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Logo",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Logo width",
+        "min": 80,
+        "max": 260,
+        "step": 5,
+        "unit": "px",
+        "default": 150
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon"
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free-shipping threshold",
+        "info": "In your store currency. Set to 0 to hide the progress bar.",
+        "default": 500
+      },
+      {
+        "type": "checkbox",
+        "id": "show_free_shipping_bar",
+        "label": "Show free-shipping progress bar",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Product page",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show vendor",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_sku",
+        "label": "Show SKU",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_share",
+        "label": "Show share links",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_button",
+        "label": "Show dynamic checkout button",
+        "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "shipping_text",
+        "label": "Shipping information",
+        "default": "Fast delivery across the country. Cash on delivery available."
+      },
+      {
+        "type": "textarea",
+        "id": "returns_text",
+        "label": "Returns information",
+        "default": "7-day returns on eligible products. Contact us and we will help."
+      }
+    ]
+  },
+  {
+    "name": "Contact and WhatsApp",
+    "settings": [
+      {
+        "type": "text",
+        "id": "whatsapp_number",
+        "label": "WhatsApp number",
+        "info": "International format, digits only, for example 212600000000.",
+        "default": "212600000000"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_message",
+        "label": "Default WhatsApp message",
+        "default": "Hello, I would like some help."
+      },
+      {
+        "type": "text",
+        "id": "contact_phone",
+        "label": "Phone",
+        "default": "+212 6 00 00 00 00"
+      },
+      {
+        "type": "text",
+        "id": "contact_email",
+        "label": "Email",
+        "default": "hello@nayro.com"
+      },
+      {
+        "type": "text",
+        "id": "contact_address",
+        "label": "Address",
+        "default": "Casablanca, Morocco"
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "Instagram"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "Facebook"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok",
+        "label": "TikTok"
+      },
+      {
+        "type": "url",
+        "id": "social_youtube",
+        "label": "YouTube"
+      },
+      {
+        "type": "url",
+        "id": "social_x",
+        "label": "X (Twitter)"
+      }
+    ]
+  },
+  {
+    "name": "Footer",
+    "settings": [
+      {
+        "type": "text",
+        "id": "footer_text",
+        "label": "Copyright text",
+        "default": "© Nayro. All rights reserved."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_icons",
+        "label": "Show accepted payment icons",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_localization",
+        "label": "Show country and language selectors",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "SEO and sharing",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "social_image",
+        "label": "Default social sharing image"
+      }
+    ]
+  }
+]

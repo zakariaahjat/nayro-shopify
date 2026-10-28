@@ -1,0 +1,136 @@
+{%- liquid
+  assign sell_url = section.settings.link
+  if sell_url == blank and settings.whatsapp_number != blank
+    assign sell_message = 'Hi, I would like to sell my device.' | url_encode
+    assign sell_url = 'https://wa.me/' | append: settings.whatsapp_number | append: '?text=' | append: sell_message
+  endif
+  assign bullets = section.settings.bullets | newline_to_br | split: '<br />'
+-%}
+<div class="nayro-page">
+  <div class="nayro-container">
+    {% render 'breadcrumbs' %}
+
+    <div class="nayro-sell-hero">
+      <div>
+        <span class="nayro-page__eyebrow" style="color: rgba(255,255,255,.8);">{{ section.settings.eyebrow | default: 'Sell with us' | escape }}</span>
+        <h1>{{ section.settings.title | default: page.title | default: 'Turn your device into cash' | escape }}</h1>
+        <p>{{ section.settings.text | default: 'Send us the details and a few photos. We will check everything and come back with a fair offer.' | escape }}</p>
+        {%- if section.settings.bullets != blank -%}
+          <ul>
+            {%- for bullet in bullets -%}
+              {%- assign bullet_text = bullet | strip_html | strip -%}
+              {%- if bullet_text != blank -%}<li>{{ bullet_text | escape }}</li>{%- endif -%}
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+        {%- if sell_url != blank -%}
+          <p style="margin-top: 20px;">
+            <a class="nayro-btn nayro-btn--light" href="{{ sell_url }}" {% if section.settings.link == blank %}target="_blank" rel="noopener"{% endif %}>
+              {% render 'icon', name: 'whatsapp' %}
+              {{ section.settings.button_label | default: 'Get an offer' | escape }}
+            </a>
+          </p>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.image != blank -%}
+        {{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'eager', widths: '500, 750, 1000', sizes: '(min-width: 900px) 40vw, 100vw', alt: section.settings.image.alt | default: page.title }}
+      {%- endif -%}
+    </div>
+
+    <div class="nayro-sell-steps">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          <div class="nayro-sell-step" {{ block.shopify_attributes }}>
+            <h3>{{ block.settings.title | escape }}</h3>
+            <p>{{ block.settings.text | escape }}</p>
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        <div class="nayro-sell-step"><h3>Send your details</h3><p>Tell us the model, condition and what you would like for it.</p></div>
+        <div class="nayro-sell-step"><h3>Get a quote</h3><p>We check current prices and send you a clear offer.</p></div>
+        <div class="nayro-sell-step"><h3>Ship or drop off</h3><p>Send the device or arrange a pickup with our team.</p></div>
+        <div class="nayro-sell-step"><h3>Get paid</h3><p>Once everything checks out, you receive your payment.</p></div>
+      {%- endif -%}
+    </div>
+
+    {%- if page.content != blank -%}
+      <div class="nayro-prose rte">{{ page.content }}</div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Sell your device",
+  "class": "nayro-main-sell-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Sell with us"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Turn your device into cash"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Send us the details and a few photos. We will check everything and come back with a fair offer."
+    },
+    {
+      "type": "textarea",
+      "id": "bullets",
+      "label": "Bullet points (one per line)",
+      "default": "Free quote\nSend photos on WhatsApp\nNo obligation"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Get an offer"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Button link",
+      "info": "Leave empty to use WhatsApp."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Send your details"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Tell us the model, condition and what you would like for it."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Sell your device"
+    }
+  ]
+}
+{% endschema %}

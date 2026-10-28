@@ -1,0 +1,155 @@
+{%- liquid
+  assign notify_url = section.settings.link
+  if notify_url == blank and settings.whatsapp_number != blank
+    assign notify_message = 'Please notify me when your store opens.' | url_encode
+    assign notify_url = 'https://wa.me/' | append: settings.whatsapp_number | append: '?text=' | append: notify_message
+  endif
+-%}
+<div class="nayro-home">
+  <section class="nh-section" id="stores-{{ section.id }}">
+    <div class="nh-wrap">
+      <div class="nh-head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="nh-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+          {%- endif -%}
+          <h2 class="nh-title">{{ section.settings.title | default: 'Stores coming soon' | escape }}</h2>
+        </div>
+      </div>
+
+      <div class="nh-stores">
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            <div class="nh-store" {{ block.shopify_attributes }}>
+              <span class="nh-store__badge"><i aria-hidden="true"></i>{{ section.settings.badge | default: 'Coming soon' | escape }}</span>
+              <h3>{{ block.settings.city | default: 'Casablanca' | escape }}</h3>
+              <p>{{ block.settings.text | escape }}</p>
+              {%- if block.settings.when != blank -%}
+                <span class="nh-store__when">{{ block.settings.when | escape }}</span>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          <div class="nh-store">
+            <span class="nh-store__badge"><i aria-hidden="true"></i>Coming soon</span>
+            <h3>Casablanca</h3>
+            <p>A place to see, try and compare products before you buy.</p>
+            <span class="nh-store__when">Opening this season</span>
+          </div>
+          <div class="nh-store">
+            <span class="nh-store__badge"><i aria-hidden="true"></i>Coming soon</span>
+            <h3>Rabat</h3>
+            <p>Pick up your online order and get help from our team.</p>
+            <span class="nh-store__when">Opening soon</span>
+          </div>
+          <div class="nh-store">
+            <span class="nh-store__badge"><i aria-hidden="true"></i>Coming soon</span>
+            <h3>Marrakech</h3>
+            <p>Our next location for in-person advice and after-sales support.</p>
+            <span class="nh-store__when">Announcing soon</span>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.show_cta -%}
+        <div class="nh-stores__cta">
+          <span>{{ section.settings.cta_text | default: 'Be the first to know when your city opens.' | escape }}</span>
+          {%- if notify_url != blank -%}
+            <a class="nh-btn nh-btn--primary" href="{{ notify_url }}" {% if section.settings.link == blank %}target="_blank" rel="noopener"{% endif %}>
+              {% render 'icon', name: 'mail', class: 'nh-icon' %}
+              {{ section.settings.cta_label | default: 'Notify me' | escape }}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Stores",
+  "class": "nayro-stores-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Offline too"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Stores coming soon"
+    },
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge label",
+      "default": "Coming soon"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show call to action",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Call to action text",
+      "default": "Be the first to know when your city opens."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Call to action button",
+      "default": "Notify me"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Call to action link",
+      "info": "Leave empty to use WhatsApp."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "store",
+      "name": "Store",
+      "settings": [
+        {
+          "type": "text",
+          "id": "city",
+          "label": "City",
+          "default": "Casablanca"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "A place to see, try and compare products before you buy."
+        },
+        {
+          "type": "text",
+          "id": "when",
+          "label": "Opening note",
+          "default": "Opening this season"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Stores",
+      "blocks": [
+        { "type": "store", "settings": { "city": "Casablanca", "text": "A place to see, try and compare products before you buy.", "when": "Opening this season" } },
+        { "type": "store", "settings": { "city": "Rabat", "text": "Pick up your online order and get help from our team.", "when": "Opening soon" } },
+        { "type": "store", "settings": { "city": "Marrakech", "text": "Our next location for in-person advice and after-sales support.", "when": "Announcing soon" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

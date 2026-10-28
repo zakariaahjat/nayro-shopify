@@ -1,0 +1,57 @@
+{%- liquid
+  assign recommendations_limit = section.settings.products_to_show | default: 4
+  assign recommendations_url = routes.product_recommendations_url | append: '?section_id=' | append: section.id | append: '&product_id=' | append: product.id | append: '&limit=' | append: recommendations_limit
+  assign has_recommendations = false
+  if recommendations.performed and recommendations.products_count > 0
+    assign has_recommendations = true
+  endif
+-%}
+<section
+  class="nayro-related"
+  id="recommendations-{{ section.id }}"
+  data-product-recommendations
+  data-url="{{ recommendations_url }}"
+  {% unless has_recommendations %}hidden{% endunless %}
+>
+  <div data-recommendations-content>
+    {%- if has_recommendations -%}
+      <div class="nh-head">
+        <h2 class="nayro-related__title">{{ section.settings.title | default: 'You may also like' | escape }}</h2>
+      </div>
+      <ul class="products nayro-products">
+        {%- for recommended_product in recommendations.products -%}
+          {% render 'product-card', product: recommended_product, index: forloop.index %}
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "class": "nayro-product-recommendations-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "You may also like"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product recommendations"
+    }
+  ]
+}
+{% endschema %}

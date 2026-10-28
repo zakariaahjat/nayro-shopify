@@ -1,0 +1,25 @@
+{%- comment -%}
+  Renders a price. Accepts: product (required), variant (optional), class (optional).
+{%- endcomment -%}
+{%- liquid
+  assign price_value = product.price
+  assign compare_value = product.compare_at_price
+  assign price_varies = product.price_varies
+  if variant != blank
+    assign price_value = variant.price
+    assign compare_value = variant.compare_at_price
+    assign price_varies = false
+  endif
+  assign price_class = class | default: 'nayro-price'
+-%}
+<span class="{{ price_class }}" data-price>
+  {%- if compare_value != blank and compare_value > price_value -%}
+    <del>{{ compare_value | money }}</del>
+    <ins>{{ price_value | money }}</ins>
+  {%- elsif price_varies -%}
+    <span class="nayro-price__from">{{ 'products.product.from' | t }}</span>
+    {{ price_value | money }}
+  {%- else -%}
+    {{ price_value | money }}
+  {%- endif -%}
+</span>

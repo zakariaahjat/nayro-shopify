@@ -1,0 +1,96 @@
+{%- liquid
+  assign featured = section.settings.collection
+  if featured == blank
+    assign featured = collections.all
+  endif
+  assign product_limit = section.settings.products_to_show | default: 4
+-%}
+<div class="nayro-home">
+  <section class="nh-section{% if section.settings.alt_background %} nh-alt{% endif %}" id="featured-{{ section.id }}">
+    <div class="nh-wrap">
+      <div class="nh-head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="nh-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+          {%- endif -%}
+          <h2 class="nh-title">{{ section.settings.title | default: 'Featured products' | escape }}</h2>
+        </div>
+        {%- if section.settings.show_view_all -%}
+          <a class="nh-link" href="{{ featured.url }}">{{ section.settings.link_label | default: 'View all' | escape }} {% render 'icon', name: 'arrow', class: 'nh-icon' %}</a>
+        {%- endif -%}
+      </div>
+
+      {%- if featured.products.size > 0 -%}
+        <ul class="products nayro-products">
+          {%- for product in featured.products limit: product_limit -%}
+            {% render 'product-card', product: product, collection: featured, index: forloop.index %}
+          {%- endfor -%}
+        </ul>
+      {%- else -%}
+        <div class="nayro-empty-state">
+          {% render 'icon', name: 'box' %}
+          <h2>{{ 'collections.general.no_products' | t }}</h2>
+          <p>{{ 'collections.general.no_products_text' | t }}</p>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "class": "nayro-featured-collection-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Hand-picked"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "alt_background",
+      "label": "Alternate background",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show view-all link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "View-all label",
+      "default": "View all"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured collection"
+    }
+  ]
+}
+{% endschema %}

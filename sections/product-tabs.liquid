@@ -1,0 +1,173 @@
+{%- liquid
+  assign tab_count = 0
+  for block in section.blocks
+    if block.settings.collection != blank and block.settings.collection.products.size > 0
+      assign tab_count = tab_count | plus: 1
+    endif
+  endfor
+-%}
+<div class="nayro-home">
+  <section class="nh-section nh-alt" id="products-{{ section.id }}">
+    <div class="nh-wrap" data-nh-tabs>
+      <div class="nh-head">
+        <div>
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="nh-eyebrow">{{ section.settings.eyebrow | escape }}</span>
+          {%- endif -%}
+          <h2 class="nh-title">{{ section.settings.title | default: 'Our products' | escape }}</h2>
+        </div>
+        {%- if section.settings.show_link -%}
+          <a class="nh-link" href="{{ routes.all_products_collection_url }}">{{ section.settings.link_label | default: 'Shop all' | escape }} {% render 'icon', name: 'arrow', class: 'nh-icon' %}</a>
+        {%- endif -%}
+      </div>
+
+      {%- if tab_count > 0 -%}
+        <div class="nh-tabs" role="tablist" aria-label="{{ section.settings.title | default: 'Our products' | escape }}">
+          {%- assign tab_i = 0 -%}
+          {%- for block in section.blocks -%}
+            {%- assign tab_collection = block.settings.collection -%}
+            {%- if tab_collection != blank and tab_collection.products.size > 0 -%}
+              {%- assign panel_id = 'nh-panel-' | append: section.id | append: '-' | append: block.id -%}
+              {%- assign tab_id = 'nh-tab-' | append: section.id | append: '-' | append: block.id -%}
+              <button
+                class="nh-tab"
+                role="tab"
+                id="{{ tab_id }}"
+                aria-controls="{{ panel_id }}"
+                aria-selected="{% if tab_i == 0 %}true{% else %}false{% endif %}"
+                tabindex="{% if tab_i == 0 %}0{% else %}-1{% endif %}"
+                type="button"
+              >
+                {{ block.settings.title | default: tab_collection.title | escape }}
+              </button>
+              {%- assign tab_i = tab_i | plus: 1 -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        {%- assign panel_i = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- assign tab_collection = block.settings.collection -%}
+          {%- if tab_collection != blank and tab_collection.products.size > 0 -%}
+            {%- assign panel_id = 'nh-panel-' | append: section.id | append: '-' | append: block.id -%}
+            {%- assign tab_id = 'nh-tab-' | append: section.id | append: '-' | append: block.id -%}
+            <div
+              role="tabpanel"
+              id="{{ panel_id }}"
+              aria-labelledby="{{ tab_id }}"
+              tabindex="0"
+              {% unless panel_i == 0 %}hidden{% endunless %}
+            >
+              <ul class="products nayro-products">
+                {%- for product in tab_collection.products limit: section.settings.products_to_show -%}
+                  {% render 'product-card', product: product, collection: tab_collection, index: forloop.index %}
+                {%- endfor -%}
+              </ul>
+            </div>
+            {%- assign panel_i = panel_i | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- if collections.all.products.size > 0 -%}
+          <div class="nh-tabs" role="tablist" aria-label="{{ section.settings.title | default: 'Our products' | escape }}">
+            <button
+              class="nh-tab"
+              role="tab"
+              id="nh-tab-all-{{ section.id }}"
+              aria-controls="nh-panel-all-{{ section.id }}"
+              aria-selected="true"
+              tabindex="0"
+              type="button"
+            >
+              {{ collections.all.title | default: 'All products' | escape }}
+            </button>
+          </div>
+          <div role="tabpanel" id="nh-panel-all-{{ section.id }}" aria-labelledby="nh-tab-all-{{ section.id }}" tabindex="0">
+            <ul class="products nayro-products">
+              {%- for product in collections.all.products limit: section.settings.products_to_show -%}
+                {% render 'product-card', product: product, collection: collections.all, index: forloop.index %}
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- else -%}
+          <div class="nayro-empty-state">
+            <h2>{{ 'collections.general.no_products' | t }}</h2>
+            <p>{{ 'collections.general.no_products_text' | t }}</p>
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Product tabs",
+  "class": "nayro-product-tabs-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Discover"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Our products"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products per tab",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_link",
+      "label": "Show shop-all link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link label",
+      "default": "Shop all"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Tab label",
+          "default": "New arrivals"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "Product tabs",
+      "blocks": [
+        { "type": "tab", "settings": { "title": "New arrivals" } },
+        { "type": "tab", "settings": { "title": "Best sellers" } },
+        { "type": "tab", "settings": { "title": "Deals" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

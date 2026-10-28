@@ -1,0 +1,347 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign product_form_id = 'nayro-product-form-' | append: section.id
+  assign condition_label = ''
+  assign tags_string = product.tags | join: ',' | downcase
+  if tags_string contains 'refurbished'
+    assign condition_label = 'products.product.refurbished' | t
+  elsif tags_string contains 'used'
+    assign condition_label = 'products.product.used' | t
+  elsif tags_string contains 'new'
+    assign condition_label = 'products.product.new' | t
+  endif
+  assign share_url = shop.url | append: product.url
+  assign images = product.media
+  assign main_image = product.featured_image
+  if main_image == blank
+    assign main_image = product.media.first.preview_image
+  endif
+  assign image_count = 0
+  for media in images
+    if media.preview_image != blank
+      assign image_count = image_count | plus: 1
+    endif
+  endfor
+  assign low_stock = false
+  if current_variant.inventory_management != blank and current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= 5
+    assign low_stock = true
+  endif
+-%}
+
+<div class="nayro-single-wrap">
+  <div class="nayro-container">
+    {% render 'breadcrumbs' %}
+
+    <div class="nayro-single-product" data-product-root data-section-id="{{ section.id }}" data-product-handle="{{ product.handle }}">
+      <div class="nayro-product-gallery nayro-gallery" data-gallery>
+        <div class="nayro-gallery__stage">
+          <div class="nayro-gallery__badges">
+            {%- if product.compare_at_price > product.price -%}
+              <span class="nayro-badge nayro-badge--sale">{{ 'products.product.on_sale' | t }}</span>
+            {%- endif -%}
+            {%- if condition_label != blank -%}
+              <span class="nayro-badge nayro-badge--cond">{{ condition_label }}</span>
+            {%- endif -%}
+            {%- unless product.available -%}
+              <span class="nayro-badge nayro-badge--out">{{ 'products.product.sold_out' | t }}</span>
+            {%- endunless -%}
+          </div>
+
+          {%- if image_count > 0 -%}
+            {%- assign slide_index = 0 -%}
+            {%- for media in images -%}
+              {%- if media.preview_image == blank -%}{%- continue -%}{%- endif -%}
+              {%- assign loading_mode = 'lazy' -%}
+              {%- if slide_index == 0 -%}{%- assign loading_mode = 'eager' -%}{%- endif -%}
+              <div class="nayro-gallery__slide{% if slide_index == 0 %} is-active{% endif %}" data-gallery-slide data-index="{{ slide_index }}" data-media-id="{{ media.id }}" data-full="{{ media.preview_image | image_url: width: 2400 }}"{% unless slide_index == 0 %} aria-hidden="true"{% endunless %}>
+                {{ media.preview_image | image_url: width: 1600 | image_tag:
+                  loading: loading_mode,
+                  widths: '500, 800, 1200, 1600',
+                  sizes: '(min-width: 900px) 50vw, 100vw',
+                  class: 'nayro-gallery__img',
+                  alt: media.preview_image.alt | default: product.title
+                }}
+              </div>
+              {%- assign slide_index = slide_index | plus: 1 -%}
+            {%- endfor -%}
+
+            {%- if image_count > 1 -%}
+              <button type="button" class="nayro-gallery__nav nayro-gallery__nav--prev" data-gallery-prev aria-label="{{ 'general.accessibility.previous' | t }}">
+                {% render 'icon', name: 'chevron-left' %}
+              </button>
+              <button type="button" class="nayro-gallery__nav nayro-gallery__nav--next" data-gallery-next aria-label="{{ 'general.accessibility.next' | t }}">
+                {% render 'icon', name: 'chevron-right' %}
+              </button>
+            {%- endif -%}
+
+            <a class="nayro-gallery__zoom" href="{{ main_image | image_url: width: 2400 }}" target="_blank" rel="noopener" data-gallery-zoom aria-label="{{ 'products.product.view_product' | t }}: {{ product.title | escape }}">
+              {% render 'icon', name: 'zoom' %}
+            </a>
+          {%- else -%}
+            <div class="nayro-gallery__slide is-active">
+              {{ 'product-1' | placeholder_svg_tag: 'nayro-placeholder' }}
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- if image_count > 1 -%}
+          <div class="nayro-gallery__thumbs" data-gallery-thumbs>
+            {%- assign thumb_index = 0 -%}
+            {%- for media in images -%}
+              {%- if media.preview_image == blank -%}{%- continue -%}{%- endif -%}
+              <button type="button" class="nayro-gallery__thumb{% if thumb_index == 0 %} is-active{% endif %}" data-gallery-thumb data-index="{{ thumb_index }}" data-media-id="{{ media.id }}" aria-label="{{ 'products.product.view_product' | t }} {{ thumb_index | plus: 1 }}" aria-pressed="{% if thumb_index == 0 %}true{% else %}false{% endif %}">
+                {{ media.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', width: 78, height: 78, alt: media.preview_image.alt | default: product.title }}
+              </button>
+              {%- assign thumb_index = thumb_index | plus: 1 -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="nayro-product-summary">
+        {%- if settings.show_vendor and product.vendor != blank -%}
+          <p class="nayro-single__vendor">{{ product.vendor | escape }}</p>
+        {%- endif -%}
+
+        <h1 class="nayro-single__title">{{ product.title | escape }}</h1>
+
+        <div class="nayro-single__price" data-product-price>
+          {% render 'price', product: product, variant: current_variant %}
+        </div>
+        <p class="nayro-single__tax">{{ 'products.product.tax_included' | t }}</p>
+
+        <div class="nayro-single__meta">
+          {%- if settings.show_sku -%}
+            <span>{{ 'products.product.sku' | t }}: <b data-product-sku>{{ current_variant.sku | default: '—' }}</b></span>
+          {%- endif -%}
+          {%- if condition_label != blank -%}
+            <span>{{ 'products.product.condition' | t }}: <b>{{ condition_label }}</b></span>
+          {%- endif -%}
+        </div>
+
+        <span class="nayro-stock{% unless current_variant.available %} nayro-stock--out{% elsif low_stock %} nayro-stock--low{% endunless %}" data-product-stock>
+          {%- if current_variant.available -%}
+            {%- if low_stock -%}
+              {{ 'products.product.low_stock' | t }}
+            {%- else -%}
+              {{ 'products.product.in_stock' | t }}
+            {%- endif -%}
+          {%- else -%}
+            {{ 'products.product.out_of_stock' | t }}
+          {%- endif -%}
+        </span>
+
+        {%- form 'product', product, id: product_form_id, class: 'nayro-single__form nayro-product-form', data-product-form: '', data-cart-form: '' -%}
+          {%- unless product.has_only_default_variant -%}
+            <div class="nayro-variant">
+              <label for="VariantSelect-{{ section.id }}">{{ 'products.product.product_details' | t }}</label>
+              <select id="VariantSelect-{{ section.id }}" name="id" data-variant-select>
+                {%- for variant in product.variants -%}
+                  <option
+                    value="{{ variant.id }}"
+                    {% if variant.id == current_variant.id %}selected{% endif %}
+                    {% unless variant.available %}disabled{% endunless %}
+                    data-variant-price="{{ variant.price | money | escape }}"
+                    data-variant-compare="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money | escape }}{% endif %}"
+                    data-variant-available="{{ variant.available }}"
+                    data-variant-inventory="{{ variant.inventory_quantity }}"
+                    data-variant-sku="{{ variant.sku | escape }}"
+                    data-variant-media="{{ variant.featured_media.id }}"
+                  >
+                    {{ variant.title | escape }}{% unless variant.available %} — {{ 'products.product.sold_out' | t }}{% endunless %}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- else -%}
+            <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-select>
+          {%- endunless -%}
+
+          <div class="nayro-qty-wrap">
+            <button type="button" class="nayro-qty-btn" data-qty-minus aria-label="{{ 'products.product.quantity' | t }} –">−</button>
+            <label class="nayro-visually-hidden" for="ProductQty-{{ section.id }}">{{ 'products.product.quantity' | t }}</label>
+            <input id="ProductQty-{{ section.id }}" class="qty" type="number" name="quantity" value="1" min="1" inputmode="numeric" data-qty-input>
+            <button type="button" class="nayro-qty-btn" data-qty-plus aria-label="{{ 'products.product.quantity' | t }} +">+</button>
+          </div>
+
+          <button type="submit" name="add" class="nayro-btn nayro-btn--primary" data-add-to-cart {% unless current_variant.available %}disabled{% endunless %}>
+            <span data-add-to-cart-text>
+              {%- if current_variant.available -%}
+                {{ 'products.product.add_to_cart' | t }}
+              {%- else -%}
+                {{ 'products.product.sold_out' | t }}
+              {%- endif -%}
+            </span>
+          </button>
+
+          {%- if settings.show_payment_button and current_variant.available -%}
+            {{ form | payment_button }}
+          {%- endif -%}
+
+          <p class="nayro-form__error" data-form-error role="alert" hidden></p>
+        {%- endform -%}
+
+        {%- if settings.enable_wishlist -%}
+          <button type="button" class="nayro-btn nayro-btn--ghost nayro-btn--sm" data-wishlist-handle="{{ product.handle }}" aria-pressed="false">
+            {% render 'icon', name: 'heart' %}
+            <span data-wishlist-label>{{ 'products.product.add_to_wishlist' | t }}</span>
+          </button>
+        {%- endif -%}
+
+        {%- if section.settings.show_trust -%}
+          <div class="nayro-single__trust">
+            <div>{% render 'icon', name: 'truck' %}<span><b>{{ section.settings.trust_1_title | default: 'Fast delivery' | escape }}</b>{{ section.settings.trust_1_text | default: settings.shipping_text | escape }}</span></div>
+            <div>{% render 'icon', name: 'shield' %}<span><b>{{ section.settings.trust_2_title | default: 'Warranty included' | escape }}</b>{{ section.settings.trust_2_text | default: 'Covered on selected products.' | escape }}</span></div>
+            <div>{% render 'icon', name: 'cash' %}<span><b>{{ section.settings.trust_3_title | default: 'Cash on delivery' | escape }}</b>{{ section.settings.trust_3_text | default: 'Pay when you receive your order.' | escape }}</span></div>
+            <div>{% render 'icon', name: 'refresh' %}<span><b>{{ section.settings.trust_4_title | default: 'Easy returns' | escape }}</b>{{ section.settings.trust_4_text | default: settings.returns_text | escape }}</span></div>
+          </div>
+        {%- endif -%}
+
+        {%- if settings.show_share -%}
+          <div class="nayro-share">
+            <span>{{ 'products.product.share' | t }}:</span>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ share_url | url_encode }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook">{% render 'icon', name: 'facebook' %}</a>
+            <a href="https://twitter.com/intent/tweet?url={{ share_url | url_encode }}&amp;text={{ product.title | url_encode }}" target="_blank" rel="noopener noreferrer" aria-label="X">{% render 'icon', name: 'x' %}</a>
+            <a href="https://wa.me/?text={{ share_url | url_encode }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">{% render 'icon', name: 'whatsapp' %}</a>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="nayro-product-tabs" data-product-tabs>
+      <div class="nayro-product-tabs__nav" role="tablist" aria-label="{{ 'products.product.product_details' | t }}">
+        <button type="button" class="nayro-product-tabs__tab" role="tab" id="TabDesc-{{ section.id }}" aria-controls="PanelDesc-{{ section.id }}" aria-selected="true" data-product-tab>
+          {{ 'products.product.description' | t }}
+        </button>
+        <button type="button" class="nayro-product-tabs__tab" role="tab" id="TabShip-{{ section.id }}" aria-controls="PanelShip-{{ section.id }}" aria-selected="false" tabindex="-1" data-product-tab>
+          {{ 'products.product.shipping' | t }}
+        </button>
+        <button type="button" class="nayro-product-tabs__tab" role="tab" id="TabReturns-{{ section.id }}" aria-controls="PanelReturns-{{ section.id }}" aria-selected="false" tabindex="-1" data-product-tab>
+          {{ 'products.product.returns' | t }}
+        </button>
+      </div>
+
+      <div class="nayro-product-tabs__panel" role="tabpanel" id="PanelDesc-{{ section.id }}" aria-labelledby="TabDesc-{{ section.id }}" tabindex="0">
+        {%- if product.description != blank -%}
+          <div class="nayro-single__desc">{{ product.description }}</div>
+        {%- else -%}
+          <p>{{ 'products.product.no_description' | t }}</p>
+        {%- endif -%}
+        {%- if section.settings.extra_description != blank -%}
+          <div class="nayro-single__desc">{{ section.settings.extra_description }}</div>
+        {%- endif -%}
+      </div>
+
+      <div class="nayro-product-tabs__panel" role="tabpanel" id="PanelShip-{{ section.id }}" aria-labelledby="TabShip-{{ section.id }}" tabindex="0" hidden>
+        <p>{{ settings.shipping_text | default: section.settings.shipping_fallback | escape }}</p>
+        {%- if section.settings.shipping_details != blank -%}
+          <div class="nayro-single__desc">{{ section.settings.shipping_details }}</div>
+        {%- endif -%}
+      </div>
+
+      <div class="nayro-product-tabs__panel" role="tabpanel" id="PanelReturns-{{ section.id }}" aria-labelledby="TabReturns-{{ section.id }}" tabindex="0" hidden>
+        <p>{{ settings.returns_text | default: section.settings.returns_fallback | escape }}</p>
+        {%- if section.settings.returns_details != blank -%}
+          <div class="nayro-single__desc">{{ section.settings.returns_details }}</div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product information",
+  "class": "nayro-main-product-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_trust",
+      "label": "Show trust badges",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "trust_1_title",
+      "label": "Trust badge 1 title",
+      "default": "Fast delivery"
+    },
+    {
+      "type": "textarea",
+      "id": "trust_1_text",
+      "label": "Trust badge 1 text",
+      "default": "Delivered across the country."
+    },
+    {
+      "type": "text",
+      "id": "trust_2_title",
+      "label": "Trust badge 2 title",
+      "default": "Warranty included"
+    },
+    {
+      "type": "textarea",
+      "id": "trust_2_text",
+      "label": "Trust badge 2 text",
+      "default": "Covered on selected products."
+    },
+    {
+      "type": "text",
+      "id": "trust_3_title",
+      "label": "Trust badge 3 title",
+      "default": "Cash on delivery"
+    },
+    {
+      "type": "textarea",
+      "id": "trust_3_text",
+      "label": "Trust badge 3 text",
+      "default": "Pay when you receive your order."
+    },
+    {
+      "type": "text",
+      "id": "trust_4_title",
+      "label": "Trust badge 4 title",
+      "default": "Easy returns"
+    },
+    {
+      "type": "textarea",
+      "id": "trust_4_text",
+      "label": "Trust badge 4 text",
+      "default": "Contact us and we will help."
+    },
+    {
+      "type": "richtext",
+      "id": "extra_description",
+      "label": "Extra content below description"
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_details",
+      "label": "Shipping details",
+      "default": "<p>Orders are prepared within 24 hours. Delivery usually takes 1 to 3 business days.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "returns_details",
+      "label": "Returns details",
+      "default": "<p>Contact us within 7 days of delivery to arrange a return or exchange on eligible products.</p>"
+    },
+    {
+      "type": "text",
+      "id": "shipping_fallback",
+      "label": "Shipping fallback text",
+      "default": "Fast delivery across the country."
+    },
+    {
+      "type": "text",
+      "id": "returns_fallback",
+      "label": "Returns fallback text",
+      "default": "7-day returns on eligible products."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product information"
+    }
+  ]
+}
+{% endschema %}

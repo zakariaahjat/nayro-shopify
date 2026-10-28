@@ -1,0 +1,25 @@
+{%- if paginate.pages > 1 -%}
+  <nav class="nayro-pagination" role="navigation" aria-label="Pagination">
+    {%- if paginate.previous -%}
+      <a href="{{ paginate.previous.url }}" aria-label="{{ 'general.accessibility.previous' | t }}">
+        {% render 'icon', name: 'chevron-left' %}
+      </a>
+    {%- endif -%}
+
+    {%- for part in paginate.parts -%}
+      {%- if part.is_link -%}
+        <a href="{{ part.url }}">{{ part.title }}</a>
+      {%- elsif part.title == paginate.current_page -%}
+        <span class="is-current" aria-current="page">{{ part.title }}</span>
+      {%- else -%}
+        <span class="is-gap">{{ part.title }}</span>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if paginate.next -%}
+      <a href="{{ paginate.next.url }}" aria-label="{{ 'general.accessibility.next' | t }}">
+        {% render 'icon', name: 'chevron-right' %}
+      </a>
+    {%- endif -%}
+  </nav>
+{%- endif -%}

@@ -1,0 +1,49 @@
+<div class="nayro-customer">
+  <div class="nayro-customer__card">
+    <h1>{{ 'customer.general.register' | t }}</h1>
+
+    {%- form 'create_customer', novalidate: 'novalidate', class: 'nayro-form' -%}
+      {%- if form.errors -%}
+        <div class="nayro-notice nayro-notice--error" role="alert">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+
+      <div class="nayro-form__row">
+        <div>
+          <label for="RegisterFirstName">{{ 'customer.general.first_name' | t }}</label>
+          <input id="RegisterFirstName" type="text" name="customer[first_name]" value="{{ form.first_name | escape }}" autocomplete="given-name">
+        </div>
+        <div>
+          <label for="RegisterLastName">{{ 'customer.general.last_name' | t }}</label>
+          <input id="RegisterLastName" type="text" name="customer[last_name]" value="{{ form.last_name | escape }}" autocomplete="family-name">
+        </div>
+      </div>
+
+      <div>
+        <label for="RegisterEmail">{{ 'customer.general.email' | t }}</label>
+        <input id="RegisterEmail" type="email" name="customer[email]" value="{{ form.email | escape }}" autocomplete="email" required>
+      </div>
+
+      <div>
+        <label for="RegisterPassword">{{ 'customer.general.password' | t }}</label>
+        <input id="RegisterPassword" type="password" name="customer[password]" autocomplete="new-password" required>
+      </div>
+
+      <button type="submit" class="nayro-btn nayro-btn--primary nayro-btn--block">{{ 'customer.general.register' | t }}</button>
+    {%- endform -%}
+
+    <p class="nayro-customer__note">{{ 'customer.general.have_account' | t }} <a href="{{ routes.account_login_url }}">{{ 'customer.general.login' | t }}</a></p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Register",
+  "class": "nayro-main-register-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Register"
+    }
+  ]
+}
+{% endschema %}

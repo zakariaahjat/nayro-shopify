@@ -1,0 +1,166 @@
+{%- liquid
+  assign per_page = section.settings.products_per_page | default: 24
+  assign current_sort = collection.sort_by | default: collection.default_sort_by
+  assign active_filter_count = 0
+  for filter in collection.filters
+    assign active_filter_count = active_filter_count | plus: filter.active_values.size
+    if filter.type == 'price_range'
+      if filter.min_value.value != nil or filter.max_value.value != nil
+        assign active_filter_count = active_filter_count | plus: 1
+      endif
+    endif
+  endfor
+-%}
+<div class="nayro-page nayro-collection-page">
+  <div class="nayro-container">
+    {% render 'breadcrumbs' %}
+
+    <header class="nayro-collection-banner">
+      {%- if collection.image != blank -%}
+        {{ collection.image | image_url: width: 2000 | image_tag: loading: 'eager', widths: '750, 1100, 1500, 2000', sizes: '100vw', alt: collection.image.alt | default: collection.title }}
+      {%- endif -%}
+      <div class="nayro-collection-banner__inner">
+        <h1>{{ collection.title | escape }}</h1>
+        {%- if collection.description != blank -%}
+          <p>{{ collection.description | strip_html | truncatewords: 40 }}</p>
+        {%- endif -%}
+      </div>
+    </header>
+
+    <div class="nayro-shop" data-shop-view>
+      <aside class="nayro-shop__sidebar" id="NayroFacets-{{ section.id }}" data-facets-sidebar aria-label="{{ 'collections.general.filters' | t }}">
+        <div class="nayro-facets__mobile-head">
+          <span class="nayro-filters__title">{{ 'collections.general.filters' | t }}</span>
+          <button type="button" class="nayro-icon-btn" data-close-facets aria-label="{{ 'general.accessibility.close' | t }}">
+            {% render 'icon', name: 'close' %}
+          </button>
+        </div>
+        {% render 'facets', results: collection, form_action: collection.url, reset_url: collection.url, current_sort: current_sort %}
+        {%- if collection.filters.size == 0 -%}
+          <p class="nayro-filters__empty">{{ section.settings.no_filters_text | default: 'No filters are available for this collection yet.' | escape }}</p>
+        {%- endif -%}
+      </aside>
+
+      <div class="nayro-shop__main">
+        <div class="nayro-shop__toolbar">
+          <p class="nayro-shop__count" role="status">
+            {{ collection.products_count }} {{ 'collections.general.product_count' | t }}
+            {%- if active_filter_count > 0 %} · {{ active_filter_count }} {{ 'collections.general.filters' | t | downcase }}{% endif -%}
+          </p>
+
+          <div class="nayro-shop__tools">
+            <button type="button" class="nayro-filters-toggle" data-toggle-facets aria-controls="NayroFacets-{{ section.id }}" aria-expanded="false">
+              {% render 'icon', name: 'filter' %}
+              {{ 'collections.general.filters' | t }}
+            </button>
+
+            <form class="nayro-sort" method="get" action="{{ collection.url }}" data-sort-form>
+              <label for="SortBy-{{ section.id }}">{{ 'collections.general.sort_by' | t }}</label>
+              <select id="SortBy-{{ section.id }}" name="sort_by" data-sort-select>
+                {%- for option in collection.sort_options -%}
+                  <option value="{{ option.value }}" {% if option.value == current_sort %}selected{% endif %}>{{ option.name | escape }}</option>
+                {%- endfor -%}
+              </select>
+              {%- for filter in collection.filters -%}
+                {%- if filter.type == 'price_range' -%}
+                  {%- if filter.min_value.value -%}
+                    <input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}">
+                  {%- endif -%}
+                  {%- if filter.max_value.value -%}
+                    <input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}">
+                  {%- endif -%}
+                {%- else -%}
+                  {%- for value in filter.active_values -%}
+                    <input type="hidden" name="{{ value.param_name }}" value="{{ value.value }}">
+                  {%- endfor -%}
+                {%- endif -%}
+              {%- endfor -%}
+              <noscript><button type="submit" class="nayro-btn nayro-btn--ghost nayro-btn--sm">{{ 'collections.general.apply' | t }}</button></noscript>
+            </form>
+
+            <div class="nayro-view-toggle" role="group" aria-label="{{ 'collections.general.grid_view' | t }} / {{ 'collections.general.list_view' | t }}">
+              <button type="button" class="nayro-view-btn is-active" data-view="grid" aria-pressed="true" aria-label="{{ 'collections.general.grid_view' | t }}" title="{{ 'collections.general.grid_view' | t }}">
+                {% render 'icon', name: 'grid' %}
+              </button>
+              <button type="button" class="nayro-view-btn" data-view="list" aria-pressed="false" aria-label="{{ 'collections.general.list_view' | t }}" title="{{ 'collections.general.list_view' | t }}">
+                {% render 'icon', name: 'list' %}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {%- if active_filter_count > 0 -%}
+          <div class="nayro-filters__active">
+            {%- for filter in collection.filters -%}
+              {%- for value in filter.active_values -%}
+                <span class="nayro-filter-chip">
+                  {{ filter.label | escape }}: {{ value.label | escape }}
+                  <a href="{{ value.url_to_remove }}" aria-label="{{ 'collections.general.clear_all' | t }}: {{ value.label | escape }}">×</a>
+                </span>
+              {%- endfor -%}
+            {%- endfor -%}
+            <a class="nayro-filter-chip nayro-filter-chip--clear" href="{{ collection.url }}">{{ 'collections.general.clear_all' | t }}</a>
+          </div>
+        {%- endif -%}
+
+        {%- paginate collection.products by per_page -%}
+          {%- if collection.products.size > 0 -%}
+            <ul class="products nayro-products" id="ProductGrid-{{ section.id }}" data-product-grid>
+              {%- for product in collection.products -%}
+                {% render 'product-card', product: product, collection: collection, index: forloop.index %}
+              {%- endfor -%}
+            </ul>
+
+            {% render 'pagination', paginate: paginate %}
+          {%- else -%}
+            <div class="nayro-empty-state">
+              {% render 'icon', name: 'search' %}
+              <h2>{{ 'collections.general.no_products' | t }}</h2>
+              <p>{{ 'collections.general.no_products_text' | t }}</p>
+              <a class="nayro-btn nayro-btn--primary nayro-btn--sm" href="{{ routes.all_products_collection_url }}">{{ 'collections.general.view_all' | t }}</a>
+            </div>
+          {%- endif -%}
+        {%- endpaginate -%}
+      </div>
+    </div>
+
+    {%- if collection.description != blank and section.settings.show_description -%}
+      <div class="nayro-prose nayro-collection-description">{{ collection.description }}</div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection products",
+  "class": "nayro-main-collection-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show full description below products",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "no_filters_text",
+      "label": "No-filters text",
+      "default": "No filters are available for this collection yet."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection products"
+    }
+  ]
+}
+{% endschema %}
