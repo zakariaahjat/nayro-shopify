@@ -21,6 +21,30 @@
   assign current_variant = product.selected_or_first_available_variant
   assign spec_sku = current_variant.sku | default: product.variants.first.sku
 
+  # A single JSON metafield holds every row: either an array of objects
+  # ({ "label": "Length", "value": "5 m" }) or a plain object
+  # ({ "Length": "5 m" }).
+  assign json_key = section.settings.json_key | strip | default: 'fiche'
+  assign spec_json = spec_namespace[json_key]
+  assign json_rows = ''
+  assign json_count = 0
+  if section.settings.show_json and spec_json != blank
+    if spec_json.type == 'json' or spec_json.type == 'json_string'
+      assign json_rows = spec_json.value
+      for row in json_rows
+        assign row_label = row.label | default: row.name | default: row.title
+        assign row_value = row.value | default: row.text | default: row.content
+        if row_label == blank
+          assign row_label = row[0]
+          assign row_value = row[1]
+        endif
+        if row_label != blank and row_value != blank
+          assign json_count = json_count | plus: 1
+        endif
+      endfor
+    endif
+  endif
+
   assign row_count = 0
   for block in section.blocks
     assign block_label = block.settings.label | strip
@@ -33,7 +57,8 @@
   assign metafield_count = 0
   if section.settings.show_metafields
     for metafield in spec_namespace
-      if metafield.last.value != blank
+      assign metafield_key = metafield.first | strip
+      if metafield_key != json_key and metafield.last.value != blank
         assign metafield_count = metafield_count | plus: 1
       endif
     endfor
@@ -56,7 +81,7 @@
     assign builtin_count = builtin_count | plus: 1
   endif
 
-  assign specs_total = row_count | plus: builtin_count | plus: metafield_count
+  assign specs_total = json_count | plus: row_count | plus: builtin_count | plus: metafield_count
 -%}
 {%- if specs_total > 0 -%}
   <section class="nayro-specs" id="specs-{{ section.id }}">
@@ -70,6 +95,23 @@
         </div>
 
         <dl class="nayro-specs__list">
+          {%- if json_count > 0 -%}
+            {%- for row in json_rows -%}
+              {%- assign row_label = row.label | default: row.name | default: row.title -%}
+              {%- assign row_value = row.value | default: row.text | default: row.content -%}
+              {%- if row_label == blank -%}
+                {%- assign row_label = row[0] -%}
+                {%- assign row_value = row[1] -%}
+              {%- endif -%}
+              {%- if row_label != blank and row_value != blank -%}
+                <div class="nayro-specs__row">
+                  <dt>{{ row_label | escape }}</dt>
+                  <dd>{{ row_value | escape | newline_to_br }}</dd>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+
           {%- for block in section.blocks -%}
             {%- assign block_label = block.settings.label | strip -%}
             {%- assign block_value = block.settings.value | strip -%}
@@ -124,6 +166,8 @@
 
           {%- if section.settings.show_metafields -%}
             {%- for metafield in spec_namespace -%}
+              {%- assign metafield_key = metafield.first | strip -%}
+              {%- if metafield_key == json_key -%}{%- continue -%}{%- endif -%}
               {%- assign spec = metafield.last -%}
               {%- assign spec_value = spec.value -%}
               {%- if spec_value != blank -%}
@@ -175,6 +219,23 @@
       "id": "heading",
       "label": "Heading",
       "default": "Fiche technique"
+    },
+    {
+      "type": "header",
+      "content": "JSON metafield"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_json",
+      "label": "Show the JSON metafield rows",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "json_key",
+      "label": "JSON metafield key",
+      "default": "fiche",
+      "info": "Create one product metafield of type JSON with this key in the namespace above, then paste an array of { \"label\": \"...\", \"value\": \"...\" } objects."
     },
     {
       "type": "header",

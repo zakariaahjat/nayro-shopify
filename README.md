@@ -120,21 +120,35 @@ page is empty until a product uses that vendor name.
 ## Product technical specifications (Fiche technique)
 
 `templates/product.json` includes a **Fiche technique** section after the product
-information. Every row is optional and comes from three sources, in this order:
+information. Every row is optional and comes from four sources, in this order:
 
-1. **Row blocks** added in the theme editor (**Fiche technique -> Add row**).
+1. **JSON metafield** (recommended, one field per product). Create a product
+   metafield definition of type **JSON** with the namespace `specs` and the key
+   `fiche`, then paste a list of rows on each product:
+
+   ```json
+   [
+     { "label": "Longueur", "value": "5 m" },
+     { "label": "Couleur", "value": "16 millions de couleurs RGB" },
+     { "label": "Alimentation", "value": "USB ou adaptateur 12 V" }
+   ]
+   ```
+
+   A plain object also works: `{ "Longueur": "5 m", "Couleur": "RGB" }`.
+   `label`/`value`, `name`/`value` and `title`/`text` are all accepted keys.
+   Change the key from **Theme editor -> Fiche technique -> JSON metafield key**.
+2. **Row blocks** added in the theme editor (**Fiche technique -> Add row**).
    Type a label and a value, for example `Garantie` / `12 mois`. Blocks are shared
    by every product using this product template, so use them for common rows, or
    create one product template per product family and give each its own rows.
-2. **Built-in rows**: brand, category, SKU, availability and tags, each with its
+3. **Built-in rows**: brand, category, SKU, availability and tags, each with its
    own on/off switch and editable label. Brand and category are off by default,
    because they fall back to the store name and Shopify's product type.
-3. **Product metafields** in the `specs` namespace, which is the per-product
-   option. In Shopify admin go to **Settings -> Custom data -> Products**, create
-   definitions with the namespace `specs` (for example `processor`, `ram`,
-   `storage`, `screen`, `battery`, `warranty`), then fill the value on each
-   product. The key becomes the row label (`screen_size` becomes "Screen size").
-   Turn this off or change the namespace from **Theme editor -> Fiche technique**.
+4. **Individual product metafields** in the `specs` namespace (one key per row,
+   for example `processor`, `ram`, `warranty`). The key becomes the row label
+   (`screen_size` becomes "Screen size"). The JSON key itself is never rendered
+   twice. Turn this off or change the namespace from **Theme editor -> Fiche
+   technique**.
 
 The section hides itself when nothing is selected or filled in.
 
