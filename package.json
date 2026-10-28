@@ -8,7 +8,9 @@
     "seed:blog": "node scripts/seed-blog.mjs",
     "seed:blog:dry": "node scripts/seed-blog.mjs --dry-run",
     "vendors": "node scripts/apply-vendors.mjs",
-    "vendors:apply": "node scripts/apply-vendors.mjs --apply"
+    "vendors:apply": "node scripts/apply-vendors.mjs --apply",
+    "blog:auto": "node scripts/auto-blog.mjs",
+    "blog:auto:dry": "node scripts/auto-blog.mjs --dry-run"
   },
   "engines": {
     "node": ">=20"

@@ -96,6 +96,67 @@ Publish at least one article under **Online Store -> Blog posts** for posts to
 appear. The homepage "From the blog" section uses the `News` blog by default and
 can be pointed to a different blog from the theme editor.
 
+## Automatic blog posts
+
+`scripts/auto-blog.mjs` reads the RSS/Atom feeds listed in
+`scripts/blog-sources.mjs` and publishes the newest tech stories to the store
+blog. It ships with 13 verified sources:
+
+- **French:** Numerama, Presse-Citron, 01net, FrAndroid, Journal du Geek,
+  Tom's Hardware FR.
+- **English:** GSMArena, Android Authority, 9to5Mac, The Verge, TechRadar,
+  Ars Technica, Tom's Hardware.
+
+Each imported post is a **short excerpt** (about 700 characters), the source
+name, and a link to the original article. Full articles are never copied, so the
+blog stays on the right side of copyright and does not compete with the source
+for search traffic. Posts are tagged `auto-blog`, `source-<key>` and
+`lang-<fr|en>` so you can find or unpublish them in bulk.
+
+### Running it
+
+From GitHub (no local setup): **Actions -> Auto blog -> Run workflow**. It runs
+automatically every 6 hours, publishes 3 posts per run (max 1 per source) and
+skips anything older than 48 hours. The inputs let you change the count, the
+language (`fr`, `en` or `all`), publish as drafts, or do a dry run.
+
+Locally:
+
+```powershell
+$env:SHOPIFY_STORE_DOMAIN="jq5gaa-01.myshopify.com"
+$env:SHOPIFY_ADMIN_API_TOKEN="shpat_..."
+node scripts/auto-blog.mjs --dry-run --limit 3 --lang fr   # preview
+node scripts/auto-blog.mjs --limit 3 --lang fr             # publish
+```
+
+Flags:
+
+| Flag | Default | Meaning |
+|---|---|---|
+| `--dry-run` | off | Print the posts, write nothing |
+| `--draft` | off | Create unpublished articles |
+| `--limit` | `3` | Max posts per run |
+| `--per-source` | `1` | Max posts taken from one feed |
+| `--max-age-hours` | `48` | Ignore older articles |
+| `--excerpt-length` | `700` | Characters kept from the feed summary |
+| `--lang` | `fr` | `fr`, `en` or `all` |
+| `--source` | all | Comma separated source keys, e.g. `numerama,gsmarena` |
+
+Duplicates are prevented by a deterministic handle built from the article URL,
+so re-running the workflow never publishes the same story twice.
+
+### Required settings
+
+- Repository secrets: `SHOPIFY_STORE_DOMAIN` and `SHOPIFY_ADMIN_API_TOKEN`
+  (same names as the seed / vendor workflows). The token needs
+  `read_content` and `write_content`.
+- Optional repository variables: `SHOPIFY_BLOG_HANDLE` (default `news`) and
+  `SHOPIFY_BLOG_TITLE` (default `Nayro Blog`). The blog is created on the first
+  run if it does not exist yet.
+
+Add or remove a feed by editing `scripts/blog-sources.mjs` (one object per
+source: `key`, `name`, `url`, `lang`, optional `tags`).
+
 ## Brands and product counts
 
 The home page brand section ships with 43 tech brands (Apple, Samsung, Dell, HP,

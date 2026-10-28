@@ -1,0 +1,68 @@
+name: Auto blog
+
+on:
+  schedule:
+    # Every 6 hours (UTC). GitHub may delay scheduled runs a few minutes.
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: How many posts to publish this run
+        required: false
+        default: '3'
+      lang:
+        description: Which sources to use
+        type: choice
+        options:
+          - fr
+          - en
+          - all
+        default: fr
+      draft:
+        description: Publish as drafts instead of live posts
+        type: boolean
+        default: false
+      dry_run:
+        description: Only print what would be published
+        type: boolean
+        default: false
+      max_age_hours:
+        description: Ignore articles older than this many hours
+        required: false
+        default: '48'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: auto-blog
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Import feed articles
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Publish blog posts
+        run: >-
+          node scripts/auto-blog.mjs
+          --limit ${{ inputs.limit || '3' }}
+          --lang ${{ inputs.lang || 'fr' }}
+          --max-age-hours ${{ inputs.max_age_hours || '48' }}
+          ${{ inputs.draft && '--draft' || '' }}
+          ${{ inputs.dry_run && '--dry-run' || '' }}
+        env:
+          SHOPIFY_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE_DOMAIN }}
+          SHOPIFY_ADMIN_API_TOKEN: ${{ secrets.SHOPIFY_ADMIN_API_TOKEN }}
+          SHOPIFY_BLOG_HANDLE: ${{ vars.SHOPIFY_BLOG_HANDLE || 'news' }}
+          SHOPIFY_BLOG_TITLE: ${{ vars.SHOPIFY_BLOG_TITLE || 'Nayro Blog' }}
