@@ -1,0 +1,90 @@
+# Nayro Shopify theme
+
+Custom Shopify theme for Nayro, plus a small automation that publishes the
+starter blog posts to a real Shopify store.
+
+## Logo
+
+The storefront logo lives at:
+
+```
+assets/nayro-logo.png
+```
+
+The header, footer, password page and Organization structured data all use this
+asset automatically when no logo is selected in **Theme settings → Logo**. To
+change the logo, replace that file with your own image (the bundled one is
+600 × 327 px, transparent PNG).
+
+If you prefer to manage the logo from the Shopify theme editor, set
+**Theme settings → Logo** and it will take priority over the asset.
+
+## Blog posts
+
+The starter articles live in [`scripts/blog-content.mjs`](scripts/blog-content.mjs)
+and their images are `assets/blog-demo-1.png` … `assets/blog-demo-6.png`.
+
+The theme already renders those images as a fallback on the blog, article and
+home-page blog sections, so posts look complete even before an image is set.
+
+To create the articles as **real Shopify blog posts** (title, body, summary,
+tags, author, publish date and image), run the seeder:
+
+```bash
+npm run seed:blog
+```
+
+The seeder is idempotent: existing articles are matched by handle and updated,
+new ones are created. Use `npm run seed:blog:dry` to preview without writing.
+
+### 1. Create an Admin API token
+
+1. In Shopify admin, go to **Settings → Apps and sales channels → Develop apps**.
+2. Create a custom app (for example `Nayro Blog Seeder`).
+3. Under **Configuration → Admin API access scopes**, enable:
+   - `read_content`
+   - `write_content`
+4. Install the app and copy the **Admin API access token**.
+
+### 2. Add GitHub secrets
+
+In the GitHub repository, open **Settings → Secrets and variables → Actions**
+and add:
+
+| Secret | Value |
+| --- | --- |
+| `SHOPIFY_STORE_DOMAIN` | your store domain, e.g. `nayro.myshopify.com` |
+| `SHOPIFY_ADMIN_API_TOKEN` | the Admin API access token from step 1 |
+
+### 3. Run the automation
+
+Open **Actions → Seed blog posts → Run workflow**.
+
+Optional inputs:
+
+- **Blog handle** — defaults to `news` (the `/blogs/news` blog used by the theme).
+- **Re-upload images** — refresh article images even if one is already set.
+
+### Run locally
+
+```bash
+export SHOPIFY_STORE_DOMAIN=nayro.myshopify.com
+export SHOPIFY_ADMIN_API_TOKEN=shpat_xxx
+npm run seed:blog
+```
+
+Optional variables: `SHOPIFY_BLOG_HANDLE`, `SHOPIFY_BLOG_TITLE`,
+`SHOPIFY_BLOG_AUTHOR`, `SHOPIFY_API_VERSION` (default `2026-10`),
+`FORCE_IMAGES=true`.
+
+## Theme structure
+
+```
+assets/     CSS, JS, logo and blog images
+config/     Theme settings
+layout/     theme.liquid, password.liquid, gift_card.liquid
+sections/   Home page and template sections
+snippets/   Reusable partials
+templates/  JSON templates
+scripts/    Blog content + Admin API seeder
+```

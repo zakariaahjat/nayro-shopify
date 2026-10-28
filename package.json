@@ -1,0 +1,14 @@
+{
+  "name": "nayro-shopify-theme",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Nayro Shopify theme",
+  "type": "module",
+  "scripts": {
+    "seed:blog": "node scripts/seed-blog.mjs",
+    "seed:blog:dry": "node scripts/seed-blog.mjs --dry-run"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

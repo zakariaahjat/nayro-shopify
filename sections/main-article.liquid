@@ -14,16 +14,18 @@
       {%- endif -%}
     </header>
 
-    {%- if article.image != blank -%}
-      <div class="nayro-article__hero">
+    <div class="nayro-article__hero">
+      {%- if article.image != blank -%}
         {{ article.image | image_url: width: 1800 | image_tag:
           loading: 'eager',
           widths: '750, 1100, 1500, 1800',
           sizes: '(min-width: 1000px) 1000px, 100vw',
           alt: article.image.alt | default: article.title
         }}
-      </div>
-    {%- endif -%}
+      {%- else -%}
+        {% render 'article-image-fallback', article: article, loading: 'eager' %}
+      {%- endif -%}
+    </div>
 
     <div class="nayro-article__body rte">
       {{ article.content }}

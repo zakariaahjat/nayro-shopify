@@ -89,6 +89,8 @@
   "url": {{ shop.url | json }},
   {%- if settings.logo != blank %}
   "logo": {{ settings.logo | image_url: width: 600 | prepend: 'https:' | json }},
+  {%- else %}
+  "logo": {{ 'nayro-logo.png' | asset_url | prepend: 'https:' | json }},
   {%- endif %}
   "sameAs": [
     {%- assign social_urls = '' -%}

@@ -21,16 +21,18 @@
       {%- if blog.articles.size > 0 -%}
         {%- if featured_article != blank -%}
           <article class="nayro-blog__featured">
-            {%- if featured_article.image != blank -%}
-              <a href="{{ featured_article.url }}" tabindex="-1" aria-hidden="true">
+            <a href="{{ featured_article.url }}" tabindex="-1" aria-hidden="true">
+              {%- if featured_article.image != blank -%}
                 {{ featured_article.image | image_url: width: 1400 | image_tag:
                   loading: 'eager',
                   widths: '500, 800, 1100, 1400',
                   sizes: '(min-width: 900px) 55vw, 100vw',
                   alt: featured_article.image.alt | default: featured_article.title
                 }}
-              </a>
-            {%- endif -%}
+              {%- else -%}
+                {% render 'article-image-fallback', article: featured_article, loading: 'eager' %}
+              {%- endif -%}
+            </a>
             <div>
               <div class="nayro-blog__meta">
                 <span>{{ featured_article.published_at | date: '%b %d, %Y' }}</span>
@@ -57,6 +59,8 @@
                     sizes: '(min-width: 1024px) 33vw, (min-width: 720px) 50vw, 100vw',
                     alt: article.image.alt | default: article.title
                   }}
+                {%- else -%}
+                  {% render 'article-image-fallback', article: article, loading: 'lazy' %}
                 {%- endif -%}
               </a>
               <div class="nayro-post-card__body">

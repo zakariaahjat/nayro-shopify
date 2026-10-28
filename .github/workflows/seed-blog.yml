@@ -1,0 +1,43 @@
+name: Seed blog posts
+
+on:
+  workflow_dispatch:
+    inputs:
+      blog_handle:
+        description: Blog handle to publish into
+        required: false
+        default: news
+      force_images:
+        description: Re-upload images even if an article already has one
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: seed-blog
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    name: Create blog posts
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Seed blog
+        run: node scripts/seed-blog.mjs
+        env:
+          SHOPIFY_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE_DOMAIN }}
+          SHOPIFY_ADMIN_API_TOKEN: ${{ secrets.SHOPIFY_ADMIN_API_TOKEN }}
+          SHOPIFY_BLOG_HANDLE: ${{ inputs.blog_handle }}
+          FORCE_IMAGES: ${{ inputs.force_images }}

@@ -67,7 +67,7 @@
           {%- if settings.logo != blank -%}
             <img class="nayro-footer__logo-img" src="{{ settings.logo | image_url: width: 400 }}" alt="{{ shop.name | escape }}" loading="lazy" width="{{ settings.logo_width }}" height="44">
           {%- else -%}
-            <span class="nayro-logo__text"><span class="nayro-logo__mark">N</span><span>{{ shop.name | default: 'nayro' }}</span></span>
+            <img class="nayro-footer__logo-img" src="{{ 'nayro-logo.png' | asset_url }}" alt="{{ shop.name | default: 'nayro' | escape }}" loading="lazy" width="{{ settings.logo_width }}" height="44">
           {%- endif -%}
         </a>
         <p class="nayro-footer__slogan">{{ section.settings.slogan | default: shop.description | escape }}</p>

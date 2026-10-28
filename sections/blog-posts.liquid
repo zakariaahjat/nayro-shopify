@@ -32,6 +32,8 @@
                     sizes: '(min-width: 1024px) 33vw, (min-width: 720px) 50vw, 100vw',
                     alt: article.image.alt | default: article.title
                   }}
+                {%- else -%}
+                  {% render 'article-image-fallback', article: article, loading: 'lazy' %}
                 {%- endif -%}
               </span>
               <span class="nh-post__body">

@@ -1,0 +1,14 @@
+{%- liquid
+  assign fallback_index = article.id | modulo: 6 | plus: 1
+  assign fallback_file = 'blog-demo-' | append: fallback_index | append: '.png'
+  assign fallback_alt = article.title | default: shop.name
+  assign fallback_loading = loading | default: 'lazy'
+-%}
+<img
+  src="{{ fallback_file | asset_url }}"
+  alt="{{ fallback_alt | escape }}"
+  width="1600"
+  height="1000"
+  loading="{{ fallback_loading }}"
+  {%- if class != blank %} class="{{ class }}"{% endif -%}
+>

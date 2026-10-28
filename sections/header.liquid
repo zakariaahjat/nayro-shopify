@@ -34,7 +34,14 @@
             loading="eager"
           >
         {%- else -%}
-          <span class="nayro-logo__text"><span class="nayro-logo__mark">N</span><span>{{ shop.name | default: 'nayro' }}</span></span>
+          <img
+            src="{{ 'nayro-logo.png' | asset_url }}"
+            alt="{{ shop.name | default: 'nayro' | escape }}"
+            width="{{ settings.logo_width }}"
+            height="{{ settings.logo_width | divided_by: 1.8349 | round }}"
+            style="width: {{ settings.logo_width }}px; max-height: 52px; object-fit: contain;"
+            loading="eager"
+          >
         {%- endif -%}
       </a>
     </div>
