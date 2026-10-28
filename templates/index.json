@@ -6,6 +6,7 @@
         "slide_1": {
           "type": "slide",
           "settings": {
+            "show_content": false,
             "heading": "Everything you need, new or used",
             "text": "Laptops, phones and components, checked, guaranteed and delivered to your door.",
             "button_label": "Shop now"
@@ -14,6 +15,7 @@
         "slide_2": {
           "type": "slide",
           "settings": {
+            "show_content": false,
             "heading": "Tech you can trust, prices you will love",
             "text": "New, used and refurbished devices with warranty and fast delivery.",
             "button_label": "Browse deals"

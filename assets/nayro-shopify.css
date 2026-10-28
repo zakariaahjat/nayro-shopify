@@ -505,3 +505,19 @@ button{font:inherit}
   .nayro-article__nav{flex-direction:column}
   .nayro-article__nav a{max-width:100%}
 }
+.nayro-specs{padding:34px 0 8px}
+.nayro-specs__inner{padding:26px;border:1px solid var(--n-border);border-radius:20px;background:var(--n-surface)}
+.nayro-specs__head{margin-bottom:18px}
+.nayro-specs__title{margin:0;font-size:clamp(1.4rem,2.6vw,2rem);font-weight:800;color:var(--n-text)}
+.nayro-specs__list{display:grid;gap:0;margin:0}
+.nayro-specs__row{display:grid;grid-template-columns:minmax(140px,220px) 1fr;gap:16px;padding:12px 0;border-top:1px solid var(--n-border)}
+.nayro-specs__row:first-child{border-top:0;padding-top:0}
+.nayro-specs__row dt{margin:0;font-size:13px;font-weight:700;color:var(--n-muted)}
+.nayro-specs__row dd{margin:0;font-size:14px;line-height:1.5;color:var(--n-text)}
+.nayro-specs__row dd p{margin:0}
+.nayro-specs__note{margin:16px 0 0;font-size:13px;color:var(--n-muted)}
+@media (max-width:600px){
+  .nayro-specs__inner{padding:18px}
+  .nayro-specs__row{grid-template-columns:1fr;gap:4px}
+  .nayro-specs__row:first-child{padding-top:12px;border-top:1px solid var(--n-border)}
+}

@@ -1,0 +1,211 @@
+{%- comment -%}
+  Technical specifications ("Fiche technique") for the product page.
+
+  Rows are built from:
+  - product metafields in the namespace set below (default: "specs"), and
+  - optional built-in product attributes (brand, category, SKU, availability).
+
+  Create product metafields in Shopify admin -> Settings -> Custom data ->
+  Products, using the same namespace (for example "specs") and one key per row:
+  processor, ram, storage, screen, battery, warranty, etc. Every non-empty
+  metafield in the namespace is rendered automatically.
+{%- endcomment -%}
+{%- liquid
+  assign spec_namespace_key = section.settings.namespace | strip | default: 'specs'
+  assign spec_namespace = product.metafields[spec_namespace_key]
+  assign current_variant = product.selected_or_first_available_variant
+  assign spec_sku = current_variant.sku | default: product.variants.first.sku
+
+  assign metafield_count = 0
+  for metafield in spec_namespace
+    if metafield.last.value != blank
+      assign metafield_count = metafield_count | plus: 1
+    endif
+  endfor
+
+  assign builtin_count = 0
+  if section.settings.show_vendor and product.vendor != blank
+    assign builtin_count = builtin_count | plus: 1
+  endif
+  if section.settings.show_type and product.type != blank
+    assign builtin_count = builtin_count | plus: 1
+  endif
+  if section.settings.show_sku and spec_sku != blank
+    assign builtin_count = builtin_count | plus: 1
+  endif
+  if section.settings.show_availability
+    assign builtin_count = builtin_count | plus: 1
+  endif
+
+  assign specs_total = metafield_count | plus: builtin_count
+-%}
+{%- if specs_total > 0 -%}
+  <section class="nayro-specs" id="specs-{{ section.id }}">
+    <div class="nayro-container">
+      <div class="nayro-specs__inner">
+        <div class="nayro-specs__head">
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="nayro-page__eyebrow">{{ section.settings.eyebrow | escape }}</span>
+          {%- endif -%}
+          <h2 class="nayro-specs__title">{{ section.settings.heading | default: 'Fiche technique' | escape }}</h2>
+        </div>
+
+        <dl class="nayro-specs__list">
+          {%- if section.settings.show_vendor and product.vendor != blank -%}
+            <div class="nayro-specs__row">
+              <dt>{{ section.settings.label_vendor | default: 'Marque' | escape }}</dt>
+              <dd>{{ product.vendor | escape }}</dd>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_type and product.type != blank -%}
+            <div class="nayro-specs__row">
+              <dt>{{ section.settings.label_type | default: 'Catégorie' | escape }}</dt>
+              <dd>{{ product.type | escape }}</dd>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_sku and spec_sku != blank -%}
+            <div class="nayro-specs__row">
+              <dt>{{ section.settings.label_sku | default: 'Référence' | escape }}</dt>
+              <dd>{{ spec_sku | escape }}</dd>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_availability -%}
+            <div class="nayro-specs__row">
+              <dt>{{ section.settings.label_availability | default: 'Disponibilité' | escape }}</dt>
+              <dd>
+                {%- if product.available -%}
+                  {{ 'products.product.in_stock' | t }}
+                {%- else -%}
+                  {{ 'products.product.out_of_stock' | t }}
+                {%- endif -%}
+              </dd>
+            </div>
+          {%- endif -%}
+
+          {%- for metafield in spec_namespace -%}
+            {%- assign spec = metafield.last -%}
+            {%- assign spec_value = spec.value -%}
+            {%- if spec_value != blank -%}
+              {%- assign spec_type = spec.type | default: '' -%}
+              {%- assign spec_is_list = false -%}
+              {%- if spec_type contains 'list' -%}
+                {%- assign spec_is_list = true -%}
+              {%- elsif spec_type != 'json' and spec_value.first != blank -%}
+                {%- assign spec_is_list = true -%}
+              {%- endif -%}
+              {%- if spec_is_list -%}
+                {%- assign spec_value = spec_value | join: ', ' -%}
+              {%- endif -%}
+              <div class="nayro-specs__row">
+                <dt>{{ metafield.first | replace: '_', ' ' | replace: '-', ' ' | capitalize }}</dt>
+                <dd>
+                  {%- if spec_type == 'rich_text_field' -%}
+                    {{ spec_value }}
+                  {%- else -%}
+                    {{ spec_value | escape }}
+                  {%- endif -%}
+                </dd>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </dl>
+
+        {%- if section.settings.note != blank -%}
+          <p class="nayro-specs__note">{{ section.settings.note | escape | newline_to_br }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Fiche technique",
+  "class": "nayro-product-specs-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Fiche technique"
+    },
+    {
+      "type": "text",
+      "id": "namespace",
+      "label": "Metafield namespace",
+      "default": "specs",
+      "info": "All non-empty product metafields in this namespace are shown as rows."
+    },
+    {
+      "type": "header",
+      "content": "Built-in rows"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show brand",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_vendor",
+      "label": "Brand label",
+      "default": "Marque"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_type",
+      "label": "Show category",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_type",
+      "label": "Category label",
+      "default": "Catégorie"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sku",
+      "label": "Show SKU",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_sku",
+      "label": "SKU label",
+      "default": "Référence"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_availability",
+      "label": "Show availability",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_availability",
+      "label": "Availability label",
+      "default": "Disponibilité"
+    },
+    {
+      "type": "textarea",
+      "id": "note",
+      "label": "Note below the table"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fiche technique"
+    }
+  ]
+}
+{% endschema %}

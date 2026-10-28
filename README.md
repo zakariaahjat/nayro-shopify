@@ -109,6 +109,29 @@ manually per brand from **Theme editor -> Brands -> Brand -> Products count**.
 
 Category cards already show `collection.all_products_count` under each title.
 
+## Product technical specifications (Fiche technique)
+
+`templates/product.json` includes a **Fiche technique** section after the product
+information. It shows:
+
+- Brand, category, SKU and availability (each can be turned off), and
+- every non-empty product metafield in the `specs` namespace.
+
+To add spec rows, go to **Settings -> Custom data -> Products** in Shopify admin
+and create metafield definitions with the namespace `specs`, for example:
+`processor`, `ram`, `storage`, `screen`, `battery`, `warranty`, `weight`.
+The key becomes the row label (`screen_size` becomes "Screen size") and the value
+becomes the row value. Change the namespace from **Theme editor -> Fiche
+technique -> Metafield namespace**.
+
+## Hero banner images
+
+Each slide has a **Show text and button** checkbox. Turn it off when the uploaded
+banner image already contains its own text and button, so only the image is
+shown. The **Image link** field on the slide is the destination for the whole
+banner: clicking anywhere on the image opens that link. If no link is set, the
+banner opens `/collections/all`.
+
 ## Theme structure
 
 ```

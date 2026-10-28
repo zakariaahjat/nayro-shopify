@@ -4,6 +4,10 @@
       "type": "main-product",
       "settings": {}
     },
+    "specs": {
+      "type": "product-specs",
+      "settings": {}
+    },
     "recommendations": {
       "type": "product-recommendations",
       "settings": {}
@@ -13,5 +17,5 @@
       "settings": {}
     }
   },
-  "order": ["main", "recommendations", "recent"]
+  "order": ["main", "specs", "recommendations", "recent"]
 }
