@@ -156,6 +156,10 @@
 .nh-brands{display:flex;flex-wrap:wrap;gap:.75rem}
 .nh-brand{display:grid;place-items:center;min-width:8.5rem;height:4.5rem;padding:.75rem 1.25rem;font-weight:800;color:var(--nh-muted);text-decoration:none;background:var(--nh-surface);border:1px solid var(--nh-border);border-radius:16px;transition:color .2s,border-color .2s,transform .2s}
 .nh-brand img{max-width:100%;max-height:2.4rem;width:auto;filter:grayscale(1);opacity:.7;transition:filter .2s,opacity .2s}
+.nh-brand{display:inline-flex;align-items:center;justify-content:center;gap:.5rem}
+.nh-brand__name{line-height:1.1}
+.nh-brand__count{display:inline-flex;align-items:center;justify-content:center;min-width:1.5rem;padding:.12rem .45rem;font-size:.72rem;font-weight:800;line-height:1.2;border-radius:999px;background:rgba(15,23,42,.06);border:1px solid var(--nh-border);color:var(--nh-muted)}
+.nh-brand:hover .nh-brand__count{color:var(--nh-primary);border-color:var(--nh-primary)}
 .nh-brand:hover{color:var(--nh-primary);border-color:var(--nh-primary);transform:translateY(-2px)}
 .nh-brand:hover img{filter:none;opacity:1}
 

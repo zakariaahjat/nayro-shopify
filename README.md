@@ -96,6 +96,19 @@ Publish at least one article under **Online Store -> Blog posts** for posts to
 appear. The homepage "From the blog" section uses the `News` blog by default and
 can be pointed to a different blog from the theme editor.
 
+## Brands and product counts
+
+The home page brand section ships with 43 tech brands (Apple, Samsung, Dell, HP,
+Lenovo, Asus, Acer, MSI, Xiaomi, Huawei, Sony, LG, Intel, AMD, NVIDIA and more).
+Each brand links to its vendor page, for example `/collections/vendors?q=Apple`.
+
+The number shown next to a brand is read from the storefront **Vendor** filter.
+To turn those automatic counts on, install the free **Search & Discovery** app
+and add a **Vendor** filter under **Filters**. Without the app, set a count
+manually per brand from **Theme editor -> Brands -> Brand -> Products count**.
+
+Category cards already show `collection.all_products_count` under each title.
+
 ## Theme structure
 
 ```

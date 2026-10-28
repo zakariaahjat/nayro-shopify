@@ -272,41 +272,350 @@
         "brand_1": {
           "type": "brand",
           "settings": {
-            "name": "Apple"
+            "name": "Apple",
+            "link": "/collections/vendors?q=Apple"
           }
         },
         "brand_2": {
           "type": "brand",
           "settings": {
-            "name": "Samsung"
+            "name": "Samsung",
+            "link": "/collections/vendors?q=Samsung"
           }
         },
         "brand_3": {
           "type": "brand",
           "settings": {
-            "name": "Dell"
+            "name": "Dell",
+            "link": "/collections/vendors?q=Dell"
           }
         },
         "brand_4": {
           "type": "brand",
           "settings": {
-            "name": "Lenovo"
+            "name": "Lenovo",
+            "link": "/collections/vendors?q=Lenovo"
           }
         },
         "brand_5": {
           "type": "brand",
           "settings": {
-            "name": "HP"
+            "name": "HP",
+            "link": "/collections/vendors?q=HP"
           }
         },
         "brand_6": {
           "type": "brand",
           "settings": {
-            "name": "Sony"
+            "name": "Sony",
+            "link": "/collections/vendors?q=Sony"
+          }
+        },
+        "brand_7": {
+          "type": "brand",
+          "settings": {
+            "name": "Asus",
+            "link": "/collections/vendors?q=Asus"
+          }
+        },
+        "brand_8": {
+          "type": "brand",
+          "settings": {
+            "name": "Acer",
+            "link": "/collections/vendors?q=Acer"
+          }
+        },
+        "brand_9": {
+          "type": "brand",
+          "settings": {
+            "name": "MSI",
+            "link": "/collections/vendors?q=MSI"
+          }
+        },
+        "brand_10": {
+          "type": "brand",
+          "settings": {
+            "name": "Xiaomi",
+            "link": "/collections/vendors?q=Xiaomi"
+          }
+        },
+        "brand_11": {
+          "type": "brand",
+          "settings": {
+            "name": "Huawei",
+            "link": "/collections/vendors?q=Huawei"
+          }
+        },
+        "brand_12": {
+          "type": "brand",
+          "settings": {
+            "name": "Google",
+            "link": "/collections/vendors?q=Google"
+          }
+        },
+        "brand_13": {
+          "type": "brand",
+          "settings": {
+            "name": "Microsoft",
+            "link": "/collections/vendors?q=Microsoft"
+          }
+        },
+        "brand_14": {
+          "type": "brand",
+          "settings": {
+            "name": "LG",
+            "link": "/collections/vendors?q=LG"
+          }
+        },
+        "brand_15": {
+          "type": "brand",
+          "settings": {
+            "name": "Motorola",
+            "link": "/collections/vendors?q=Motorola"
+          }
+        },
+        "brand_16": {
+          "type": "brand",
+          "settings": {
+            "name": "Nokia",
+            "link": "/collections/vendors?q=Nokia"
+          }
+        },
+        "brand_17": {
+          "type": "brand",
+          "settings": {
+            "name": "OnePlus",
+            "link": "/collections/vendors?q=OnePlus"
+          }
+        },
+        "brand_18": {
+          "type": "brand",
+          "settings": {
+            "name": "Oppo",
+            "link": "/collections/vendors?q=Oppo"
+          }
+        },
+        "brand_19": {
+          "type": "brand",
+          "settings": {
+            "name": "Realme",
+            "link": "/collections/vendors?q=Realme"
+          }
+        },
+        "brand_20": {
+          "type": "brand",
+          "settings": {
+            "name": "Honor",
+            "link": "/collections/vendors?q=Honor"
+          }
+        },
+        "brand_21": {
+          "type": "brand",
+          "settings": {
+            "name": "TCL",
+            "link": "/collections/vendors?q=TCL"
+          }
+        },
+        "brand_22": {
+          "type": "brand",
+          "settings": {
+            "name": "Hisense",
+            "link": "/collections/vendors?q=Hisense"
+          }
+        },
+        "brand_23": {
+          "type": "brand",
+          "settings": {
+            "name": "Philips",
+            "link": "/collections/vendors?q=Philips"
+          }
+        },
+        "brand_24": {
+          "type": "brand",
+          "settings": {
+            "name": "Logitech",
+            "link": "/collections/vendors?q=Logitech"
+          }
+        },
+        "brand_25": {
+          "type": "brand",
+          "settings": {
+            "name": "Razer",
+            "link": "/collections/vendors?q=Razer"
+          }
+        },
+        "brand_26": {
+          "type": "brand",
+          "settings": {
+            "name": "Corsair",
+            "link": "/collections/vendors?q=Corsair"
+          }
+        },
+        "brand_27": {
+          "type": "brand",
+          "settings": {
+            "name": "Kingston",
+            "link": "/collections/vendors?q=Kingston"
+          }
+        },
+        "brand_28": {
+          "type": "brand",
+          "settings": {
+            "name": "SanDisk",
+            "link": "/collections/vendors?q=SanDisk"
+          }
+        },
+        "brand_29": {
+          "type": "brand",
+          "settings": {
+            "name": "Seagate",
+            "link": "/collections/vendors?q=Seagate"
+          }
+        },
+        "brand_30": {
+          "type": "brand",
+          "settings": {
+            "name": "Western Digital",
+            "link": "/collections/vendors?q=Western%20Digital"
+          }
+        },
+        "brand_31": {
+          "type": "brand",
+          "settings": {
+            "name": "Intel",
+            "link": "/collections/vendors?q=Intel"
+          }
+        },
+        "brand_32": {
+          "type": "brand",
+          "settings": {
+            "name": "AMD",
+            "link": "/collections/vendors?q=AMD"
+          }
+        },
+        "brand_33": {
+          "type": "brand",
+          "settings": {
+            "name": "NVIDIA",
+            "link": "/collections/vendors?q=NVIDIA"
+          }
+        },
+        "brand_34": {
+          "type": "brand",
+          "settings": {
+            "name": "Canon",
+            "link": "/collections/vendors?q=Canon"
+          }
+        },
+        "brand_35": {
+          "type": "brand",
+          "settings": {
+            "name": "Nikon",
+            "link": "/collections/vendors?q=Nikon"
+          }
+        },
+        "brand_36": {
+          "type": "brand",
+          "settings": {
+            "name": "JBL",
+            "link": "/collections/vendors?q=JBL"
+          }
+        },
+        "brand_37": {
+          "type": "brand",
+          "settings": {
+            "name": "Bose",
+            "link": "/collections/vendors?q=Bose"
+          }
+        },
+        "brand_38": {
+          "type": "brand",
+          "settings": {
+            "name": "Anker",
+            "link": "/collections/vendors?q=Anker"
+          }
+        },
+        "brand_39": {
+          "type": "brand",
+          "settings": {
+            "name": "TP-Link",
+            "link": "/collections/vendors?q=TP-Link"
+          }
+        },
+        "brand_40": {
+          "type": "brand",
+          "settings": {
+            "name": "Epson",
+            "link": "/collections/vendors?q=Epson"
+          }
+        },
+        "brand_41": {
+          "type": "brand",
+          "settings": {
+            "name": "Brother",
+            "link": "/collections/vendors?q=Brother"
+          }
+        },
+        "brand_42": {
+          "type": "brand",
+          "settings": {
+            "name": "Gigabyte",
+            "link": "/collections/vendors?q=Gigabyte"
+          }
+        },
+        "brand_43": {
+          "type": "brand",
+          "settings": {
+            "name": "Beats",
+            "link": "/collections/vendors?q=Beats"
           }
         }
       },
-      "block_order": ["brand_1", "brand_2", "brand_3", "brand_4", "brand_5", "brand_6"],
+      "block_order": [
+        "brand_1",
+        "brand_2",
+        "brand_3",
+        "brand_4",
+        "brand_5",
+        "brand_6",
+        "brand_7",
+        "brand_8",
+        "brand_9",
+        "brand_10",
+        "brand_11",
+        "brand_12",
+        "brand_13",
+        "brand_14",
+        "brand_15",
+        "brand_16",
+        "brand_17",
+        "brand_18",
+        "brand_19",
+        "brand_20",
+        "brand_21",
+        "brand_22",
+        "brand_23",
+        "brand_24",
+        "brand_25",
+        "brand_26",
+        "brand_27",
+        "brand_28",
+        "brand_29",
+        "brand_30",
+        "brand_31",
+        "brand_32",
+        "brand_33",
+        "brand_34",
+        "brand_35",
+        "brand_36",
+        "brand_37",
+        "brand_38",
+        "brand_39",
+        "brand_40",
+        "brand_41",
+        "brand_42",
+        "brand_43"
+      ],
       "settings": {}
     },
     "blog": {

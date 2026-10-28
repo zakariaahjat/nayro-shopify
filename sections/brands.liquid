@@ -16,25 +16,48 @@
       <div class="nh-brands">
         {%- if section.blocks.size > 0 -%}
           {%- for block in section.blocks -%}
+            {%- liquid
+              assign brand_name = block.settings.name | strip
+              assign brand_count = block.settings.count | plus: 0
+
+              # Live count from the storefront vendor filter when Search & Discovery
+              # provides it. The manual "Products count" setting always wins.
+              if brand_count == 0 and brand_name != blank
+                assign brand_key = brand_name | downcase
+                for vendor_filter in collections.all.filters
+                  if vendor_filter.param_name == 'filter.p.vendor'
+                    for vendor_value in vendor_filter.values
+                      assign vendor_key = vendor_value.label | strip | downcase
+                      if vendor_key == brand_key
+                        assign brand_count = vendor_value.count
+                      endif
+                    endfor
+                  endif
+                endfor
+              endif
+            -%}
             {%- if block.settings.link != blank -%}
               <a class="nh-brand" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>
             {%- else -%}
               <span class="nh-brand" {{ block.shopify_attributes }}>
             {%- endif -%}
               {%- if block.settings.image != blank -%}
-                {{ block.settings.image | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120, 240', sizes: '140px', alt: block.settings.name | escape }}
-              {%- else -%}
-                {{ block.settings.name | escape }}
+                {{ block.settings.image | image_url: width: 240 | image_tag: loading: 'lazy', widths: '120, 240', sizes: '140px', alt: brand_name | escape }}
+              {%- elsif brand_name != blank -%}
+                <span class="nh-brand__name">{{ brand_name | escape }}</span>
+              {%- endif -%}
+              {%- if brand_count > 0 -%}
+                <span class="nh-brand__count" title="{{ 'collections.general.product_count' | t | escape }}">{{ brand_count }}</span>
               {%- endif -%}
             {%- if block.settings.link != blank -%}</a>{%- else -%}</span>{%- endif -%}
           {%- endfor -%}
         {%- else -%}
-          <span class="nh-brand">Apple</span>
-          <span class="nh-brand">Samsung</span>
-          <span class="nh-brand">Dell</span>
-          <span class="nh-brand">Lenovo</span>
-          <span class="nh-brand">HP</span>
-          <span class="nh-brand">Sony</span>
+          {%- assign fallback_brands = 'Apple,Samsung,Dell,Lenovo,HP,Sony,Asus,Acer,MSI,Xiaomi,Huawei,Google,Microsoft,LG,Motorola,Nokia,OnePlus,Oppo,Realme,Honor,TCL,Hisense,Philips,Logitech,Razer,Corsair,Kingston,SanDisk,Seagate,Western Digital,Intel,AMD,NVIDIA,Canon,Nikon,JBL,Bose,Anker,TP-Link,Epson,Brother,Gigabyte' | split: ',' -%}
+          {%- for brand_name in fallback_brands -%}
+            {%- assign brand_q = brand_name | url_encode -%}
+            {%- assign brand_url = routes.collections_url | append: '/vendors?q=' | append: brand_q -%}
+            <a class="nh-brand" href="{{ brand_url }}"><span class="nh-brand__name">{{ brand_name | escape }}</span></a>
+          {%- endfor -%}
         {%- endif -%}
       </div>
     </div>
@@ -91,11 +114,17 @@
           "type": "url",
           "id": "link",
           "label": "Link"
+        },
+        {
+          "type": "number",
+          "id": "count",
+          "label": "Products count",
+          "info": "Leave at 0 to show the live count from the Vendor filter (Search & Discovery). Set a number to override it."
         }
       ]
     }
   ],
-  "max_blocks": 12,
+  "max_blocks": 60,
   "presets": [
     {
       "name": "Brands",
@@ -105,7 +134,9 @@
         { "type": "brand", "settings": { "name": "Dell" } },
         { "type": "brand", "settings": { "name": "Lenovo" } },
         { "type": "brand", "settings": { "name": "HP" } },
-        { "type": "brand", "settings": { "name": "Sony" } }
+        { "type": "brand", "settings": { "name": "Sony" } },
+        { "type": "brand", "settings": { "name": "Asus" } },
+        { "type": "brand", "settings": { "name": "Acer" } }
       ]
     }
   ]
