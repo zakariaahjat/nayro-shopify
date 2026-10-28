@@ -3,7 +3,11 @@
     "main": {
       "type": "main-collection",
       "settings": {}
+    },
+    "recent": {
+      "type": "recently-viewed",
+      "settings": {}
     }
   },
-  "order": ["main"]
+  "order": ["main", "recent"]
 }

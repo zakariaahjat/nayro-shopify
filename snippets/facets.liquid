@@ -1,39 +1,58 @@
 {%- comment -%}
   Facets. Accepts: results (collection or search), form_action, reset_url,
   current_sort (optional), is_search (optional), search_terms (optional),
-  search_type (optional).
+  search_type (optional), preset_brands (optional, comma separated).
 
   Native Shopify filters are rendered when the merchant adds them in the
-  Search & Discovery app. When the product type or vendor filter is missing,
-  the theme falls back to Shopify's built-in /collections/types and
-  /collections/vendors pages so Category and Brand filtering still works on
-  /collections/all without any app configuration.
+  Search & Discovery app. The Brand group is always rendered from the store
+  vendors plus the preset brand list, so it does not shrink to a single vendor
+  when the store has only one vendor name.
 {%- endcomment -%}
 {%- liquid
   assign has_native_type = false
-  assign has_native_vendor = false
   for filter in results.filters
     if filter.param_name == 'filter.p.product_type'
       assign has_native_type = true
     endif
-    if filter.param_name == 'filter.p.vendor'
-      assign has_native_vendor = true
-    endif
   endfor
 
   assign show_fallback_types = false
-  assign show_fallback_vendors = false
-  if is_search != true
-    if has_native_type == false and results.all_types.size > 0
-      assign show_fallback_types = true
+  if is_search != true and has_native_type == false and results.all_types.size > 0
+    assign show_fallback_types = true
+  endif
+
+  # Brand list: the store's real vendors first, then the preset brand list, so
+  # brands that do not have products yet still appear in the Brand filter.
+  assign brand_names = ''
+  assign brand_keys = '||'
+  for product_vendor in results.all_vendors
+    assign vendor_clean = product_vendor | strip
+    assign vendor_key = vendor_clean | downcase
+    assign brand_names = brand_names | append: vendor_clean | append: '||'
+    assign brand_keys = brand_keys | append: vendor_key | append: '||'
+  endfor
+
+  assign preset_brand_list = preset_brands | default: '' | split: ','
+  for preset_brand in preset_brand_list
+    assign preset_brand = preset_brand | strip
+    if preset_brand != blank
+      assign preset_key = preset_brand | downcase
+      assign preset_token = '||' | append: preset_key | append: '||'
+      unless brand_keys contains preset_token
+        assign brand_names = brand_names | append: preset_brand | append: '||'
+        assign brand_keys = brand_keys | append: preset_token
+      endunless
     endif
-    if has_native_vendor == false and results.all_vendors.size > 0
-      assign show_fallback_vendors = true
-    endif
+  endfor
+  assign brand_list = brand_names | split: '||'
+
+  assign show_brand_filter = false
+  if is_search != true and brand_list.size > 0
+    assign show_brand_filter = true
   endif
 
   assign show_filters = false
-  if results.filters.size > 0 or show_fallback_types or show_fallback_vendors
+  if results.filters.size > 0 or show_fallback_types or show_brand_filter
     assign show_filters = true
   endif
 
@@ -62,6 +81,12 @@
     </div>
 
     {%- for filter in results.filters -%}
+      {%- if filter.param_name == 'filter.p.vendor' -%}
+        {%- for value in filter.active_values -%}
+          <input type="hidden" name="{{ value.param_name }}" value="{{ value.value }}">
+        {%- endfor -%}
+        {%- continue -%}
+      {%- endif -%}
       {%- assign filter_open = false -%}
       {%- if filter.active_values.size > 0 -%}
         {%- assign filter_open = true -%}
@@ -153,20 +178,39 @@
       </details>
     {%- endif -%}
 
-    {%- if show_fallback_vendors -%}
+    {%- if show_brand_filter -%}
       <details class="nayro-filter-group" {% if current_vendor_key != blank %}open{% endif %}>
         <summary class="nayro-filter-group__title">{{ 'collections.general.brand' | t }}</summary>
         <ul class="nayro-filter-list nayro-filter-list--scroll">
-          {%- for product_vendor in results.all_vendors -%}
-            {%- assign vendor_key = product_vendor | downcase -%}
-            {%- assign vendor_q = product_vendor | url_encode -%}
+          {%- for product_vendor in brand_list -%}
+            {%- assign vendor_clean = product_vendor | strip -%}
+            {%- if vendor_clean == blank -%}{%- continue -%}{%- endif -%}
+            {%- assign vendor_key = vendor_clean | downcase -%}
+            {%- assign vendor_count = 0 -%}
+            {%- for filter in results.filters -%}
+              {%- if filter.param_name == 'filter.p.vendor' -%}
+                {%- for value in filter.values -%}
+                  {%- assign value_key = value.label | strip | downcase -%}
+                  {%- if value_key == vendor_key -%}
+                    {%- assign vendor_count = value.count -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endif -%}
+            {%- endfor -%}
+            {%- assign vendor_q = vendor_clean | url_encode -%}
             {%- assign vendor_url = routes.collections_url | append: '/vendors?q=' | append: vendor_q -%}
             {%- if current_sort != blank -%}
               {%- assign vendor_url = vendor_url | append: '&sort_by=' | append: current_sort -%}
             {%- endif -%}
+            {%- if vendor_key == current_vendor_key -%}
+              {%- assign vendor_url = reset_url -%}
+            {%- endif -%}
             <li class="nayro-filter-item{% if vendor_key == current_vendor_key %} is-active{% endif %}">
               <a href="{{ vendor_url }}"{% if vendor_key == current_vendor_key %} class="is-active" aria-current="page"{% endif %}>
-                <span class="nayro-filter-item__label">{{ product_vendor | escape }}</span>
+                <span class="nayro-filter-item__label">{{ vendor_clean | escape }}</span>
+                {%- if vendor_count > 0 -%}
+                  <span class="nayro-filter-item__count">{{ vendor_count }}</span>
+                {%- endif -%}
               </a>
             </li>
           {%- endfor -%}

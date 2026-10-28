@@ -1,14 +1,19 @@
 {%- comment -%}
   Technical specifications ("Fiche technique") for the product page.
 
-  Rows are built from:
-  - product metafields in the namespace set below (default: "specs"), and
-  - optional built-in product attributes (brand, category, SKU, availability).
+  Every row is optional. Rows come from three sources, in this order:
 
-  Create product metafields in Shopify admin -> Settings -> Custom data ->
-  Products, using the same namespace (for example "specs") and one key per row:
-  processor, ram, storage, screen, battery, warranty, etc. Every non-empty
-  metafield in the namespace is rendered automatically.
+  1. "Row" blocks added in the theme editor (label + value). They are shared by
+     every product that uses this product template. Use them for common rows
+     such as warranty or delivery, or create a separate product template per
+     product family and give each template its own rows.
+  2. Built-in product attributes: brand, category, SKU, availability, tags.
+     Each one has its own on/off switch in the theme editor.
+  3. Product metafields in the namespace below (default: "specs"). This is the
+     per-product option: create the definitions in Shopify admin -> Settings ->
+     Custom data -> Products, then fill the value on each product.
+
+  The section hides itself when there is nothing to show.
 {%- endcomment -%}
 {%- liquid
   assign spec_namespace_key = section.settings.namespace | strip | default: 'specs'
@@ -16,12 +21,23 @@
   assign current_variant = product.selected_or_first_available_variant
   assign spec_sku = current_variant.sku | default: product.variants.first.sku
 
-  assign metafield_count = 0
-  for metafield in spec_namespace
-    if metafield.last.value != blank
-      assign metafield_count = metafield_count | plus: 1
+  assign row_count = 0
+  for block in section.blocks
+    assign block_label = block.settings.label | strip
+    assign block_value = block.settings.value | strip
+    if block_label != blank and block_value != blank
+      assign row_count = row_count | plus: 1
     endif
   endfor
+
+  assign metafield_count = 0
+  if section.settings.show_metafields
+    for metafield in spec_namespace
+      if metafield.last.value != blank
+        assign metafield_count = metafield_count | plus: 1
+      endif
+    endfor
+  endif
 
   assign builtin_count = 0
   if section.settings.show_vendor and product.vendor != blank
@@ -36,8 +52,11 @@
   if section.settings.show_availability
     assign builtin_count = builtin_count | plus: 1
   endif
+  if section.settings.show_tags and product.tags.size > 0
+    assign builtin_count = builtin_count | plus: 1
+  endif
 
-  assign specs_total = metafield_count | plus: builtin_count
+  assign specs_total = row_count | plus: builtin_count | plus: metafield_count
 -%}
 {%- if specs_total > 0 -%}
   <section class="nayro-specs" id="specs-{{ section.id }}">
@@ -51,6 +70,17 @@
         </div>
 
         <dl class="nayro-specs__list">
+          {%- for block in section.blocks -%}
+            {%- assign block_label = block.settings.label | strip -%}
+            {%- assign block_value = block.settings.value | strip -%}
+            {%- if block_label != blank and block_value != blank -%}
+              <div class="nayro-specs__row" {{ block.shopify_attributes }}>
+                <dt>{{ block_label | escape }}</dt>
+                <dd>{{ block_value | escape | newline_to_br }}</dd>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+
           {%- if section.settings.show_vendor and product.vendor != blank -%}
             <div class="nayro-specs__row">
               <dt>{{ section.settings.label_vendor | default: 'Marque' | escape }}</dt>
@@ -85,32 +115,41 @@
             </div>
           {%- endif -%}
 
-          {%- for metafield in spec_namespace -%}
-            {%- assign spec = metafield.last -%}
-            {%- assign spec_value = spec.value -%}
-            {%- if spec_value != blank -%}
-              {%- assign spec_type = spec.type | default: '' -%}
-              {%- assign spec_is_list = false -%}
-              {%- if spec_type contains 'list' -%}
-                {%- assign spec_is_list = true -%}
-              {%- elsif spec_type != 'json' and spec_value.first != blank -%}
-                {%- assign spec_is_list = true -%}
+          {%- if section.settings.show_tags and product.tags.size > 0 -%}
+            <div class="nayro-specs__row">
+              <dt>{{ section.settings.label_tags | default: 'Tags' | escape }}</dt>
+              <dd>{{ product.tags | join: ', ' | escape }}</dd>
+            </div>
+          {%- endif -%}
+
+          {%- if section.settings.show_metafields -%}
+            {%- for metafield in spec_namespace -%}
+              {%- assign spec = metafield.last -%}
+              {%- assign spec_value = spec.value -%}
+              {%- if spec_value != blank -%}
+                {%- assign spec_type = spec.type | default: '' -%}
+                {%- assign spec_is_list = false -%}
+                {%- if spec_type contains 'list' -%}
+                  {%- assign spec_is_list = true -%}
+                {%- elsif spec_type != 'json' and spec_value.first != blank -%}
+                  {%- assign spec_is_list = true -%}
+                {%- endif -%}
+                {%- if spec_is_list -%}
+                  {%- assign spec_value = spec_value | join: ', ' -%}
+                {%- endif -%}
+                <div class="nayro-specs__row">
+                  <dt>{{ metafield.first | replace: '_', ' ' | replace: '-', ' ' | capitalize }}</dt>
+                  <dd>
+                    {%- if spec_type == 'rich_text_field' -%}
+                      {{ spec_value }}
+                    {%- else -%}
+                      {{ spec_value | escape }}
+                    {%- endif -%}
+                  </dd>
+                </div>
               {%- endif -%}
-              {%- if spec_is_list -%}
-                {%- assign spec_value = spec_value | join: ', ' -%}
-              {%- endif -%}
-              <div class="nayro-specs__row">
-                <dt>{{ metafield.first | replace: '_', ' ' | replace: '-', ' ' | capitalize }}</dt>
-                <dd>
-                  {%- if spec_type == 'rich_text_field' -%}
-                    {{ spec_value }}
-                  {%- else -%}
-                    {{ spec_value | escape }}
-                  {%- endif -%}
-                </dd>
-              </div>
-            {%- endif -%}
-          {%- endfor -%}
+            {%- endfor -%}
+          {%- endif -%}
         </dl>
 
         {%- if section.settings.note != blank -%}
@@ -138,11 +177,21 @@
       "default": "Fiche technique"
     },
     {
+      "type": "header",
+      "content": "Rows from product metafields"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_metafields",
+      "label": "Show metafield rows",
+      "default": true
+    },
+    {
       "type": "text",
       "id": "namespace",
       "label": "Metafield namespace",
       "default": "specs",
-      "info": "All non-empty product metafields in this namespace are shown as rows."
+      "info": "Every non-empty product metafield in this namespace becomes a row. Set values per product in Shopify admin -> Settings -> Custom data -> Products."
     },
     {
       "type": "header",
@@ -152,7 +201,7 @@
       "type": "checkbox",
       "id": "show_vendor",
       "label": "Show brand",
-      "default": true
+      "default": false
     },
     {
       "type": "text",
@@ -164,7 +213,7 @@
       "type": "checkbox",
       "id": "show_type",
       "label": "Show category",
-      "default": true
+      "default": false
     },
     {
       "type": "text",
@@ -197,11 +246,44 @@
       "default": "Disponibilité"
     },
     {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show tags",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "label_tags",
+      "label": "Tags label",
+      "default": "Tags"
+    },
+    {
       "type": "textarea",
       "id": "note",
       "label": "Note below the table"
     }
   ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Garantie"
+        },
+        {
+          "type": "textarea",
+          "id": "value",
+          "label": "Value",
+          "default": "12 mois"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 30,
   "presets": [
     {
       "name": "Fiche technique"

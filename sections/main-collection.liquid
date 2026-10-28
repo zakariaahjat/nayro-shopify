@@ -58,8 +58,8 @@
             {% render 'icon', name: 'close' %}
           </button>
         </div>
-        {% render 'facets', results: collection, form_action: facets_form_action, reset_url: reset_filters_url, current_sort: current_sort, virtual_q: virtual_q %}
-        {%- if collection.filters.size == 0 and collection.all_types.size == 0 and collection.all_vendors.size == 0 -%}
+        {% render 'facets', results: collection, form_action: facets_form_action, reset_url: reset_filters_url, current_sort: current_sort, virtual_q: virtual_q, preset_brands: section.settings.brand_list %}
+        {%- if collection.filters.size == 0 and collection.all_types.size == 0 and section.settings.brand_list == blank -%}
           <p class="nayro-filters__empty">{{ section.settings.no_filters_text | default: 'No filters are available for this collection yet.' | escape }}</p>
         {%- endif -%}
       </aside>
@@ -187,6 +187,13 @@
       "id": "show_description",
       "label": "Show full description below products",
       "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "brand_list",
+      "label": "Brand filter list",
+      "info": "Comma separated. These brands always appear in the Brand filter, even when no product uses them yet. Store vendors are added automatically.",
+      "default": "Apple, Samsung, Dell, Lenovo, HP, Sony, Asus, Acer, MSI, Xiaomi, Huawei, Google, Microsoft, LG, Motorola, Nokia, OnePlus, Oppo, Realme, Honor, TCL, Hisense, Philips, Logitech, Razer, Corsair, Kingston, SanDisk, Seagate, Western Digital, Intel, AMD, NVIDIA, Canon, Nikon, JBL, Bose, Anker, TP-Link, Epson, Brother, Gigabyte, Beats"
     },
     {
       "type": "text",

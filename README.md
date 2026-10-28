@@ -109,20 +109,40 @@ manually per brand from **Theme editor -> Brands -> Brand -> Products count**.
 
 Category cards already show `collection.all_products_count` under each title.
 
+### Brand filter on collection pages
+
+The **Brand** filter lists the store's real vendors first and then the preset
+brand list, so it never collapses to a single "store name" vendor. Edit the list
+from **Theme editor -> Collection products -> Brand filter list** (comma
+separated, 43 brands by default). Brands with no products yet still appear; their
+page is empty until a product uses that vendor name.
+
 ## Product technical specifications (Fiche technique)
 
 `templates/product.json` includes a **Fiche technique** section after the product
-information. It shows:
+information. Every row is optional and comes from three sources, in this order:
 
-- Brand, category, SKU and availability (each can be turned off), and
-- every non-empty product metafield in the `specs` namespace.
+1. **Row blocks** added in the theme editor (**Fiche technique -> Add row**).
+   Type a label and a value, for example `Garantie` / `12 mois`. Blocks are shared
+   by every product using this product template, so use them for common rows, or
+   create one product template per product family and give each its own rows.
+2. **Built-in rows**: brand, category, SKU, availability and tags, each with its
+   own on/off switch and editable label. Brand and category are off by default,
+   because they fall back to the store name and Shopify's product type.
+3. **Product metafields** in the `specs` namespace, which is the per-product
+   option. In Shopify admin go to **Settings -> Custom data -> Products**, create
+   definitions with the namespace `specs` (for example `processor`, `ram`,
+   `storage`, `screen`, `battery`, `warranty`), then fill the value on each
+   product. The key becomes the row label (`screen_size` becomes "Screen size").
+   Turn this off or change the namespace from **Theme editor -> Fiche technique**.
 
-To add spec rows, go to **Settings -> Custom data -> Products** in Shopify admin
-and create metafield definitions with the namespace `specs`, for example:
-`processor`, `ram`, `storage`, `screen`, `battery`, `warranty`, `weight`.
-The key becomes the row label (`screen_size` becomes "Screen size") and the value
-becomes the row value. Change the namespace from **Theme editor -> Fiche
-technique -> Metafield namespace**.
+The section hides itself when nothing is selected or filled in.
+
+## Recently viewed
+
+A **Recently viewed** section is on the product page and under the product grid
+on collection pages. It is filled from the visitor's browser and stays hidden
+until they have viewed at least one product.
 
 ## Hero banner images
 
