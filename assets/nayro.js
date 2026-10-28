@@ -1226,6 +1226,34 @@
   }
 
   /* ------------------------------------------------------------------ */
+  /* Brand filter search                                                */
+  /* ------------------------------------------------------------------ */
+  function initBrandSearch() {
+    var inputs = qsa('[data-brand-search]');
+    inputs.forEach(function (input) {
+      var group = input.closest('[data-brand-group]') || document;
+      var list = qs('[data-brand-list]', group);
+      var empty = qs('[data-brand-empty]', group);
+      if (!list) { return; }
+      var items = qsa('[data-brand-name]', list);
+      function apply() {
+        var term = input.value.trim().toLowerCase();
+        var shown = 0;
+        items.forEach(function (item) {
+          var name = item.getAttribute('data-brand-name') || '';
+          var match = !term || name.indexOf(term) !== -1;
+          item.hidden = !match;
+          if (match) { shown += 1; }
+        });
+        if (empty) { empty.hidden = shown !== 0; }
+        list.hidden = shown === 0;
+      }
+      input.addEventListener('input', apply);
+      input.addEventListener('search', apply);
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
   /* Boot                                                               */
   /* ------------------------------------------------------------------ */
   function init() {
@@ -1247,6 +1275,7 @@
     recordRecentlyViewed();
     initRecentlyViewed();
     initRecommendations();
+    initBrandSearch();
   }
 
   if (document.readyState === 'loading') {

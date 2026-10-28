@@ -50,7 +50,12 @@
 .nayro-filters__title { font-family: var(--n-font-head); font-weight: 700; font-size: 17px; }
 .nayro-filters__reset { border: 0; background: transparent; color: var(--n-primary); font-size: 13px; font-weight: 600; }
 .nayro-filter-group { padding: 14px 0; border-top: 1px solid var(--n-border); }
-.nayro-filter-group__title { font-size: 14px; text-transform: uppercase; letter-spacing: .03em; color: var(--n-muted); margin-bottom: 10px; }
+.nayro-filter-group__title { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 14px; text-transform: uppercase; letter-spacing: .03em; color: var(--n-muted); margin-bottom: 10px; }
+.nayro-filter-group__count { font-size: 11px; font-weight: 600; color: var(--n-muted); background: var(--n-border); border-radius: 999px; padding: 1px 7px; letter-spacing: 0; }
+.nayro-brand-search { margin-bottom: 8px; }
+.nayro-brand-search__input { width: 100%; padding: 8px 10px; font-size: 13px; color: inherit; background: transparent; border: 1px solid var(--n-border); border-radius: var(--n-radius-sm); }
+.nayro-brand-search__input:focus { outline: none; border-color: var(--n-primary); }
+.nayro-brand-search__empty { margin: 8px 0 0; font-size: 13px; color: var(--n-muted); }
 .nayro-filter-list { list-style: none; margin: 0; padding: 0; }
 .nayro-filter-item label { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 14px; cursor: pointer; }
 .nayro-filter-item input { accent-color: var(--n-primary); }

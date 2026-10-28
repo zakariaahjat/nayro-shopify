@@ -110,7 +110,10 @@
       "refine": "Refine",
       "showing": "Showing",
       "category": "Category",
-      "brand": "Brand"
+      "brand": "Brand",
+      "search_brand": "Search brands…",
+      "no_brand_matches": "No brand matches",
+      "all_brands": "All brands"
     }
   },
   "search": {

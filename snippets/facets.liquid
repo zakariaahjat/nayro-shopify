@@ -8,6 +8,7 @@
   vendors plus the preset brand list, so it does not shrink to a single vendor
   when the store has only one vendor name.
 {%- endcomment -%}
+{%- capture nayro_canonical_brands -%}{% render 'brand-list' %}{%- endcapture -%}
 {%- liquid
   assign has_native_type = false
   for filter in results.filters
@@ -21,18 +22,25 @@
     assign show_fallback_types = true
   endif
 
-  # Brand list: the store's real vendors first, then the preset brand list, so
-  # brands that do not have products yet still appear in the Brand filter.
+  # Brand list: the store's real vendors first, then the canonical list in
+  # snippets/brand-list.liquid, then the theme editor setting. Duplicates are
+  # removed, so brands without products yet still appear in the Brand filter.
   assign brand_names = ''
   assign brand_keys = '||'
+  assign shop_name_key = shop.name | downcase
   for product_vendor in results.all_vendors
     assign vendor_clean = product_vendor | strip
     assign vendor_key = vendor_clean | downcase
+    if vendor_key == shop_name_key
+      continue
+    endif
     assign brand_names = brand_names | append: vendor_clean | append: '||'
     assign brand_keys = brand_keys | append: vendor_key | append: '||'
   endfor
 
-  assign preset_brand_list = preset_brands | default: '' | split: ','
+  assign brand_setting_csv = preset_brands | default: '' | strip
+  assign preset_brand_csv = brand_setting_csv | append: ',' | append: nayro_canonical_brands
+  assign preset_brand_list = preset_brand_csv | split: ','
   for preset_brand in preset_brand_list
     assign preset_brand = preset_brand | strip
     if preset_brand != blank
@@ -45,6 +53,13 @@
     endif
   endfor
   assign brand_list = brand_names | split: '||'
+  assign brand_total = 0
+  for brand_item in brand_list
+    assign brand_item_clean = brand_item | strip
+    if brand_item_clean != blank
+      assign brand_total = brand_total | plus: 1
+    endif
+  endfor
 
   assign show_brand_filter = false
   if is_search != true and brand_list.size > 0
@@ -179,9 +194,22 @@
     {%- endif -%}
 
     {%- if show_brand_filter -%}
-      <details class="nayro-filter-group" {% if current_vendor_key != blank %}open{% endif %}>
-        <summary class="nayro-filter-group__title">{{ 'collections.general.brand' | t }}</summary>
-        <ul class="nayro-filter-list nayro-filter-list--scroll">
+      <details class="nayro-filter-group" {% if current_vendor_key != blank %}open{% endif %} data-brand-group>
+        <summary class="nayro-filter-group__title">
+          {{ 'collections.general.brand' | t }}
+          <span class="nayro-filter-group__count">{{ brand_total }}</span>
+        </summary>
+        <div class="nayro-brand-search">
+          <input
+            type="search"
+            class="nayro-brand-search__input"
+            placeholder="{{ 'collections.general.search_brand' | t }}"
+            aria-label="{{ 'collections.general.search_brand' | t }}"
+            autocomplete="off"
+            data-brand-search
+          >
+        </div>
+        <ul class="nayro-filter-list nayro-filter-list--scroll" data-brand-list>
           {%- for product_vendor in brand_list -%}
             {%- assign vendor_clean = product_vendor | strip -%}
             {%- if vendor_clean == blank -%}{%- continue -%}{%- endif -%}
@@ -205,7 +233,7 @@
             {%- if vendor_key == current_vendor_key -%}
               {%- assign vendor_url = reset_url -%}
             {%- endif -%}
-            <li class="nayro-filter-item{% if vendor_key == current_vendor_key %} is-active{% endif %}">
+            <li class="nayro-filter-item{% if vendor_key == current_vendor_key %} is-active{% endif %}" data-brand-name="{{ vendor_key | escape }}">
               <a href="{{ vendor_url }}"{% if vendor_key == current_vendor_key %} class="is-active" aria-current="page"{% endif %}>
                 <span class="nayro-filter-item__label">{{ vendor_clean | escape }}</span>
                 {%- if vendor_count > 0 -%}
@@ -215,6 +243,7 @@
             </li>
           {%- endfor -%}
         </ul>
+        <p class="nayro-brand-search__empty" data-brand-empty hidden>{{ 'collections.general.no_brand_matches' | t }}</p>
       </details>
     {%- endif -%}
 

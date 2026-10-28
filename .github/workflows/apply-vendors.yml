@@ -1,0 +1,45 @@
+name: Apply product brands
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Write the vendors to Shopify (uncheck for a preview)
+        type: boolean
+        default: false
+      overwrite:
+        description: Also replace vendors that are already set
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: apply-vendors
+  cancel-in-progress: false
+
+jobs:
+  vendors:
+    name: Set product vendors from the brand list
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Apply vendors
+        run: >-
+          node scripts/apply-vendors.mjs
+          ${{ inputs.apply && '--apply' || '' }}
+          ${{ inputs.overwrite && '--overwrite' || '' }}
+        env:
+          SHOPIFY_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE_DOMAIN }}
+          SHOPIFY_ADMIN_API_TOKEN: ${{ secrets.SHOPIFY_ADMIN_API_TOKEN }}
+          SHOPIFY_STORE_NAME: ${{ vars.SHOPIFY_STORE_NAME || 'My Store 2' }}

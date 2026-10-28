@@ -111,11 +111,34 @@ Category cards already show `collection.all_products_count` under each title.
 
 ### Brand filter on collection pages
 
-The **Brand** filter lists the store's real vendors first and then the preset
-brand list, so it never collapses to a single "store name" vendor. Edit the list
-from **Theme editor -> Collection products -> Brand filter list** (comma
-separated, 43 brands by default). Brands with no products yet still appear; their
+The **Brand** filter lists the store's real vendors first, then the canonical
+brand list in `snippets/brand-list.liquid` (159 brands: phones, laptops,
+accessories, gaming, audio, storage, networking, printers, smart home, cameras,
+TVs and more). Duplicates are removed, and a search box at the top of the group
+filters the list as you type. Brands with no products yet still appear; their
 page is empty until a product uses that vendor name.
+
+Add or remove brands by editing `snippets/brand-list.liquid` (one comma
+separated line). The **Collection products -> Extra brands for the Brand filter**
+setting is optional and is merged on top of that file.
+
+To make a brand page actually list products, each product needs the matching
+**Vendor**. Two ways:
+
+- **Manually:** Products -> open the product -> **Product organization** ->
+  **Vendor**.
+- **In bulk:** run `node scripts/apply-vendors.mjs` (preview) then
+  `node scripts/apply-vendors.mjs --apply`. It reads the same brand list, guesses
+  the brand from the product title or tags (for example "Samsung Galaxy S24" ->
+  `Samsung`, "iPhone 15" -> `Apple`) and only fills vendors that are blank or
+  still the store name. Add `--overwrite` to replace brands you already set and
+  `--report vendor-report.csv` to get a CSV of every decision. Products whose
+  title has no brand in it are listed at the end so you can set them by hand.
+
+The same run is available in GitHub Actions: **Actions -> Apply product brands
+-> Run workflow** (uncheck `apply` to only preview). It needs the
+`SHOPIFY_STORE_DOMAIN` and `SHOPIFY_ADMIN_API_TOKEN` repository secrets, and the
+token needs the `read_products` and `write_products` scopes.
 
 ## Product technical specifications (Fiche technique)
 

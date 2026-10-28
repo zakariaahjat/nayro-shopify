@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "seed:blog": "node scripts/seed-blog.mjs",
-    "seed:blog:dry": "node scripts/seed-blog.mjs --dry-run"
+    "seed:blog:dry": "node scripts/seed-blog.mjs --dry-run",
+    "vendors": "node scripts/apply-vendors.mjs",
+    "vendors:apply": "node scripts/apply-vendors.mjs --apply"
   },
   "engines": {
     "node": ">=20"
