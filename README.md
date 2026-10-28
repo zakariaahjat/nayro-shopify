@@ -137,6 +137,16 @@ information. Every row is optional and comes from four sources, in this order:
    A plain object also works: `{ "Longueur": "5 m", "Couleur": "RGB" }`.
    `label`/`value`, `name`/`value` and `title`/`text` are all accepted keys.
    Change the key from **Theme editor -> Fiche technique -> JSON metafield key**.
+
+   The section also looks for the same value in the `custom` namespace, and for
+   the keys `fiche_technique` and `custom.specs`, so a definition created in the
+   wrong namespace still renders instead of silently disappearing.
+
+   If nothing shows up, turn on **Theme editor -> Fiche technique -> Show
+   diagnostic info**. The product page then prints the namespace, key, the
+   metafield it actually found, its type and the number of rows rendered.
+   A multi-line text metafield filled with `Label: value` lines on separate
+   lines also works as a fallback.
 2. **Row blocks** added in the theme editor (**Fiche technique -> Add row**).
    Type a label and a value, for example `Garantie` / `12 mois`. Blocks are shared
    by every product using this product template, so use them for common rows, or

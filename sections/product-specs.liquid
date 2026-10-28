@@ -26,11 +26,67 @@
   # ({ "Length": "5 m" }).
   assign json_key = section.settings.json_key | strip | default: 'fiche'
   assign spec_json = spec_namespace[json_key]
+  assign json_source = ''
+  assign json_found = false
+  if spec_json != blank
+    assign json_source = spec_namespace_key | append: '.' | append: json_key
+    assign json_found = true
+  endif
+
+  # Be forgiving about where the definition was created: a "custom" namespace
+  # is what Shopify suggests by default, and the name of the definition is
+  # often used as the key instead of "fiche".
+  if spec_json == blank
+    assign spec_json = product.metafields.custom[json_key]
+    if spec_json != blank
+      assign json_source = 'custom.' | append: json_key
+      assign json_found = true
+    endif
+  endif
+  if spec_json == blank
+    assign spec_json = product.metafields.custom.fiche
+    if spec_json != blank
+      assign json_source = 'custom.fiche'
+      assign json_found = true
+    endif
+  endif
+  if spec_json == blank
+    assign spec_json = product.metafields.specs.fiche_technique
+    if spec_json != blank
+      assign json_source = 'specs.fiche_technique'
+      assign json_found = true
+    endif
+  endif
+  if spec_json == blank
+    assign spec_json = product.metafields.custom.fiche_technique
+    if spec_json != blank
+      assign json_source = 'custom.fiche_technique'
+      assign json_found = true
+    endif
+  endif
+  if spec_json == blank
+    assign spec_json = product.metafields.custom.specs
+    if spec_json != blank
+      assign json_source = 'custom.specs'
+      assign json_found = true
+    endif
+  endif
+
+  assign json_type = ''
   assign json_rows = ''
+  assign json_lines = ''
   assign json_count = 0
+  assign json_is_lines = false
+  assign json_value = ''
   if section.settings.show_json and spec_json != blank
-    if spec_json.type == 'json' or spec_json.type == 'json_string'
-      assign json_rows = spec_json.value
+    assign json_type = spec_json.type | default: ''
+    assign json_value = spec_json.value
+    assign json_is_text = false
+    if json_type contains 'text' or json_type contains 'string' or json_type contains 'url'
+      assign json_is_text = true
+    endif
+    unless json_is_text
+      assign json_rows = json_value
       for row in json_rows
         assign row_label = row.label | default: row.name | default: row.title
         assign row_value = row.value | default: row.text | default: row.content
@@ -39,6 +95,27 @@
           assign row_value = row[1]
         endif
         if row_label != blank and row_value != blank
+          assign json_count = json_count | plus: 1
+        endif
+      endfor
+    endunless
+    if json_count == 0 and json_value != blank
+      # Not a JSON object/array (for example a text metafield filled with
+      # "Label: value" lines), so read it line by line.
+      assign json_lines = json_value | newline_to_br | split: '<br />'
+      assign json_is_lines = true
+      for spec_line in json_lines
+        assign spec_line = spec_line | strip
+        if spec_line == blank
+          continue
+        endif
+        if spec_line contains '{' or spec_line contains '['
+          continue
+        endif
+        assign spec_parts = spec_line | split: ':'
+        assign spec_label = spec_parts[0] | strip
+        assign spec_text = spec_parts | slice: 1, 50 | join: ':' | strip
+        if spec_label != blank and spec_text != blank
           assign json_count = json_count | plus: 1
         endif
       endfor
@@ -58,7 +135,8 @@
   if section.settings.show_metafields
     for metafield in spec_namespace
       assign metafield_key = metafield.first | strip
-      if metafield_key != json_key and metafield.last.value != blank
+      assign metafield_path = spec_namespace_key | append: '.' | append: metafield_key
+      if metafield_path != json_source and metafield.last.value != blank
         assign metafield_count = metafield_count | plus: 1
       endif
     endfor
@@ -96,20 +174,37 @@
 
         <dl class="nayro-specs__list">
           {%- if json_count > 0 -%}
-            {%- for row in json_rows -%}
-              {%- assign row_label = row.label | default: row.name | default: row.title -%}
-              {%- assign row_value = row.value | default: row.text | default: row.content -%}
-              {%- if row_label == blank -%}
-                {%- assign row_label = row[0] -%}
-                {%- assign row_value = row[1] -%}
-              {%- endif -%}
-              {%- if row_label != blank and row_value != blank -%}
-                <div class="nayro-specs__row">
-                  <dt>{{ row_label | escape }}</dt>
-                  <dd>{{ row_value | escape | newline_to_br }}</dd>
-                </div>
-              {%- endif -%}
-            {%- endfor -%}
+            {%- if json_is_lines -%}
+              {%- for spec_line in json_lines -%}
+                {%- assign spec_line = spec_line | strip -%}
+                {%- if spec_line == blank -%}{%- continue -%}{%- endif -%}
+                {%- if spec_line contains '{' or spec_line contains '[' -%}{%- continue -%}{%- endif -%}
+                {%- assign spec_parts = spec_line | split: ':' -%}
+                {%- assign row_label = spec_parts[0] | strip -%}
+                {%- assign row_value = spec_parts | slice: 1, 50 | join: ':' | strip -%}
+                {%- if row_label != blank and row_value != blank -%}
+                  <div class="nayro-specs__row">
+                    <dt>{{ row_label | escape }}</dt>
+                    <dd>{{ row_value | escape }}</dd>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- else -%}
+              {%- for row in json_rows -%}
+                {%- assign row_label = row.label | default: row.name | default: row.title -%}
+                {%- assign row_value = row.value | default: row.text | default: row.content -%}
+                {%- if row_label == blank -%}
+                  {%- assign row_label = row[0] -%}
+                  {%- assign row_value = row[1] -%}
+                {%- endif -%}
+                {%- if row_label != blank and row_value != blank -%}
+                  <div class="nayro-specs__row">
+                    <dt>{{ row_label | escape }}</dt>
+                    <dd>{{ row_value | escape | newline_to_br }}</dd>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
           {%- endif -%}
 
           {%- for block in section.blocks -%}
@@ -167,7 +262,8 @@
           {%- if section.settings.show_metafields -%}
             {%- for metafield in spec_namespace -%}
               {%- assign metafield_key = metafield.first | strip -%}
-              {%- if metafield_key == json_key -%}{%- continue -%}{%- endif -%}
+              {%- assign metafield_path = spec_namespace_key | append: '.' | append: metafield_key -%}
+              {%- if metafield_path == json_source -%}{%- continue -%}{%- endif -%}
               {%- assign spec = metafield.last -%}
               {%- assign spec_value = spec.value -%}
               {%- if spec_value != blank -%}
@@ -202,6 +298,20 @@
       </div>
     </div>
   </section>
+{%- endif -%}
+
+{%- if section.settings.show_debug -%}
+  <div class="nayro-container" style="padding:12px 0">
+    <pre style="margin:0;padding:12px;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:8px;font-size:12px;white-space:pre-wrap">FICHE DEBUG
+namespace: {{ spec_namespace_key }}
+key: {{ json_key }}
+metafield found: {{ json_found }}
+source: {{ json_source | default: '(none)' }}
+type: {{ json_type | default: '(none)' }}
+rows rendered: {{ json_count }}
+section show_json: {{ section.settings.show_json }}
+total rows: {{ specs_total }}</pre>
+  </div>
 {%- endif -%}
 
 {% schema %}
@@ -322,6 +432,13 @@
       "type": "textarea",
       "id": "note",
       "label": "Note below the table"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_debug",
+      "label": "Show diagnostic info",
+      "default": false,
+      "info": "Prints the metafield namespace, key, type and rendered row count on the product page. Turn it off when everything works."
     }
   ],
   "blocks": [
