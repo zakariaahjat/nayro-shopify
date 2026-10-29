@@ -100,33 +100,67 @@ can be pointed to a different blog from the theme editor.
 
 `scripts/auto-blog.mjs` reads the RSS/Atom feeds listed in
 `scripts/blog-sources.mjs` and publishes the newest tech stories to the store
-blog. It ships with 13 verified sources:
+blog. It ships with 19 verified sources:
 
 - **French:** Numerama, Presse-Citron, 01net, FrAndroid, Journal du Geek,
   Tom's Hardware FR.
-- **English:** GSMArena, Android Authority, 9to5Mac, The Verge, TechRadar,
-  Ars Technica, Tom's Hardware.
+- **English:** GSMArena, Android Authority, Android Central, 9to5Mac,
+  9to5Google, XDA Developers, Liliputing, Digital Trends, The Verge, TechRadar,
+  Ars Technica, Tom's Hardware, Google News (smartphone / laptop / USB-C / GPU
+  search).
 
 Each imported post is a **short excerpt** (about 700 characters), the source
 name, and a link to the original article. Full articles are never copied, so the
 blog stays on the right side of copyright and does not compete with the source
-for search traffic. Posts are tagged `auto-blog`, `source-<key>` and
-`lang-<fr|en>` so you can find or unpublish them in bulk.
+for search traffic. No AI service is involved and nothing is rewritten, so there
+is no OpenAI/Claude bill and no API key. Posts are tagged `auto-blog`,
+`source-<key>` and `lang-<fr|en>` so you can find or unpublish them in bulk.
+
+### Keyword filter
+
+Matching follows the WordPress-style setup: an article is imported only when its
+title or summary mentions one of the keywords, ignoring case and accents. The
+default list is:
+
+`phone, smartphone, mobile, téléphone, laptop, ordinateur portable, pc, computer,
+ordinateur, cable, câble, charger, chargeur, USB-C, accessory, accessoire, GPU,
+graphics card, carte graphique, launch, lancement, brand, marque, product,
+produit, tech, technology, technologie`
+
+Because words like `tech`, `product` and `launch` appear in almost every story on
+a tech site, the filter is intentionally loose. Puzzles, word games and
+crosswords are excluded (see `--exclude`). Narrow the list for a tighter blog:
+
+```powershell
+node scripts/auto-blog.mjs --keywords "smartphone,laptop,gpu,usb-c,charger"
+node scripts/auto-blog.mjs --no-keywords   # import everything
+```
 
 ### Running it
 
 From GitHub (no local setup): **Actions -> Auto blog -> Run workflow**. It runs
-automatically every 6 hours, publishes 3 posts per run (max 1 per source) and
-skips anything older than 48 hours. The inputs let you change the count, the
-language (`fr`, `en` or `all`), publish as drafts, or do a dry run.
+automatically **every 10 minutes**, publishes 1 new post per run (max 1 per
+source) and skips anything older than 48 hours. A hard cap of **6 posts per 24
+hours** stops the 10-minute schedule from flooding the blog, and posts are spaced
+**at least 2 hours apart**, so a run that finds nothing new simply waits. The
+inputs let you change the count, the language (`fr`, `en` or `all`), the daily
+cap, publish as drafts, or do a dry run.
+
+The workflow uses GitHub's free Actions minutes (the repository is public, so
+scheduled runs are unlimited). Shopify's Admin API token is also free: it is the
+key that lets the workflow add posts to your blog, not a paid service. There is
+no way to create real Shopify blog posts without it — Shopify requires
+authentication for every write. If the token ever leaks, uninstall the app in
+**Settings -> Apps and sales channels** and create a new one; nothing else
+changes.
 
 Locally:
 
 ```powershell
 $env:SHOPIFY_STORE_DOMAIN="jq5gaa-01.myshopify.com"
 $env:SHOPIFY_ADMIN_API_TOKEN="shpat_..."
-node scripts/auto-blog.mjs --dry-run --limit 3 --lang fr   # preview
-node scripts/auto-blog.mjs --limit 3 --lang fr             # publish
+node scripts/auto-blog.mjs --dry-run --limit 3 --lang all   # preview
+node scripts/auto-blog.mjs --limit 3 --lang all             # publish
 ```
 
 Flags:
@@ -137,13 +171,19 @@ Flags:
 | `--draft` | off | Create unpublished articles |
 | `--limit` | `3` | Max posts per run |
 | `--per-source` | `1` | Max posts taken from one feed |
+| `--max-per-day` | `6` | Hard cap of auto posts per 24h (`0` = unlimited) |
+| `--min-gap-minutes` | `120` | Wait at least this long between two auto posts (`0` = no wait) |
 | `--max-age-hours` | `48` | Ignore older articles |
 | `--excerpt-length` | `700` | Characters kept from the feed summary |
 | `--lang` | `fr` | `fr`, `en` or `all` |
+| `--keywords` | built-in list | Replace the keyword list |
+| `--no-keywords` | off | Import every recent article |
+| `--exclude` | puzzle games | Replace the exclusion list |
 | `--source` | all | Comma separated source keys, e.g. `numerama,gsmarena` |
 
 Duplicates are prevented by a deterministic handle built from the article URL,
-so re-running the workflow never publishes the same story twice.
+so re-running the workflow never publishes the same story twice. Identical
+headlines from two feeds are also collapsed into one post.
 
 ### Required settings
 
@@ -155,7 +195,9 @@ so re-running the workflow never publishes the same story twice.
   run if it does not exist yet.
 
 Add or remove a feed by editing `scripts/blog-sources.mjs` (one object per
-source: `key`, `name`, `url`, `lang`, optional `tags`).
+source: `key`, `name`, `url`, `lang`, optional `tags`). Feeds that hide the real
+article link behind a redirect (Google News) can set `stripPublisher: true` and
+`resolveArticle: true`.
 
 ## Brands and product counts
 

@@ -2,22 +2,27 @@ name: Auto blog
 
 on:
   schedule:
-    # Every 6 hours (UTC). GitHub may delay scheduled runs a few minutes.
-    - cron: '17 */6 * * *'
+    # Every 10 minutes (UTC). GitHub may delay scheduled runs, and pauses
+    # schedules after 60 days without repository activity.
+    - cron: '*/10 * * * *'
   workflow_dispatch:
     inputs:
       limit:
         description: How many posts to publish this run
         required: false
-        default: '3'
+        default: '1'
       lang:
         description: Which sources to use
         type: choice
         options:
+          - all
           - fr
           - en
-          - all
-        default: fr
+        default: all
+      max_per_day:
+        description: Hard cap of auto posts per 24 hours (0 = unlimited)
+        required: false
+        default: '6'
       draft:
         description: Publish as drafts instead of live posts
         type: boolean
@@ -56,8 +61,9 @@ jobs:
       - name: Publish blog posts
         run: >-
           node scripts/auto-blog.mjs
-          --limit ${{ inputs.limit || '3' }}
-          --lang ${{ inputs.lang || 'fr' }}
+          --limit ${{ inputs.limit || '1' }}
+          --lang ${{ inputs.lang || 'all' }}
+          --max-per-day ${{ inputs.max_per_day || '6' }}
           --max-age-hours ${{ inputs.max_age_hours || '48' }}
           ${{ inputs.draft && '--draft' || '' }}
           ${{ inputs.dry_run && '--dry-run' || '' }}

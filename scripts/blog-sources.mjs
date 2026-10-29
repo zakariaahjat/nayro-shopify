@@ -7,6 +7,9 @@
  * Only feeds that are publicly available and allow excerpt + link attribution
  * are used. Articles are never copied in full: the theme publishes a short
  * excerpt with a link to the original article.
+ *
+ * `stripPublisher: true` removes the " - Publisher" suffix that Google News
+ * appends to every title.
  */
 
 export const sources = [
@@ -70,11 +73,46 @@ export const sources = [
     tags: ['Android'],
   },
   {
+    key: 'androidcentral',
+    name: 'Android Central',
+    url: 'https://www.androidcentral.com/feeds.xml',
+    lang: 'en',
+    tags: ['Android'],
+  },
+  {
     key: '9to5mac',
     name: '9to5Mac',
     url: 'https://9to5mac.com/feed/',
     lang: 'en',
     tags: ['Apple'],
+  },
+  {
+    key: '9to5google',
+    name: '9to5Google',
+    url: 'https://9to5google.com/feed/',
+    lang: 'en',
+    tags: ['Google', 'Android'],
+  },
+  {
+    key: 'xda-developers',
+    name: 'XDA Developers',
+    url: 'https://www.xda-developers.com/feed/',
+    lang: 'en',
+    tags: ['Tech'],
+  },
+  {
+    key: 'liliputing',
+    name: 'Liliputing',
+    url: 'https://liliputing.com/feed/',
+    lang: 'en',
+    tags: ['PC', 'Laptops'],
+  },
+  {
+    key: 'digitaltrends',
+    name: 'Digital Trends',
+    url: 'https://www.digitaltrends.com/feed/',
+    lang: 'en',
+    tags: ['Tech'],
   },
   {
     key: 'theverge',
@@ -86,7 +124,7 @@ export const sources = [
   {
     key: 'techradar',
     name: 'TechRadar',
-    url: 'https://www.techradar.com/rss',
+    url: 'https://www.techradar.com/feeds.xml',
     lang: 'en',
     tags: ['Tech'],
   },
@@ -103,6 +141,15 @@ export const sources = [
     url: 'https://www.tomshardware.com/feeds/all',
     lang: 'en',
     tags: ['PC', 'Hardware'],
+  },
+  {
+    key: 'google-news',
+    name: 'Google News',
+    url: 'https://news.google.com/rss/search?q=smartphone%20OR%20laptop%20OR%20USB-C%20OR%20GPU&hl=en-US&gl=US&ceid=US:en',
+    lang: 'en',
+    tags: ['Tech'],
+    stripPublisher: true,
+    resolveArticle: true,
   },
 ];
 
