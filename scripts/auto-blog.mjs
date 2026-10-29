@@ -8,8 +8,14 @@
  * of copyright and does not compete with the source for SEO.
  *
  * Required environment variables (not needed with --dry-run):
- *   SHOPIFY_STORE_DOMAIN     e.g. jq5gaa-01.myshopify.com
- *   SHOPIFY_ADMIN_API_TOKEN  Admin API token with read_content + write_content
+ *   SHOPIFY_STORE_DOMAIN         e.g. jq5gaa-01.myshopify.com
+ *
+ *   and either
+ *     SHOPIFY_ADMIN_API_TOKEN    custom app token (shpat_...)
+ *   or
+ *     SHOPIFY_CLIENT_ID          Dev Dashboard app client ID
+ *     SHOPIFY_CLIENT_SECRET      Dev Dashboard app client secret
+ *   (the client credentials are exchanged for a 24h token automatically)
  *
  * Optional:
  *   SHOPIFY_BLOG_HANDLE      default: news
@@ -25,12 +31,12 @@
 
 import { createHash } from 'node:crypto';
 import { sources, sourceByKey } from './blog-sources.mjs';
+import { getAccessToken } from './shopify-auth.mjs';
 
 const STORE = (process.env.SHOPIFY_STORE_DOMAIN || '')
   .trim()
   .replace(/^https?:\/\//i, '')
   .replace(/\/+$/, '');
-const TOKEN = (process.env.SHOPIFY_ADMIN_API_TOKEN || '').trim();
 const API_VERSION = (process.env.SHOPIFY_API_VERSION || '2026-10').trim();
 const BLOG_HANDLE = (process.env.SHOPIFY_BLOG_HANDLE || 'news').trim();
 const BLOG_TITLE = (process.env.SHOPIFY_BLOG_TITLE || 'Nayro Blog').trim();
@@ -472,13 +478,21 @@ function buildTags(item) {
 /* -------------------------------------------------------------------------- */
 
 async function adminRequest(query, variables = {}, attempt = 0) {
-  if (!STORE || !TOKEN) fail('SHOPIFY_STORE_DOMAIN and SHOPIFY_ADMIN_API_TOKEN are required (or use --dry-run).');
+  if (!STORE) fail('SHOPIFY_STORE_DOMAIN is required (or use --dry-run).');
+
+  let token;
+  try {
+    token = await getAccessToken();
+  } catch (error) {
+    if (error.isConfiguration) fail(error.message);
+    throw error;
+  }
 
   const response = await fetch(ENDPOINT, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': TOKEN,
+      'X-Shopify-Access-Token': token,
     },
     body: JSON.stringify({ query, variables }),
   });

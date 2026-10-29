@@ -70,5 +70,7 @@ jobs:
         env:
           SHOPIFY_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE_DOMAIN }}
           SHOPIFY_ADMIN_API_TOKEN: ${{ secrets.SHOPIFY_ADMIN_API_TOKEN }}
+          SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
+          SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
           SHOPIFY_BLOG_HANDLE: ${{ vars.SHOPIFY_BLOG_HANDLE || 'news' }}
           SHOPIFY_BLOG_TITLE: ${{ vars.SHOPIFY_BLOG_TITLE || 'Nayro Blog' }}

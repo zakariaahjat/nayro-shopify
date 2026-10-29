@@ -12,7 +12,10 @@
  *
  * Required environment variables:
  *   SHOPIFY_STORE_DOMAIN     e.g. jq5gaa-01.myshopify.com
- *   SHOPIFY_ADMIN_API_TOKEN  Admin API token with read_products + write_products
+ *
+ *   and either SHOPIFY_ADMIN_API_TOKEN, or
+ *   SHOPIFY_CLIENT_ID + SHOPIFY_CLIENT_SECRET (Dev Dashboard app, exchanged for
+ *   a 24h token automatically by scripts/shopify-auth.mjs)
  *
  * Optional:
  *   SHOPIFY_STORE_NAME       generic vendor to replace (default: My Store 2)
@@ -28,12 +31,12 @@
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { brands, detectBrand } from './brand-match.mjs';
+import { getAccessToken } from './shopify-auth.mjs';
 
 const STORE = (process.env.SHOPIFY_STORE_DOMAIN || '')
   .trim()
   .replace(/^https?:\/\//i, '')
   .replace(/\/+$/, '');
-const TOKEN = (process.env.SHOPIFY_ADMIN_API_TOKEN || '').trim();
 const API_VERSION = (process.env.SHOPIFY_API_VERSION || '2026-10').trim();
 const STORE_NAME = (process.env.SHOPIFY_STORE_NAME || 'My Store 2').trim();
 
@@ -52,18 +55,25 @@ function fail(message) {
 }
 
 if (!STORE) fail('SHOPIFY_STORE_DOMAIN is missing.');
-if (!TOKEN) fail('SHOPIFY_ADMIN_API_TOKEN is missing.');
 
 /* -------------------------------------------------------------------------- */
 /* Admin API                                                                   */
 /* -------------------------------------------------------------------------- */
 
 async function graphql(query, variables, attempt = 0) {
+  let token;
+  try {
+    token = await getAccessToken();
+  } catch (error) {
+    if (error.isConfiguration) fail(error.message);
+    throw error;
+  }
+
   const response = await fetch(ENDPOINT, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': TOKEN,
+      'X-Shopify-Access-Token': token,
     },
     body: JSON.stringify({ query, variables }),
   });

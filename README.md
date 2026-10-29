@@ -187,12 +187,38 @@ headlines from two feeds are also collapsed into one post.
 
 ### Required settings
 
-- Repository secrets: `SHOPIFY_STORE_DOMAIN` and `SHOPIFY_ADMIN_API_TOKEN`
-  (same names as the seed / vendor workflows). The token needs
-  `read_content` and `write_content`.
+The workflow needs `SHOPIFY_STORE_DOMAIN` plus **one** of these two credentials.
+Neither costs anything, and both are only used to let the script add posts —
+Shopify rejects every write without one.
+
+**Option A — Dev Dashboard app (no token to copy).** Create the app, add
+`read_content` + `write_content` to a version, release it, and install it on your
+store. Then add these repository secrets:
+
+| Secret | Value |
+|---|---|
+| `SHOPIFY_STORE_DOMAIN` | `jq5gaa-01.myshopify.com` |
+| `SHOPIFY_CLIENT_ID` | app Client ID (`0da0…`) |
+| `SHOPIFY_CLIENT_SECRET` | app Client secret (`shpss_…`) |
+
+`scripts/shopify-auth.mjs` exchanges the pair for a token with Shopify's client
+credentials grant at the start of every run. Those tokens last 24 hours, so the
+workflow always fetches a fresh one; there is no token to paste and nothing to
+renew by hand. The app and the store must belong to the same Shopify
+organization, and the app must be **installed** (Dev Dashboard -> app ->
+Install), otherwise Shopify answers `app_not_installed` or `shop_not_permitted`.
+
+**Option B — custom app token.** `Settings -> Apps and sales channels ->
+Develop apps`, create a custom app with `read_content` + `write_content`,
+install it, and reveal the Admin API access token once. Store it as
+`SHOPIFY_ADMIN_API_TOKEN`. This token is used as-is and does not expire.
+
 - Optional repository variables: `SHOPIFY_BLOG_HANDLE` (default `news`) and
   `SHOPIFY_BLOG_TITLE` (default `Nayro Blog`). The blog is created on the first
   run if it does not exist yet.
+
+Rotate the client secret from the Dev Dashboard (app -> Settings -> Client
+secret -> Rotate) if it was ever shared, and update the GitHub secret.
 
 Add or remove a feed by editing `scripts/blog-sources.mjs` (one object per
 source: `key`, `name`, `url`, `lang`, optional `tags`). Feeds that hide the real
