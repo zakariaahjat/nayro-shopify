@@ -185,6 +185,31 @@ Duplicates are prevented by a deterministic handle built from the article URL,
 so re-running the workflow never publishes the same story twice. Identical
 headlines from two feeds are also collapsed into one post.
 
+### Set it and forget it
+
+Once the app is installed and the three secrets exist, there is nothing left to
+do. Every 10 minutes GitHub starts a run that:
+
+1. downloads the 19 feeds,
+2. keeps only recent articles,
+3. keeps only articles matching the keywords,
+4. skips anything already published,
+5. publishes at most one post, and stops for the day after 6.
+
+If nothing matches, the run ends silently. The blog is created on the first
+post. The workflow also commits a timestamp to `.github/auto-blog-heartbeat`
+every two weeks, because GitHub disables scheduled workflows after 60 days
+without repository activity — this keeps the schedule running with no manual
+action.
+
+Things that still need you once:
+
+- Install the app on the store (Shopify refuses to issue tokens otherwise).
+- Add the repository secrets.
+- Remove the storefront password if you want visitors and Google to see the blog
+  (**Online Store -> Preferences -> Password protection**).
+- Rotate the client secret if it was ever shared, then update the GitHub secret.
+
 ### Required settings
 
 The workflow needs `SHOPIFY_STORE_DOMAIN` plus **one** of these two credentials.

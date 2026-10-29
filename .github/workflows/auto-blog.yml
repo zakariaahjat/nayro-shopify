@@ -37,7 +37,7 @@ on:
         default: '48'
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: auto-blog
@@ -74,3 +74,26 @@ jobs:
           SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
           SHOPIFY_BLOG_HANDLE: ${{ vars.SHOPIFY_BLOG_HANDLE || 'news' }}
           SHOPIFY_BLOG_TITLE: ${{ vars.SHOPIFY_BLOG_TITLE || 'Nayro Blog' }}
+
+      # GitHub disables scheduled workflows in repositories with no activity for
+      # 60 days. Committing a timestamp every two weeks keeps the schedule alive
+      # without needing anyone to touch the repository.
+      - name: Keep the schedule alive
+        if: always() && github.event_name == 'schedule'
+        run: |
+          set -e
+          file=.github/auto-blog-heartbeat
+          last=0
+          if [ -f "$file" ]; then last=$(cat "$file" || echo 0); fi
+          now=$(date +%s)
+          if [ "$last" -gt 0 ] && [ $((now - last)) -lt 1209600 ]; then
+            echo "Heartbeat is recent, nothing to do."
+            exit 0
+          fi
+          echo "$now" > "$file"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$file"
+          git commit -m "Keep the auto blog schedule alive"
+          git pull --rebase --autostash origin main
+          git push origin HEAD:main
