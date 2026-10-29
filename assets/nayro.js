@@ -968,6 +968,9 @@
           '<button type="button" class="nayro-wish-btn" data-wishlist-handle="' + escapeAttr(data.handle) + '" aria-pressed="false" aria-label="' + escapeAttr((strings.addToWishlist || 'Add to wishlist') + ': ' + data.title) + '">' +
             '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>' +
           '</button>' +
+          '<button type="button" class="nayro-compare-btn' + (compareHas(data.handle) ? ' is-active' : '') + '" data-compare-handle="' + escapeAttr(data.handle) + '" data-compare-label="' + escapeAttr(data.title) + '" aria-pressed="' + (compareHas(data.handle) ? 'true' : 'false') + '" aria-label="' + escapeAttr((strings.compareAdd || 'Add to comparison') + ': ' + data.title) + '">' +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 7h14"/><path d="M5 7 2.5 13h5L5 7zM19 7l-2.5 6h5L19 7z"/></svg>' +
+          '</button>' +
         '</div>' +
       '</div>' +
       '<div class="nayro-product__body">' +
@@ -1254,6 +1257,672 @@
   }
 
   /* ------------------------------------------------------------------ */
+  /* Product comparison                                                 */
+  /* ------------------------------------------------------------------ */
+  var COMPARE_KEY = 'nayro-compare';
+  var COMPARE_DEFAULT_MAX = 4;
+  var compareRowsCache = {};
+  var compareTitles = {};
+
+  function compareText(key, fallback) {
+    return strings[key] || fallback;
+  }
+  function compareCount(template, count) {
+    return String(template || '').replace(/\{\{\s*count\s*\}\}/g, count);
+  }
+  function compareMax() {
+    var section = qs('[data-compare-section]');
+    var max = parseInt(section && section.getAttribute('data-compare-max'), 10);
+    return max >= 2 ? max : COMPARE_DEFAULT_MAX;
+  }
+  function compareList() {
+    return getList(COMPARE_KEY).slice(0, compareMax());
+  }
+  function compareHas(handle) {
+    return compareList().indexOf(handle) !== -1;
+  }
+  function compareTitle(handle) {
+    if (compareTitles[handle]) { return compareTitles[handle]; }
+    if (productCache[handle] && productCache[handle].title) { return productCache[handle].title; }
+    var section = qs('[data-compare-section]');
+    if (section && section.getAttribute('data-compare-current') === handle) {
+      return section.getAttribute('data-compare-current-title') || handle;
+    }
+    return String(handle || '').replace(/-/g, ' ');
+  }
+  function compareLabel(value) {
+    return String(value == null ? '' : value)
+      .toLowerCase()
+      .replace(/\s*:\s*$/, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+  function compareCanonical(label) {
+    var aliases = {
+      brand: ['brand', 'marque', 'vendor', 'fabricant', 'manufacturer'],
+      category: ['category', 'catégorie', 'categorie', 'type'],
+      sku: ['sku', 'référence', 'reference', 'ref', 'modèle', 'modele', 'model'],
+      availability: ['availability', 'disponibilité', 'disponibilite', 'stock'],
+      tags: ['tags']
+    };
+    var value = compareLabel(label);
+    var keys = Object.keys(aliases);
+    for (var i = 0; i < keys.length; i += 1) {
+      if (aliases[keys[i]].indexOf(value) !== -1) { return keys[i]; }
+    }
+    return '';
+  }
+  function compareParseNumber(value) {
+    var text = String(value == null ? '' : value).replace(/\u00a0/g, ' ').trim();
+    var match = text.match(/(-?\d+(?:[.,]\d+)?)/);
+    if (!match) { return { number: null, unit: '' }; }
+    var rest = text.slice(match.index + match[0].length).trim().toLowerCase();
+    var unitMatch = rest.match(/^([a-zµ%°/]+(?:\s[a-z]+)?)/);
+    return {
+      number: parseFloat(match[1].replace(',', '.')),
+      unit: unitMatch ? unitMatch[1] : ''
+    };
+  }
+  function compareLowerBetter(label) {
+    var value = compareLabel(label);
+    var keywords = [
+      'weight', 'poids', 'thickness', 'épaisseur', 'epaisseur',
+      'consumption', 'consommation', 'charge time', 'charging time', 'temps de charge',
+      'latency', 'latence', 'response time', 'temps de réponse', 'temps de reponse',
+      'noise', 'bruit', 'footprint', 'encombrement', 'power draw', 'prix', 'price'
+    ];
+    for (var i = 0; i < keywords.length; i += 1) {
+      if (value.indexOf(keywords[i]) !== -1) { return true; }
+    }
+    return false;
+  }
+  var COMPARE_UNITS = {
+    mg: ['mass', 0.001], g: ['mass', 1], kg: ['mass', 1000],
+    mm: ['length', 1], cm: ['length', 10], m: ['length', 1000], km: ['length', 1000000],
+    in: ['length', 25.4], inch: ['length', 25.4], inches: ['length', 25.4], pouce: ['length', 25.4], pouces: ['length', 25.4],
+    ml: ['volume', 1], cl: ['volume', 10], l: ['volume', 1000], litre: ['volume', 1000], litres: ['volume', 1000], liter: ['volume', 1000], liters: ['volume', 1000],
+    w: ['power', 1], watt: ['power', 1], watts: ['power', 1], kw: ['power', 1000],
+    wh: ['energy', 1], kwh: ['energy', 1000],
+    mo: ['data', 1], mb: ['data', 1], go: ['data', 1024], gb: ['data', 1024], to: ['data', 1048576], tb: ['data', 1048576],
+    s: ['time', 1], sec: ['time', 1], seconde: ['time', 1], secondes: ['time', 1], seconds: ['time', 1],
+    min: ['time', 60], minute: ['time', 60], minutes: ['time', 60],
+    h: ['time', 3600], heure: ['time', 3600], heures: ['time', 3600], hour: ['time', 3600], hours: ['time', 3600],
+    j: ['time', 86400], jour: ['time', 86400], jours: ['time', 86400], day: ['time', 86400], days: ['time', 86400],
+    mhz: ['frequency', 1], ghz: ['frequency', 1000]
+  };
+  function compareNormalize(indexes, parsed) {
+    var units = indexes.map(function (index) { return parsed[index].unit; });
+    var known = units.map(function (unit) { return COMPARE_UNITS[unit]; });
+    if (known.every(Boolean)) {
+      var family = known[0][0];
+      var sameFamily = known.every(function (definition) { return definition[0] === family; });
+      if (!sameFamily) { return null; }
+      return indexes.map(function (index, position) {
+        return parsed[index].number * known[position][1];
+      });
+    }
+    var sameUnit = units.every(function (unit) { return unit === units[0]; });
+    if (!sameUnit) { return null; }
+    return indexes.map(function (index) { return parsed[index].number; });
+  }
+  function compareValuesEqual(values) {
+    var filled = values.filter(function (value) { return String(value == null ? '' : value).trim(); });
+    if (filled.length < 2) { return false; }
+    var first = compareLabel(filled[0]);
+    return filled.every(function (value) { return compareLabel(value) === first; });
+  }
+  function compareRowWinner(values, label) {
+    var present = [];
+    values.forEach(function (value, index) {
+      if (String(value == null ? '' : value).trim()) { present.push(index); }
+    });
+    if (present.length === 1) { return present[0]; }
+    if (present.length < 2) { return -1; }
+    var parsed = values.map(compareParseNumber);
+    var indexes = present.filter(function (index) { return parsed[index].number !== null; });
+    if (indexes.length < 2) { return -1; }
+    var numbers = compareNormalize(indexes, parsed);
+    if (!numbers) { return -1; }
+    var lower = compareLowerBetter(label);
+    var best = indexes[0];
+    var bestValue = numbers[0];
+    indexes.forEach(function (index, position) {
+      var current = numbers[position];
+      if (lower ? current < bestValue : current > bestValue) {
+        best = index;
+        bestValue = current;
+      }
+    });
+    var tie = numbers.every(function (current) { return current === bestValue; });
+    return tie ? -1 : best;
+  }
+  function readCompareRows(scope) {
+    return qsa('.nayro-specs__row', scope).map(function (row) {
+      var label = qs('dt', row);
+      var value = qs('dd', row);
+      return {
+        label: label ? (label.textContent || '').trim() : '',
+        value: value ? (value.textContent || '').replace(/\s+/g, ' ').trim() : ''
+      };
+    }).filter(function (row) { return row.label && row.value; });
+  }
+  function loadCompareRows(handle) {
+    if (compareRowsCache[handle]) { return Promise.resolve(compareRowsCache[handle]); }
+    var section = qs('[data-compare-section]');
+    if (section && section.getAttribute('data-compare-current') === handle) {
+      var localRows = readCompareRows(document);
+      if (localRows.length) {
+        compareRowsCache[handle] = localRows;
+        return Promise.resolve(localRows);
+      }
+    }
+    return fetch(productUrl({ handle: handle }), {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    }).then(function (response) {
+      return response.ok ? response.text() : '';
+    }).then(function (html) {
+      var rows = [];
+      if (html) {
+        rows = readCompareRows(new DOMParser().parseFromString(html, 'text/html'));
+      }
+      compareRowsCache[handle] = rows;
+      return rows;
+    }).catch(function () {
+      compareRowsCache[handle] = [];
+      return [];
+    });
+  }
+  function loadCompareProduct(handle) {
+    return fetchProduct(handle).then(function (product) {
+      return loadCompareRows(handle).then(function (rows) {
+        var variant = (product.variants && product.variants[0]) || {};
+        var compare = number(product.compare_at_price_max != null ? product.compare_at_price_max : product.compare_at_price);
+        var built = {
+          handle: product.handle || handle,
+          title: product.title || compareTitle(handle),
+          url: product.url || productUrl({ handle: handle }),
+          brand: product.vendor || '',
+          category: product.type || '',
+          sku: variant.sku || '',
+          available: !!product.available,
+          price: number(product.price_min != null ? product.price_min : product.price),
+          compareAt: compare,
+          priceVaries: !!product.price_varies,
+          image: product.featured_image || (product.images && product.images[0]) || '',
+          rows: rows || []
+        };
+        compareTitles[built.handle] = built.title;
+        return built;
+      });
+    });
+  }
+  function collectCompareRows(products) {
+    var rows = [];
+    var seen = {};
+    products.forEach(function (product, index) {
+      (product.rows || []).forEach(function (row) {
+        if (compareCanonical(row.label)) { return; }
+        var key = compareLabel(row.label);
+        if (!key) { return; }
+        if (!seen[key]) {
+          var values = [];
+          for (var i = 0; i < products.length; i += 1) { values.push(''); }
+          seen[key] = { label: row.label, values: values };
+          rows.push(seen[key]);
+        }
+        seen[key].values[index] = row.value;
+      });
+    });
+    return rows;
+  }
+  function compareBestBadge() {
+    return '<span class="nayro-compare__best">' + escapeHtml(compareText('compareBest', 'Best')) + '</span>';
+  }
+  function compareVerdict(label, title, meta, tone) {
+    return '<article class="nayro-compare__verdict nayro-compare__verdict--' + tone + '">' +
+      '<span class="nayro-compare__verdict-label">' + escapeHtml(label) + '</span>' +
+      '<strong class="nayro-compare__verdict-title">' + escapeHtml(title) + '</strong>' +
+      (meta ? '<span class="nayro-compare__verdict-meta">' + escapeHtml(meta) + '</span>' : '') +
+      '</article>';
+  }
+  function buildCompareTable(products) {
+    var specRows = collectCompareRows(products);
+    var specWins = products.map(function () { return 0; });
+    var rowWinners = specRows.map(function (row) {
+      var winner = compareRowWinner(row.values, row.label);
+      if (winner !== -1) { specWins[winner] += 1; }
+      return winner;
+    });
+
+    var maxWins = 0;
+    specWins.forEach(function (wins) { if (wins > maxWins) { maxWins = wins; } });
+    var specsWinners = [];
+    if (maxWins > 0) {
+      specWins.forEach(function (wins, index) {
+        if (wins === maxWins) { specsWinners.push(index); }
+      });
+    }
+
+    var pricePool = [];
+    products.forEach(function (product, index) {
+      if (product.available) { pricePool.push(index); }
+    });
+    if (!pricePool.length) {
+      products.forEach(function (product, index) { pricePool.push(index); });
+    }
+    var minPrice = Infinity;
+    pricePool.forEach(function (index) {
+      if (products[index].price < minPrice) { minPrice = products[index].price; }
+    });
+    var priceAtMin = pricePool.filter(function (index) { return products[index].price === minPrice; });
+    var priceWinner = priceAtMin.length === 1 ? priceAtMin[0] : -1;
+
+    var prices = products.map(function (product) { return product.price; });
+    var lowest = Math.min.apply(null, prices);
+    var highest = Math.max.apply(null, prices);
+    var scores = products.map(function (product, index) {
+      var priceScore = highest === lowest ? 100 : ((highest - product.price) / (highest - lowest)) * 100;
+      var specScore = maxWins > 0 ? (specWins[index] / maxWins) * 100 : 0;
+      var score = priceScore * 0.45 + specScore * 0.55;
+      if (!product.available) { score -= 30; }
+      return score;
+    });
+    var valueWinner = 0;
+    var valuePool = [];
+    products.forEach(function (product, index) {
+      if (product.available) { valuePool.push(index); }
+    });
+    if (!valuePool.length) {
+      products.forEach(function (product, index) { valuePool.push(index); });
+    }
+    valueWinner = valuePool[0];
+    valuePool.forEach(function (index) {
+      if (scores[index] > scores[valueWinner]) { valueWinner = index; }
+    });
+
+    var verdicts = '<div class="nayro-compare__verdicts">';
+    verdicts += compareVerdict(
+      compareText('compareBestPrice', 'Best price'),
+      priceAtMin.length ? (priceAtMin.length > 1 ? compareText('compareTie', 'Tie') : products[priceAtMin[0]].title) : compareText('compareNone', '—'),
+      priceAtMin.length === 1 ? formatMoney(products[priceAtMin[0]].price, cfg.moneyFormat) : '',
+      'price'
+    );
+    verdicts += compareVerdict(
+      compareText('compareBestSpecs', 'Best specs'),
+      specsWinners.length ? specsWinners.map(function (index) { return products[index].title; }).join(' · ') : compareText('compareNone', '—'),
+      specsWinners.length ? compareCount(compareText('compareSpecsWon', '{{ count }} specs won'), maxWins) : '',
+      'specs'
+    );
+    verdicts += compareVerdict(
+      compareText('compareBestValue', 'Best value'),
+      products[valueWinner].title,
+      formatMoney(products[valueWinner].price, cfg.moneyFormat),
+      'value'
+    );
+    verdicts += '</div>';
+
+    var head = '<thead><tr><th scope="col" class="nayro-compare-table__corner"><span class="nayro-visually-hidden">' +
+      escapeHtml(compareText('compareProduct', 'Product')) + '</span></th>';
+    products.forEach(function (product, index) {
+      head += '<th scope="col" class="nayro-compare-table__product' + (index === valueWinner ? ' is-value' : '') + '">' +
+        (index === valueWinner ? '<span class="nayro-compare__ribbon">' + escapeHtml(compareText('compareBestValue', 'Best value')) + '</span>' : '') +
+        '<span class="nayro-compare-table__media">' +
+          (product.image ? '<img src="' + escapeAttr(product.image) + '" alt="" loading="lazy" width="72" height="72">' : '') +
+        '</span>' +
+        '<a class="nayro-compare-table__title" href="' + escapeAttr(product.url) + '">' + escapeHtml(product.title) + '</a>' +
+        (product.brand ? '<span class="nayro-compare-table__brand">' + escapeHtml(product.brand) + '</span>' : '') +
+        '<button type="button" class="nayro-compare-table__remove" data-compare-remove="' + escapeAttr(product.handle) + '" aria-label="' +
+          escapeAttr(compareText('compareRemoveProduct', 'Remove') + ': ' + product.title) + '">' +
+          '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>' +
+        '</button>' +
+      '</th>';
+    });
+    head += '</tr></thead>';
+
+    var body = '<tbody>';
+    body += '<tr class="nayro-compare__row-price"><th scope="row">' + escapeHtml(compareText('comparePrice', 'Price')) + '</th>';
+    products.forEach(function (product, index) {
+      var best = index === priceWinner;
+      body += '<td' + (best ? ' class="is-best"' : '') + '>' +
+        '<strong class="nayro-compare__price">' +
+          (product.priceVaries ? escapeHtml(compareText('compareFrom', 'From')) + ' ' : '') +
+          escapeHtml(formatMoney(product.price, cfg.moneyFormat)) +
+        '</strong>' +
+        (product.compareAt > product.price ? ' <s class="nayro-compare__was">' + escapeHtml(formatMoney(product.compareAt, cfg.moneyFormat)) + '</s>' : '') +
+        (best ? compareBestBadge() : '') +
+      '</td>';
+    });
+    body += '</tr>';
+
+    body += '<tr><th scope="row">' + escapeHtml(compareText('compareAvailability', 'Availability')) + '</th>';
+    products.forEach(function (product) {
+      body += '<td class="' + (product.available ? 'is-good' : 'is-bad') + '">' +
+        '<span class="nayro-stock-status ' + (product.available ? 'nayro-stock-status--instock' : 'nayro-stock-status--outofstock') + '">' +
+          escapeHtml(product.available ? (strings.inStock || 'In stock') : (strings.outOfStock || 'Out of stock')) +
+        '</span></td>';
+    });
+    body += '</tr>';
+
+    specRows.forEach(function (row, index) {
+      var similar = compareValuesEqual(row.values);
+      body += '<tr data-compare-row' + (similar ? ' class="is-similar"' : '') + '>';
+      body += '<th scope="row">' + escapeHtml(row.label) + '</th>';
+      row.values.forEach(function (value, column) {
+        var best = rowWinners[index] === column;
+        body += '<td' + (best ? ' class="is-best"' : '') + '>' +
+          (value ? escapeHtml(value) : '<span class="nayro-compare__na">' + escapeHtml(compareText('compareNone', '—')) + '</span>') +
+          (best ? compareBestBadge() : '') +
+        '</td>';
+      });
+      body += '</tr>';
+    });
+    body += '</tbody>';
+
+    return verdicts +
+      '<div class="nayro-compare__toolbar">' +
+        '<label class="nayro-compare__switch">' +
+          '<input type="checkbox" data-compare-differences>' +
+          '<span>' + escapeHtml(compareText('compareDifferences', 'Show differences only')) + '</span>' +
+        '</label>' +
+      '</div>' +
+      '<div class="nayro-compare__scroll">' +
+        '<table class="nayro-compare-table nayro-compare-table--comparison">' + head + body + '</table>' +
+      '</div>';
+  }
+  function renderCompareChips(handles, products) {
+    var byHandle = {};
+    (products || []).forEach(function (product) { byHandle[product.handle] = product; });
+    return handles.map(function (handle) {
+      var product = byHandle[handle];
+      var title = product ? product.title : compareTitle(handle);
+      var url = product ? product.url : productUrl({ handle: handle });
+      return '<span class="nayro-compare__chip">' +
+        '<a href="' + escapeAttr(url) + '">' + escapeHtml(title) + '</a>' +
+        '<button type="button" data-compare-remove="' + escapeAttr(handle) + '" aria-label="' +
+          escapeAttr(compareText('compareRemove', 'Remove from comparison') + ': ' + title) + '">' +
+          '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>' +
+        '</button>' +
+      '</span>';
+    }).join('');
+  }
+  function renderCompare(section) {
+    if (!section) { return; }
+    var handles = compareList();
+    var selected = qs('[data-compare-selected]', section);
+    var output = qs('[data-compare-table]', section);
+    var empty = qs('[data-compare-empty]', section);
+    var emptyText = empty ? qs('p', empty) : null;
+
+    if (selected) { selected.innerHTML = renderCompareChips(handles); }
+
+    if (handles.length < 2) {
+      if (output) {
+        output.hidden = true;
+        output.innerHTML = '';
+      }
+      if (empty) { empty.hidden = false; }
+      if (emptyText) {
+        emptyText.textContent = handles.length
+          ? compareText('compareNeedTwo', 'Add one more product to compare.')
+          : compareText('compareEmpty', 'Select at least two products to compare.');
+      }
+      return;
+    }
+
+    if (empty) { empty.hidden = true; }
+    if (!output) { return; }
+    output.hidden = false;
+    output.innerHTML = '<p class="nayro-compare__loading">' + escapeHtml(compareText('compareLoading', 'Loading products…')) + '</p>';
+
+    var token = (section._nayroCompareToken || 0) + 1;
+    section._nayroCompareToken = token;
+    Promise.all(handles.map(function (handle) {
+      return loadCompareProduct(handle).catch(function () { return null; });
+    })).then(function (products) {
+      if (section._nayroCompareToken !== token) { return; }
+      var valid = products.filter(Boolean);
+      if (valid.length < 2) {
+        output.innerHTML = '<p class="nayro-compare__loading">' + escapeHtml(compareText('compareError', 'Products could not be loaded.')) + '</p>';
+        return;
+      }
+      output.innerHTML = buildCompareTable(valid);
+      if (selected) { selected.innerHTML = renderCompareChips(handles, valid); }
+    });
+  }
+  function renderCompareTray(list) {
+    var tray = qs('[data-compare-tray]');
+    var section = qs('[data-compare-section]');
+    if (!list.length || section) {
+      if (tray) { tray.hidden = true; }
+      return;
+    }
+    if (!tray) {
+      tray = document.createElement('div');
+      tray.className = 'nayro-compare-tray';
+      tray.setAttribute('data-compare-tray', '');
+      document.body.appendChild(tray);
+    }
+    var href = productUrl({ handle: list[0] }) + '#nayro-compare';
+    tray.hidden = false;
+    tray.innerHTML = '<span class="nayro-compare-tray__text">' +
+        escapeHtml(compareCount(compareText('compareTray', '{{ count }} products selected'), list.length)) +
+      '</span>' +
+      '<a class="nayro-btn nayro-btn--sm" href="' + escapeAttr(href) + '">' +
+        escapeHtml(compareText('compareTrayLink', 'Compare')) +
+      '</a>' +
+      '<button type="button" class="nayro-compare-tray__close" data-compare-clear aria-label="' +
+        escapeAttr(compareText('compareClose', 'Close')) + '">' +
+        '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>' +
+      '</button>';
+  }
+  function syncCompare() {
+    var list = compareList();
+    qsa('[data-compare-handle]').forEach(function (button) {
+      var handle = button.getAttribute('data-compare-handle');
+      var active = list.indexOf(handle) !== -1;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+      var text = button.querySelector('[data-compare-text]');
+      if (text) {
+        text.textContent = active
+          ? compareText('compareRemove', 'Remove from comparison')
+          : compareText('compareAdd', 'Add to comparison');
+      }
+      var label = button.getAttribute('data-compare-label');
+      if (label) {
+        button.setAttribute('aria-label', (active
+          ? compareText('compareRemove', 'Remove from comparison')
+          : compareText('compareAdd', 'Add to comparison')) + ': ' + label);
+      }
+    });
+    renderCompareTray(list);
+  }
+  function compareSave(list) {
+    setList(COMPARE_KEY, list.slice(0, compareMax()));
+    syncCompare();
+    renderCompare(qs('[data-compare-section]'));
+  }
+  function compareAdd(handle) {
+    if (!handle) { return; }
+    var list = compareList();
+    if (list.indexOf(handle) !== -1) { return; }
+    if (list.length >= compareMax()) {
+      toast(compareCount(compareText('compareMax', 'You can compare up to {{ count }} products.'), compareMax()));
+      return;
+    }
+    list.push(handle);
+    compareSave(list);
+    toast(compareText('compareAdded', 'Added to comparison'));
+  }
+  function compareToggle(handle) {
+    var list = compareList();
+    var index = list.indexOf(handle);
+    if (index === -1) {
+      compareAdd(handle);
+      return;
+    }
+    list.splice(index, 1);
+    compareSave(list);
+    toast(compareText('compareRemoved', 'Removed from comparison'));
+  }
+  function handleFromUrl(url) {
+    var match = String(url || '').match(/\/products\/([^/?#]+)/);
+    return match ? decodeURIComponent(match[1]) : '';
+  }
+  function fetchCompareSearch(query, section) {
+    var results = qs('[data-compare-results]', section);
+    if (!results) { return; }
+    var base = cfg.predictiveSearchUrl || (root + 'search/suggest');
+    var separator = base.indexOf('?') === -1 ? '?' : '&';
+    var url = base + separator + 'q=' + encodeURIComponent(query) +
+      '&resources[type]=product&resources[limit]=8';
+    var token = (section._nayroSearchToken || 0) + 1;
+    section._nayroSearchToken = token;
+    results.hidden = false;
+    results.innerHTML = '<p class="nayro-compare__result-note">' + escapeHtml(compareText('compareLoading', 'Loading products…')) + '</p>';
+    fetchJSON(url).then(function (data) {
+      if (section._nayroSearchToken !== token) { return; }
+      var products = (((data.resources || {}).results || {}).products) || [];
+      var selected = compareList();
+      var items = products.map(function (item) {
+        var handle = item.handle || handleFromUrl(item.url);
+        if (!handle) { return ''; }
+        compareTitles[handle] = item.title || compareTitle(handle);
+        var added = selected.indexOf(handle) !== -1;
+        return '<button type="button" class="nayro-compare__result' + (added ? ' is-added' : '') + '" data-compare-add="' +
+          escapeAttr(handle) + '"' + (added ? ' disabled' : '') + ' role="option">' +
+          '<span class="nayro-compare__result-img">' +
+            (item.image ? '<img src="' + escapeAttr(item.image) + '" alt="" loading="lazy" width="44" height="44">' : '') +
+          '</span>' +
+          '<span class="nayro-compare__result-body">' +
+            '<strong>' + escapeHtml(item.title || handle) + '</strong>' +
+            (item.vendor ? '<small>' + escapeHtml(item.vendor) + '</small>' : '') +
+          '</span>' +
+          (added
+            ? '<span class="nayro-compare__result-check">' + escapeHtml(compareText('compareAddedShort', 'Added')) + '</span>'
+            : '<span class="nayro-compare__result-plus" aria-hidden="true">+</span>') +
+        '</button>';
+      }).filter(Boolean);
+      results.innerHTML = items.length
+        ? items.join('')
+        : '<p class="nayro-compare__result-note">' + escapeHtml(compareText('compareNoResults', 'No product found.')) + '</p>';
+      results.hidden = false;
+      var input = qs('[data-compare-search]', section);
+      if (input) { input.setAttribute('aria-expanded', 'true'); }
+    }).catch(function () {
+      if (section._nayroSearchToken !== token) { return; }
+      results.innerHTML = '<p class="nayro-compare__result-note">' + escapeHtml(compareText('compareError', 'Products could not be loaded.')) + '</p>';
+      results.hidden = false;
+    });
+  }
+  function initCompareSearch(section) {
+    var input = qs('[data-compare-search]', section);
+    var results = qs('[data-compare-results]', section);
+    if (!input || !results) { return; }
+    var timer = null;
+    var lastQuery = '';
+
+    on(input, 'input', function () {
+      var query = input.value.trim();
+      if (timer) { clearTimeout(timer); }
+      if (query.length < 2) {
+        results.hidden = true;
+        results.innerHTML = '';
+        input.setAttribute('aria-expanded', 'false');
+        return;
+      }
+      timer = setTimeout(function () {
+        if (query === lastQuery) { return; }
+        lastQuery = query;
+        fetchCompareSearch(query, section);
+      }, 280);
+    });
+
+    on(input, 'focus', function () {
+      if (results.innerHTML) { results.hidden = false; }
+    });
+
+    on(input, 'keydown', function (event) {
+      if (event.key === 'Escape') {
+        results.hidden = true;
+        input.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    on(results, 'click', function (event) {
+      var item = event.target.closest('[data-compare-add]');
+      if (!item) { return; }
+      event.preventDefault();
+      compareAdd(item.getAttribute('data-compare-add'));
+      input.value = '';
+      results.hidden = true;
+      results.innerHTML = '';
+      input.setAttribute('aria-expanded', 'false');
+      input.focus();
+    });
+
+    on(document, 'click', function (event) {
+      if (event.target === input || results.contains(event.target)) { return; }
+      results.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+    });
+  }
+  function initCompare() {
+    var section = qs('[data-compare-section]');
+    if (section) {
+      var current = section.getAttribute('data-compare-current');
+      if (current && section.getAttribute('data-compare-auto') !== 'false' && !compareHas(current) && !compareList().length) {
+        var list = compareList();
+        list.push(current);
+        setList(COMPARE_KEY, list);
+      }
+      initCompareSearch(section);
+      renderCompare(section);
+    }
+    syncCompare();
+
+    document.addEventListener('click', function (event) {
+      var button = event.target.closest('[data-compare-handle]');
+      if (button) {
+        event.preventDefault();
+        compareToggle(button.getAttribute('data-compare-handle'));
+        return;
+      }
+      var remove = event.target.closest('[data-compare-remove]');
+      if (remove) {
+        event.preventDefault();
+        var handle = remove.getAttribute('data-compare-remove');
+        var list = compareList();
+        var index = list.indexOf(handle);
+        if (index !== -1) {
+          list.splice(index, 1);
+          compareSave(list);
+          toast(compareText('compareRemoved', 'Removed from comparison'));
+        }
+        return;
+      }
+      var clear = event.target.closest('[data-compare-clear]');
+      if (clear) {
+        event.preventDefault();
+        if (compareList().length) {
+          compareSave([]);
+          toast(compareText('compareRemoved', 'Removed from comparison'));
+        }
+      }
+    });
+
+    document.addEventListener('change', function (event) {
+      var toggle = event.target.closest('[data-compare-differences]');
+      if (!toggle) { return; }
+      var scope = toggle.closest('[data-compare-section]');
+      if (!scope) { return; }
+      qsa('[data-compare-row].is-similar', scope).forEach(function (row) {
+        row.hidden = toggle.checked;
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------ */
   /* Boot                                                               */
   /* ------------------------------------------------------------------ */
   function init() {
@@ -1276,6 +1945,7 @@
     initRecentlyViewed();
     initRecommendations();
     initBrandSearch();
+    initCompare();
   }
 
   if (document.readyState === 'loading') {

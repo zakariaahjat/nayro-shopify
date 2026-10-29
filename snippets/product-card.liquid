@@ -59,6 +59,9 @@
           {% render 'icon', name: 'heart' %}
         </button>
       {%- endif -%}
+      <button type="button" class="nayro-compare-btn" data-compare-handle="{{ product.handle }}" data-compare-label="{{ product.title | escape }}" aria-pressed="false" aria-label="{{ 'products.compare.add' | t }}: {{ product.title | escape }}">
+        {% render 'icon', name: 'scale' %}
+      </button>
     </div>
   </div>
 

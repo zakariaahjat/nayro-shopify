@@ -188,6 +188,11 @@
           </button>
         {%- endif -%}
 
+        <button type="button" class="nayro-btn nayro-btn--ghost nayro-btn--sm" data-compare-handle="{{ product.handle }}" data-compare-label="{{ product.title | escape }}" aria-pressed="false">
+          {% render 'icon', name: 'scale' %}
+          <span data-compare-text>{{ 'products.compare.add' | t }}</span>
+        </button>
+
         {%- if section.settings.show_trust -%}
           <div class="nayro-single__trust">
             <div>{% render 'icon', name: 'truck' %}<span><b>{{ section.settings.trust_1_title | default: 'Fast delivery' | escape }}</b>{{ section.settings.trust_1_text | default: settings.shipping_text | escape }}</span></div>

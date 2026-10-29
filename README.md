@@ -339,6 +339,45 @@ information. Every row is optional and comes from four sources, in this order:
 
 The section hides itself when nothing is selected or filled in.
 
+## Product comparison
+
+`templates/product.json` also includes a **Compare products** section. The
+customer can pick up to four products and the theme ranks them row by row:
+
+- **Best price** — lowest price among the products that are in stock.
+- **Best specs** — the product that wins the most rows of the fiche technique.
+- **Best value** — a mix of the specs score and the price score.
+
+Rows that differ get a **Best** badge, and the **Show differences only** switch
+hides the rows where every product has the same value.
+
+There is nothing to configure for the data: the comparison reuses the same
+**Fiche technique** rows (JSON metafield, editor rows, built-in attributes and
+`specs` metafields), plus price and availability. Numeric values are compared
+automatically (higher is better by default; weight, thickness, consumption,
+charge time and similar rows are treated as lower-is-better). When only one
+product lists a row, that product wins the row.
+
+Ways to add a product to the comparison:
+
+1. The **scale** button on every product card
+   (`snippets/product-card.liquid`), on collection pages, search and the home
+   page.
+2. The **Add to comparison** button next to the wishlist button on the product
+   page.
+3. The search box inside the **Compare products** section.
+
+The selection is stored in the browser (`localStorage`, key `nayro-compare`), so
+it follows the customer from one product page to the next. On pages without the
+section, a small tray at the bottom links back to the comparison.
+
+Theme editor settings: eyebrow, heading, text, **Maximum products** (2 to 4) and
+**Start the comparison with the current product** (only when the list is empty).
+
+The comparison gets the specs of the other products from their product page. If
+a product uses a different template that does not contain the Fiche technique
+section, only its price, availability and brand are compared.
+
 ## Recently viewed
 
 A **Recently viewed** section is on the product page and under the product grid

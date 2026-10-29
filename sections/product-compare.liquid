@@ -1,0 +1,132 @@
+{%- comment -%}
+  Product comparison.
+
+  The customer picks up to four products (search box or the compare button on any
+  product card / product page). The comparison itself runs in the browser:
+  price, availability and the "Fiche technique" rows of every product are read
+  from the storefront, then each row is ranked and a verdict is shown for the
+  best price, the best specs and the best overall value.
+
+  The selected products are stored in localStorage (key: nayro-compare), so the
+  list follows the customer from one product page to the next.
+{%- endcomment -%}
+{%- liquid
+  assign compare_max = section.settings.max_products | default: 4
+  if compare_max < 2
+    assign compare_max = 2
+  endif
+  if compare_max > 4
+    assign compare_max = 4
+  endif
+  assign current_handle = product.handle | default: ''
+  assign current_title = product.title | default: ''
+-%}
+{%- if current_handle != blank -%}
+  <section
+    class="nayro-compare"
+    id="nayro-compare"
+    data-compare-section
+    data-compare-max="{{ compare_max }}"
+    data-compare-current="{{ current_handle | escape }}"
+    data-compare-current-title="{{ current_title | escape }}"
+    data-compare-auto="{% if section.settings.auto_add_current %}true{% else %}false{% endif %}"
+  >
+    <div class="nayro-container">
+      <div class="nayro-compare__panel">
+        <div class="nayro-compare__head">
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="nayro-page__eyebrow">{{ section.settings.eyebrow | escape }}</span>
+          {%- endif -%}
+          <h2 class="nayro-compare__title">{{ section.settings.heading | default: 'Compare products' | escape }}</h2>
+          {%- if section.settings.text != blank -%}
+            <p class="nayro-compare__text">{{ section.settings.text | escape }}</p>
+          {%- endif -%}
+        </div>
+
+        <div class="nayro-compare__picker">
+          <div class="nayro-compare__search">
+            <span class="nayro-compare__search-icon" aria-hidden="true">{% render 'icon', name: 'search' %}</span>
+            <label class="nayro-visually-hidden" for="nayro-compare-search-{{ section.id }}">{{ 'products.compare.search_placeholder' | t }}</label>
+            <input
+              id="nayro-compare-search-{{ section.id }}"
+              type="search"
+              data-compare-search
+              placeholder="{{ 'products.compare.search_placeholder' | t | escape }}"
+              autocomplete="off"
+              spellcheck="false"
+              role="combobox"
+              aria-expanded="false"
+              aria-controls="nayro-compare-results-{{ section.id }}"
+              aria-autocomplete="list"
+            >
+            <div class="nayro-compare__results" id="nayro-compare-results-{{ section.id }}" data-compare-results role="listbox" hidden></div>
+          </div>
+          <button type="button" class="nayro-btn nayro-btn--ghost" data-compare-clear>
+            {% render 'icon', name: 'trash' %}
+            <span>{{ 'products.compare.clear' | t }}</span>
+          </button>
+        </div>
+
+        <div class="nayro-compare__selected" data-compare-selected aria-live="polite"></div>
+
+        <div class="nayro-compare__empty" data-compare-empty>
+          <p>{{ 'products.compare.empty' | t }}</p>
+        </div>
+
+        <div class="nayro-compare__output" data-compare-table hidden></div>
+
+        <noscript>
+          <p class="nayro-compare__note">{{ 'products.compare.noscript' | t }}</p>
+        </noscript>
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Compare products",
+  "class": "nayro-product-compare-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Comparison"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Compare products"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Pick up to 4 products: we highlight the best specs and the best price."
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Maximum products",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_add_current",
+      "label": "Start the comparison with the current product",
+      "default": true,
+      "info": "Only when the comparison list is still empty."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Compare products"
+    }
+  ]
+}
+{% endschema %}
